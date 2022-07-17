@@ -1,22 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import * as d3 from "d3";
-import DummyPie from "./DummyPieChart"
-import LineChart from './LineChart';
+import DummyPie from "./components/DummyPieChart"
+import LineChart from './components/LineChart';
 import logo from './logo.svg';
 import './App.css';
+import NameForm from './components/NameForm';
 
 function App() {
 
-  const generateData = (value, length = 5) =>
-    d3.range(length).map((item, index) => ({
-      date: index,
-      value: value === null || value === undefined ? Math.random() * 100 : value
-    }));
-
-  const [data, setData] = useState(generateData());
-  const changeData = () => {
-    setData(generateData());
-  };
+  const dummyPost = "7"
+  useEffect(() => {
+    fetch('/api/dummypost',{
+      method: 'POST', 
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      //body: JSON.stringify(dummyPost)})
+      body: dummyPost})
+  },[])
 
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -46,30 +47,9 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
         <p>The current time is {currentTime}.</p>
         <p>My Dummy Response is {dummyResponse}.</p>
-        <div>
-          <span className="label">Hooks</span>
-          <DummyPie
-            data={data}
-            width={200}
-            height={200}
-            innerRadius={60}
-            outerRadius={100}
-          />
-        </div>
+        <NameForm />
         <LineChart
           chartData = {dummyData}
         />

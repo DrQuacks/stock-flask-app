@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import useD3 from "./hooks/useD3";
+import useD3 from "../hooks/useD3";
 
 const LineChart = (chartData) => {
     console.log("chartData outside useD3 is: ",chartData)
@@ -29,18 +29,6 @@ const LineChart = (chartData) => {
                 .attr("transform", `translate(${margin.left},${margin.top})`)
                 .call(d3.axisLeft(yScale));
 
-            console.log("chartData is: ",chartData)
-            console.log("First xValue is: ",chartData.chartData[0])
-            console.log("First yValue is: ",chartData[0])
-
-            const newData = [{"xValue":0,"yValue":0},
-                {"xValue":1,"yValue":1},
-                {"xValue":2,"yValue":4},
-                {"xValue":3,"yValue":9}]
-
-            console.log("newData is: ",newData)
-            console.log("First xValue is: ",newData[0])
-            console.log("First yValue is: ",newData[0])
 
             const line = d3.line()
                 .x((d) => xScale(d.xValue))
@@ -54,11 +42,8 @@ const LineChart = (chartData) => {
                 .attr("fill", "none")
                 .attr("stroke", "steelblue")
                 .attr("stroke-width", 1.5)
-                .attr("d", d3.line()
-                  .x((d) => xScale(d.xValue))
-                  .y((d) => yScale(d.yValue))
-                  )
-                  .attr("transform", `translate(${margin.left},${margin.top})`)
+                .attr("d", linePlot)
+                .attr("transform", `translate(${margin.left},${margin.top})`)
                 
 
         },
