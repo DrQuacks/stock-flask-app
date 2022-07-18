@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import * as d3 from "d3";
 import DummyPie from "./components/DummyPieChart"
 import LineChart from './components/LineChart';
-import logo from './logo.svg';
 import './App.css';
 import NameForm from './components/NameForm';
 
 function App() {
 
-  const dummyPost = "7"
+  /*const dummyPost = "7"
   useEffect(() => {
     fetch('/api/dummypost',{
       method: 'POST', 
@@ -17,7 +16,7 @@ function App() {
       },
       //body: JSON.stringify(dummyPost)})
       body: dummyPost})
-  },[])
+  },[])*/
 
   const [currentTime, setCurrentTime] = useState(0);
 
@@ -44,12 +43,20 @@ function App() {
     });
   }, []);
 
+  const setInput = (inputData) => {
+    console.log("setInput was called")
+    if (inputData){
+      console.log("inputData is: ",inputData)
+      setDummyData(inputData)
+    }
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        <p>The current time is {currentTime}.</p>
-        <p>My Dummy Response is {dummyResponse}.</p>
-        <NameForm />
+        <NameForm 
+          setInput = {setInput}
+        />
         <LineChart
           chartData = {dummyData}
         />

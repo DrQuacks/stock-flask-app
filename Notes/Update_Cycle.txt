@@ -1,0 +1,5 @@
+A lot of processes seem to be happening asynchronously, 
+which is causing issues with the order of things updating.
+Right now this is especially true with fetching data from python.
+
+What I'd like to do is trigger updates when things happen.
