@@ -6,8 +6,10 @@ import dateToDate from "../helpers/dateToDate";
 const LineChart = ({chartData,plotPrefs}) => {
     console.log("chartData outside useD3 is: ",chartData)
 
-    const data = chartData
-    const {semiLog,overlayRaw,overlayNew} = plotPrefs
+    const data = chartData[0]
+    const {semiLog,overlayRaw,overlayNew} = plotPrefs.current
+
+    const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
 
     const ref = useD3(
         (svg) => {
@@ -15,20 +17,32 @@ const LineChart = ({chartData,plotPrefs}) => {
             const width = 1100;
             const margin = { top: 20, right: 30, bottom: 30, left: 40 };
 
+            
+            //re-plotting, like for semilog, plots over original  plot
+            //this is messy with colors, as the color looks like it changes
+
+            svg.selectAll("#linePlot").remove()
+
             svg.select("#xAxis").remove()
             svg.select("#yAxis").remove()
-            svg.select("#linePlot").remove()
+            
 
             /*const xScale = d3.scaleLinear()
                 .domain([0, d3.max(data, function(d) { return +d.xValue; })])
                 .rangeRound([ 0, width - (margin.right + margin.left)]);*/
 
-            const xScale = d3.scaleTime()
-                .domain(d3.extent(data, function(d) { 
-                    console.log("d.date is: ",d.date)
-                    console.log("dateToString(d.date) is: ",dateToDate(d.date))
+            const xDomain = d3.extent(chartData.reduce((acc,element) => {
+                const thisExtent = d3.extent(element, function(d) { 
                     return dateToDate(d.date);
-                }))
+                })
+                return [...acc,...thisExtent]
+            },[]))
+            
+            const xScale = d3.scaleTime()
+               /* .domain(d3.extent(data, function(d) { 
+                    return dateToDate(d.date);
+                }))*/
+                .domain(xDomain)
                 .rangeRound([ 0, width - (margin.right + margin.left)]);
             
             svg.append("g")
@@ -36,11 +50,24 @@ const LineChart = ({chartData,plotPrefs}) => {
                 .attr("transform", `translate(${margin.left},${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale));
 
+            
             const yScaleType = semiLog ? d3.scaleLog() : d3.scaleLinear()
-            const yStart = semiLog ? d3.min(data, function(d) { return +d.yValue; }) : 0
+
+            const yMin = chartData.reduce((acc,element) => {
+                const thisMin = d3.min(element, function(d) { return +d.yValue; })
+                const newMin = thisMin < acc ? thisMin : acc
+                return newMin
+            },100000) //there's gotta be a better way to do this
+            const yStart = semiLog ? yMin : 0
+
+            const yEnd = chartData.reduce((acc,element) => {
+                const thisMax = d3.max(element, function(d) { return +d.yValue; })
+                const newMax = thisMax > acc ? thisMax : acc
+                return newMax
+            },0)
             
             const yScale = yScaleType
-                .domain([yStart, d3.max(data, function(d) { return +d.yValue; })])
+                .domain([yStart, yEnd])
                 .rangeRound([ height - (margin.top + margin.bottom), 0 ]);
 
             svg.append("g")
@@ -48,25 +75,49 @@ const LineChart = ({chartData,plotPrefs}) => {
                 .attr("transform", `translate(${margin.left},${margin.top})`)
                 .call(d3.axisLeft(yScale));
 
-            
-            
-
-
-            const line = d3.line()
+            const lineVector = (d) => {
+                const line = d3.line()
                 .x((d) => xScale(dateToDate(d.date)))
                 .y((d) => yScale(d.yValue))
 
-            const linePlot = line(data)
+                const linePlot = line(d)
+                console.log("Line is: ",linePlot)
 
-            console.log("Line is: ",linePlot)
-            svg.append("path")
-                .datum(data)
-                .attr("id","linePlot")
-                .attr("fill", "none")
-                .attr("stroke", "steelblue")
-                .attr("stroke-width", 1.5)
-                .attr("d", linePlot)
-                .attr("transform", `translate(${margin.left},${margin.top})`)
+                return(linePlot)
+
+            }
+
+            const myColor = d3.scaleOrdinal().domain(chartData)
+                .range(colors)
+            
+            function updateLines() {
+                
+                
+                const lineUpdate = d3.select('.plotArea')
+                    .selectAll('.linePlot')
+                    .data(chartData)
+
+                lineUpdate.exit().remove()
+
+                const lineUpdateEnter = lineUpdate.enter()
+                    .append("g")
+                    .attr("id","linePlot")
+                    .append("path")
+                    .attr("id","linePath")
+                    .attr("fill", "none")
+                    //.attr("stroke", "steelblue")
+                    .attr("stroke", (d) => {
+                        return myColor(d)
+                    })
+                    .attr("stroke-width", 1.5)
+                    .attr("d", lineVector)
+                    .attr("transform", `translate(${margin.left},${margin.top})`)
+
+                //console.log('updateLines was called, and lineUpdate is: ',lineUpdate)
+                console.log('updateLines was called, and chartData is: ',chartData)
+            }
+
+            updateLines()
                 
 
         },
@@ -76,6 +127,7 @@ const LineChart = ({chartData,plotPrefs}) => {
     
     return (
         <svg
+            className="plotArea"
             ref = {ref}
             style={{
                 height: 800,
@@ -84,9 +136,8 @@ const LineChart = ({chartData,plotPrefs}) => {
                 marginLeft: "0px",
             }}
         >
-            <g className="plot-area" />
-            <g className="x-axis" />
-            <g className="y-axis" />
+            <g className="lineGroup"></g>
+            <g className="lineGroup"></g>
         </svg>
         )
 }

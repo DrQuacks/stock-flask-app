@@ -23,7 +23,6 @@ def get_low(sym):
     return get_history(sym).Low
 
 def get_close(sym):
-    print("get_close is returning: ",get_history(sym).Close)
     return get_history(sym).Close
 
 def get_volume(sym):
@@ -31,17 +30,17 @@ def get_volume(sym):
 
 #calculates trailing average for a specific number of days
 def trailing_avg(sym, days, avg_type, sample_type):
-    if (sample_type == 'Close'):
+    if (sample_type == 'close'):
         stock = get_close(sym)
-    elif (sample_type == 'Open'):
+    elif (sample_type == 'open'):
         stock = get_open(sym)
-    elif (sample_type == 'High'):
+    elif (sample_type == 'high'):
         stock = get_high(sym)
-    elif (sample_type == 'Low'):
+    elif (sample_type == 'low'):
         stock = get_low(sym)
     else:
         stock = get_close(sym)
-        print(sample_type)
+        print("sample type was: ",sample_type)
     #eventually should be done with a dataframe
     avg_list = []
     days_list = []
@@ -67,7 +66,7 @@ def computeAvg(stock,this_day,trail_days,type):
         coef_list = [2**d for d in day_list]
     else:
         coef_list = [d**0 for d in day_list]
-        print(type)
+        #print(type)
 
     for s,c in zip(stock.iloc[this_day-trail_days:this_day],coef_list):
         weighted_sum += s*c
