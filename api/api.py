@@ -60,7 +60,7 @@ def set_dummy_post_value():
     print(data)
     print(type(data))
 
-    stockData = sd.get_close(data)
+    stockData = sd.get_close(data['stockSymbol'])
     #if (data == "super"):
     #    dummyReturn = dummyArrayB
     #elif (data == "crazy"):

@@ -1,19 +1,4 @@
 .App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
   background-color: #282c34;
   min-height: 100vh;
   display: flex;
@@ -24,19 +9,53 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.TopBar {
+  order: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.PlotArea {
+  order: 2;
+  min-width: 1100px;
+  min-height: 800px;
 }
 
-.svgContainer {
-  background-color: white;
+.PlotInputForm {
+  display: flex;
+  flex-direction: column;
+  min-width: 1100px;
+  align-items: center;
+}
+
+.SymbolDays {
+  flex: 1;
+  display: flex;
+  font-size: 20px;
+  min-width: 900px;
+  justify-content: center;
+}
+
+.OptionsContainer{
+  flex: 2;
+  display: flex;
+  flex-direction: row;
+  min-width: 900px;
+  align-items: baseline;
+  justify-content: space-evenly;
+}
+.StockChecks {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.StockDropDowns {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  font-size: 14px;
 }

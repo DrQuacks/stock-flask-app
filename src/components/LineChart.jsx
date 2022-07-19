@@ -11,7 +11,7 @@ const LineChart = ({chartData}) => {
     const ref = useD3(
         (svg) => {
             const height = 700;
-            const width = 800;
+            const width = 1100;
             const margin = { top: 20, right: 30, bottom: 30, left: 40 };
 
             svg.select("#xAxis").remove()
@@ -70,22 +70,21 @@ const LineChart = ({chartData}) => {
     )
 
     
-
-        return (
-            <svg
-                ref = {ref}
-                style={{
-                    height: 800,
-                    width: "100%",
-                    marginRight: "0px",
-                    marginLeft: "0px",
-                }}
-            >
-                <g className="plot-area" />
-                <g className="x-axis" />
-                <g className="y-axis" />
-            </svg>
-          )
+    return (
+        <svg
+            ref = {ref}
+            style={{
+                height: 800,
+                width: 1100,
+                marginRight: "0px",
+                marginLeft: "0px",
+            }}
+        >
+            <g className="plot-area" />
+            <g className="x-axis" />
+            <g className="y-axis" />
+        </svg>
+        )
 }
 
 export default LineChart

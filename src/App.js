@@ -1,47 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import * as d3 from "d3";
-import DummyPie from "./components/DummyPieChart"
+import React, { useState } from 'react';
 import LineChart from './components/LineChart';
 import './App.css';
-import NameForm from './components/NameForm';
+import PlotInputForm from './components/PlotInputForm';
 
 function App() {
 
-  /*const dummyPost = "7"
-  useEffect(() => {
-    fetch('/api/dummypost',{
-      method: 'POST', 
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      //body: JSON.stringify(dummyPost)})
-      body: dummyPost})
-  },[])*/
-
-  const [currentTime, setCurrentTime] = useState(0);
-
-  useEffect(() => {
-    fetch('/api/time').then(res => res.json()).then(data => {
-      setCurrentTime(data.time);
-    });
-  }, []);
-
-  const [dummyResponse, setDummyResponse] = useState("");
-
-  useEffect(() => {
-    fetch('/api/dummyresponse').then(res => res.json()).then(data => {
-      setDummyResponse(data.dummy);
-    });
-  }, []);
 
   const [dummyData, setDummyData] = useState([]);
-
-  useEffect(() => {
-    fetch('/api/dummyarray').then(res => res.json()).then(data => {
-      console.log('Dummy Data: ',data)
-      setDummyData(data.dummy)
-    });
-  }, []);
 
   const setInput = (inputData) => {
     console.log("setInput was called")
@@ -53,14 +18,16 @@ function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
-        <NameForm 
+      <div className='TopBar'>
+        <PlotInputForm
           setInput = {setInput}
         />
+      </div>
+      <div className='PlotArea'>
         <LineChart
           chartData = {dummyData}
         />
-      </header>
+      </div>
     </div>
   );
 }
