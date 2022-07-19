@@ -6,13 +6,22 @@ import PlotInputForm from './components/PlotInputForm';
 function App() {
 
 
-  const [dummyData, setDummyData] = useState([]);
+  const [stockData, setStockData] = useState([]);
+  const [plotPrefs, setPlotPrefs] = useState({semiLog:"",overlayRaw:"",overlayNew:""});
 
   const setInput = (inputData) => {
     console.log("setInput was called")
     if (inputData){
       console.log("inputData is: ",inputData)
-      setDummyData(inputData)
+      setStockData(inputData)
+    }
+  }
+
+  const setPrefs = (prefs) => {
+    console.log("setPrefs was called")
+    if (prefs){
+      console.log("inputData is: ",prefs)
+      setPlotPrefs(prefs)
     }
   }
 
@@ -21,11 +30,13 @@ function App() {
       <div className='TopBar'>
         <PlotInputForm
           setInput = {setInput}
+          setPrefs = {setPrefs}
         />
       </div>
       <div className='PlotArea'>
         <LineChart
-          chartData = {dummyData}
+          chartData = {stockData}
+          plotPrefs = {plotPrefs}
         />
       </div>
     </div>

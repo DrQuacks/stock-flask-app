@@ -3,10 +3,11 @@ import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 
-const LineChart = ({chartData}) => {
+const LineChart = ({chartData,plotPrefs}) => {
     console.log("chartData outside useD3 is: ",chartData)
 
     const data = chartData
+    const {semiLog,overlayRaw,overlayNew} = plotPrefs
 
     const ref = useD3(
         (svg) => {
@@ -35,8 +36,11 @@ const LineChart = ({chartData}) => {
                 .attr("transform", `translate(${margin.left},${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale));
 
-            const yScale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) { return +d.yValue; })])
+            const yScaleType = semiLog ? d3.scaleLog() : d3.scaleLinear()
+            const yStart = semiLog ? d3.min(data, function(d) { return +d.yValue; }) : 0
+            
+            const yScale = yScaleType
+                .domain([yStart, d3.max(data, function(d) { return +d.yValue; })])
                 .rangeRound([ height - (margin.top + margin.bottom), 0 ]);
 
             svg.append("g")

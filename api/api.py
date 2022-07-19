@@ -60,18 +60,21 @@ def set_dummy_post_value():
     print(data)
     print(type(data))
 
-    stockData = sd.get_close(data['stockSymbol'])
-    #if (data == "super"):
-    #    dummyReturn = dummyArrayB
-    #elif (data == "crazy"):
-    #    dummyReturn = dummyArrayA
-    #else:
-    #    dummyReturn = [{"xValue":3,"yValue":3}]
+    rawData = sd.get_close(data['stockSymbol'])
+    stockData = sd.trailing_avg(
+        data['stockSymbol'],
+        int(data['trailingDays']),
+        data['avgType'],
+        data['sampleType']
+    )
+
     print(stockData)
     print(type(stockData))
-    dummyReturn = stockData.to_json()
+    #dummyReturn = stockData.to_json()
     #print(dummyReturn)
     stockArray = formatStockDf(stockData)
+    print('stockArray is: ',stockArray)
+    print('stockArray type is: ',type(stockArray))
 
     return {'message':stockArray}
 
@@ -80,9 +83,10 @@ def formatStockDf(df):
     print("df is: ",df)
     print("df type is: ",type(df))
     fakeIndex = 0
-    for index,value in df.iteritems():
+    #for index,value in df.iteritems():
+    for index,value in df.iterrows():
         #stockArray.append({"xValue": index,"yValue": value})
-        stockArray.append({"xValue": fakeIndex,"yValue": value,"date":index})
+        stockArray.append({"xValue": fakeIndex,"yValue": value[0],"date":index})
         fakeIndex += 1
 
     return stockArray

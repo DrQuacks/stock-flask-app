@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 import sendToPython from "../helpers/sendToPython"
 
-function PlotInputForm({setInput}) {
+function PlotInputForm({setInput,setPrefs}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
@@ -27,6 +27,12 @@ function PlotInputForm({setInput}) {
 
     async function handleSubmit(event) {
         event.preventDefault()
+        const prefs = {
+            semiLog: formData.semiLog,
+            overlayRaw: formData.overlayRaw,
+            overlayNew: formData.overlayNew
+        }
+        setPrefs(prefs)
         const data = sendToPython(formData)
         const resolvedData = await data
         setInput(resolvedData)
@@ -54,7 +60,7 @@ function PlotInputForm({setInput}) {
                     value={formData.trailingDays}
                 />
 
-                <button>Submit</button>
+                <button>PLOT</button>
             </div>
 
             <div className="OptionsContainer">

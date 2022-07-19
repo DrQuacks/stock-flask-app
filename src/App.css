@@ -5,7 +5,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  font-family: 'Lato', sans-serif;
   color: white;
 }
 
@@ -31,9 +31,13 @@
 .SymbolDays {
   flex: 1;
   display: flex;
-  font-size: 20px;
   min-width: 900px;
   justify-content: center;
+}
+
+input[type=text] {
+  padding: 10px;
+  font-size: 25px;
 }
 
 .OptionsContainer{
@@ -50,6 +54,17 @@
   flex-direction: row;
   justify-content: center;
   font-size: 14px;
+}
+
+input[type=checkbox] {
+  margin-left: 15px;
+  margin-right: 5px;
+}
+
+select {
+  margin-left: 5px;
+  margin-right: 15px;
+  font-size: 12px;
 }
 
 .StockDropDowns {
