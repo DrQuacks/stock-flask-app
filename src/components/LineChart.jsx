@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 
-const LineChart = ({chartData,plotPrefs}) => {
+const LineChart = ({chartData,plotPrefs,stockKeys}) => {
     console.log("chartData outside useD3 is: ",chartData)
 
     const data = chartData[0]
@@ -25,6 +25,7 @@ const LineChart = ({chartData,plotPrefs}) => {
 
             svg.select("#xAxis").remove()
             svg.select("#yAxis").remove()
+            svg.select('#myLabel').remove()
             
 
             /*const xScale = d3.scaleLinear()
@@ -81,13 +82,16 @@ const LineChart = ({chartData,plotPrefs}) => {
                 .y((d) => yScale(d.yValue))
 
                 const linePlot = line(d)
-                console.log("Line is: ",linePlot)
+                //console.log("Line is: ",linePlot)
 
                 return(linePlot)
 
             }
 
             const myColor = d3.scaleOrdinal().domain(chartData)
+                .range(colors)
+
+            const myLabelColor = d3.scaleOrdinal().domain(stockKeys)
                 .range(colors)
             
             function updateLines() {
@@ -97,24 +101,51 @@ const LineChart = ({chartData,plotPrefs}) => {
                     .selectAll('.linePlot')
                     .data(chartData)
 
-                lineUpdate.exit().remove()
 
                 const lineUpdateEnter = lineUpdate.enter()
                     .append("g")
-                    .attr("id","linePlot")
-                    .append("path")
-                    .attr("id","linePath")
-                    .attr("fill", "none")
-                    //.attr("stroke", "steelblue")
-                    .attr("stroke", (d) => {
-                        return myColor(d)
-                    })
-                    .attr("stroke-width", 1.5)
-                    .attr("d", lineVector)
-                    .attr("transform", `translate(${margin.left},${margin.top})`)
+                        .attr("id","linePlot")
+                        .append("path")
+                            .attr("id","linePath")
+                            .attr("fill", "none")
+                            //.attr("stroke", "steelblue")
+                            .attr("stroke", (d) => {
+                                return myColor(d)
+                            })
+                            .attr("stroke-width", 1.5)
+                            .attr("d", lineVector)
+                            .attr("transform", `translate(${margin.left},${margin.top})`)
 
+                lineUpdate.exit().remove()
+                
                 //console.log('updateLines was called, and lineUpdate is: ',lineUpdate)
                 console.log('updateLines was called, and chartData is: ',chartData)
+
+                console.log('stockKeys is: ',stockKeys)
+                const labelUpdate = d3.select('.plotArea')
+                    .selectAll(".myLabel")
+                    .data(stockKeys)
+
+                console.log('labelUpdate is: ',labelUpdate)
+
+
+                const labelUpdateEnter = labelUpdate.enter()
+                    .append("g")
+                        .attr("id","myLabel")
+                        .append("text")
+                            .attr("id","myLabelText")
+                            .attr("x", 120)
+                            .attr("y", function(d,i){ return 100 + i*35}) // 100 is where the first dot appears. 25 is the distance between dots
+                            .attr("fill", (d) => {
+                                return myLabelColor(d)
+                            })
+                            .text(function(d){ return d})
+                            .attr("text-anchor", "left")
+                            .style("alignment-baseline", "middle")
+                            .style("font-size","30px")
+
+                labelUpdate.exit().remove()
+                
             }
 
             updateLines()

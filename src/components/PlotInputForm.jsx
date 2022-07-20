@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 import sendToPython from "../helpers/sendToPython"
 
-function PlotInputForm({setInput,setPrefs}) {
+function PlotInputForm({setInput,setPrefs,setKeys}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
@@ -33,6 +33,7 @@ function PlotInputForm({setInput,setPrefs}) {
             overlayNew: formData.overlayNew
         }
         setPrefs(prefs)
+        setKeys(formData.stockSymbol)
         const data = sendToPython(formData)
         const resolvedData = await data
         setInput(resolvedData)
