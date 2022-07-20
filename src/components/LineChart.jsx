@@ -8,6 +8,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
 
     const data = chartData[0]
     const {semiLog,overlayRaw,overlayNew} = plotPrefs.current
+    console.log('semilog is: ',semiLog)
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
 
@@ -91,8 +92,8 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
             const myColor = d3.scaleOrdinal().domain(chartData)
                 .range(colors)
 
-            const myLabelColor = d3.scaleOrdinal().domain(stockKeys)
-                .range(colors)
+            /*const myLabelColor = d3.scaleOrdinal().domain(stockKeys)
+                .range(colors)*/
             
             function updateLines() {
                 
@@ -121,7 +122,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 //console.log('updateLines was called, and lineUpdate is: ',lineUpdate)
                 console.log('updateLines was called, and chartData is: ',chartData)
 
-                console.log('stockKeys is: ',stockKeys)
+                /*console.log('stockKeys is: ',stockKeys)
                 const labelUpdate = d3.select('.plotArea')
                     .selectAll(".myLabel")
                     .data(stockKeys)
@@ -144,7 +145,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                             .style("alignment-baseline", "middle")
                             .style("font-size","30px")
 
-                labelUpdate.exit().remove()
+                labelUpdate.exit().remove()*/
                 
             }
 
@@ -152,7 +153,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 
 
         },
-        [chartData]
+        [chartData,semiLog]
     )
 
     

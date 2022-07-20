@@ -9,7 +9,8 @@ function App() {
 
   const [stockData, setStockData] = useState([[]]);
   const [stockKeys, setStockKeys] = useState([])
-  //const [plotPrefs, setPlotPrefs] = useState({semiLog:false,overlayRaw:false,overlayNew:false});
+  console.log('At the start of App, stockKeys is: ',stockKeys)
+  const [plotPrefsState, setPlotPrefsState] = useState({semiLog:false,overlayRaw:false,overlayNew:false});
   const plotPrefs = useRef({semiLog:false,overlayRaw:false,overlayNew:false})
 
   const setInput = (inputData) => {
@@ -40,11 +41,25 @@ function App() {
     }
   }
 
+  const removeStock = (index) => {
+    console.log('removing stock at index: ',index)
+    console.log('stockKeys is: ',stockKeys)
+    //console.log('stockKeys is gonna be: ',stockKeys.splice(index,1))
+    const stockDataCopy = [...stockData]
+    stockDataCopy.splice(index,1)
+    const stockKeysCopy = [...stockKeys]
+    stockKeysCopy.splice(index,1)
+    console.log('stockData is actually gonna be: ',stockDataCopy)
+    console.log('stockKeys is actually gonna be: ',stockKeysCopy)
+    setStockData(stockDataCopy)
+    setStockKeys(stockKeysCopy)
+  }
+
   const setPrefs = (prefs) => {
     console.log("setPrefs was called")
     if (prefs){
       console.log("inputData is: ",prefs)
-      //setPlotPrefs(prefs)
+      setPlotPrefsState(prefs) //this seems needless, but I wasn't getting a re-render without it
       plotPrefs.current = prefs
     }
   }
@@ -56,14 +71,23 @@ function App() {
           setInput = {setInput}
           setPrefs = {setPrefs}
           setKeys = {setKeys}
-        />
-      </div>
-      <div className='PlotArea'>
-        <LineChart
-          chartData = {stockData}
-          plotPrefs = {plotPrefs}
           stockKeys = {stockKeys}
         />
+      </div>
+      <div className="MainSection">
+        <div className='PlotArea'>
+          <LineChart
+            chartData = {stockData}
+            plotPrefs = {plotPrefs}
+            stockKeys = {stockKeys}
+          />
+        </div>
+        <div className='RightMenu'>
+          <LegendContainer
+            stockKeys = {stockKeys}
+            removeStock = {removeStock}
+          />
+        </div>
       </div>
     </div>
   );
