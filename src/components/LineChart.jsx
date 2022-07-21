@@ -3,10 +3,19 @@ import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 
-const LineChart = ({chartData,plotPrefs,stockKeys}) => {
-    console.log("chartData outside useD3 is: ",chartData)
+const LineChart = ({
+    plotData,
+    chartData,
+    plotPrefs,
+    stockKeys,
+    setStartDate,
+    startDate,
+    setEndDate,
+    endDate
+}) => {
+    console.log("plotData outside useD3 is: ",plotData)
+    //const {data,start,end,min,max} = plotData
 
-    const data = chartData[0]
     const {semiLog,overlayRaw,overlayNew} = plotPrefs.current
     console.log('semilog is: ',semiLog)
 
@@ -29,23 +38,19 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
             svg.select('#myLabel').remove()
             
 
-            /*const xScale = d3.scaleLinear()
-                .domain([0, d3.max(data, function(d) { return +d.xValue; })])
-                .rangeRound([ 0, width - (margin.right + margin.left)]);*/
 
-            const xDomain = d3.extent(chartData.reduce((acc,element) => {
-                const thisExtent = d3.extent(element, function(d) { 
-                    return dateToDate(d.date);
-                })
+            const xDomain = d3.extent(plotData.reduce((acc,element) => {
+                const thisExtent = [dateToDate(element.start),dateToDate(element.end)]
+
                 return [...acc,...thisExtent]
             },[]))
-            
+
+            //const xDomain = [dateToDate(start),dateToDate(end)]
+            console.log('xDomain is: ',xDomain)
             const xScale = d3.scaleTime()
-               /* .domain(d3.extent(data, function(d) { 
-                    return dateToDate(d.date);
-                }))*/
                 .domain(xDomain)
                 .rangeRound([ 0, width - (margin.right + margin.left)]);
+
             
             svg.append("g")
                 .attr("id","xAxis")
@@ -55,7 +60,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
             
             const yScaleType = semiLog ? d3.scaleLog() : d3.scaleLinear()
 
-            const yMin = chartData.reduce((acc,element) => {
+            /*const yMin = chartData.reduce((acc,element) => {
                 const thisMin = d3.min(element, function(d) { return +d.yValue; })
                 const newMin = thisMin < acc ? thisMin : acc
                 return newMin
@@ -67,9 +72,18 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 const newMax = thisMax > acc ? thisMax : acc
                 return newMax
             },0)
-            
+
+            const yDomain = [min,max]*/
+
+            const yDomain = d3.extent(plotData.reduce((acc,element) => {
+                const thisExtent = [element.min,element.max]
+
+                return [...acc,...thisExtent]
+            },[]))
+
+
             const yScale = yScaleType
-                .domain([yStart, yEnd])
+                .domain(yDomain)
                 .rangeRound([ height - (margin.top + margin.bottom), 0 ]);
 
             svg.append("g")
@@ -78,18 +92,19 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 .call(d3.axisLeft(yScale));
 
             const lineVector = (d) => {
+                console.log('d is: ',d)
                 const line = d3.line()
                 .x((d) => xScale(dateToDate(d.date)))
                 .y((d) => yScale(d.yValue))
 
-                const linePlot = line(d)
+                const linePlot = line(d.data)
                 //console.log("Line is: ",linePlot)
 
                 return(linePlot)
 
             }
 
-            const myColor = d3.scaleOrdinal().domain(chartData)
+            const myColor = d3.scaleOrdinal().domain(plotData)
                 .range(colors)
 
             /*const myLabelColor = d3.scaleOrdinal().domain(stockKeys)
@@ -100,7 +115,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 
                 const lineUpdate = d3.select('.plotArea')
                     .selectAll('.linePlot')
-                    .data(chartData)
+                    .data(plotData)
 
 
                 const lineUpdateEnter = lineUpdate.enter()
@@ -120,7 +135,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 lineUpdate.exit().remove()
                 
                 //console.log('updateLines was called, and lineUpdate is: ',lineUpdate)
-                console.log('updateLines was called, and chartData is: ',chartData)
+                console.log('updateLines was called, and plotData is: ',plotData)
 
                 /*console.log('stockKeys is: ',stockKeys)
                 const labelUpdate = d3.select('.plotArea')
@@ -153,7 +168,7 @@ const LineChart = ({chartData,plotPrefs,stockKeys}) => {
                 
 
         },
-        [chartData,semiLog]
+        [plotData,semiLog]
     )
 
     

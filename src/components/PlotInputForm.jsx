@@ -2,7 +2,7 @@ import React, { useState } from "react"
 
 import sendToPython from "../helpers/sendToPython"
 
-function PlotInputForm({setInput,setPrefs,setKeys,stockKeys}) {
+function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
@@ -35,11 +35,30 @@ function PlotInputForm({setInput,setPrefs,setKeys,stockKeys}) {
         setPrefs(prefs)
         //don't add a stock that's already been added
         if (!stockKeys.includes(formData.stockSymbol)){
-            setKeys(formData.stockSymbol)
+            //setKeys(formData.stockSymbol)
             const data = sendToPython(formData)
             const resolvedData = await data
-            setInput(resolvedData)
+            console.log('resolvedData is: ',resolvedData)
+            const newPlotData = {
+                name:formData.stockSymbol,
+                data:resolvedData.stockArray,
+                trailingDays:formData.trailingDays,
+                avgType:formData.avgType,
+                start:resolvedData.stockFeatures.start_date,
+                end:resolvedData.stockFeatures.end_date,
+                min:resolvedData.stockFeatures.min_price,
+                max:resolvedData.stockFeatures.max_price
+            }
+            handleInput(newPlotData)
         }
+        console.log("event is: ",event)
+        setFormData((priorForm) => {
+            const clearedForm = {...priorForm,
+                stockSymbol: "", 
+                trailingDays: ""
+            }
+            return clearedForm
+        })
     }
 
     return (

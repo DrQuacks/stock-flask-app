@@ -15,7 +15,7 @@ async function sendToPython(data){
 
     console.log('jsonResponse is: ',jsonResponse)
     
-    return jsonResponse.message
+    return {"stockArray":jsonResponse.stockArray,"stockFeatures":jsonResponse.stockFeatures}
 }
 
 export default sendToPython

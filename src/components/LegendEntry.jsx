@@ -1,4 +1,4 @@
-import React, { useState , useEffect, useRef } from "react";
+import React, { useState } from "react";
 
 
 const LegendEntry = ({name,index,removeStock}) => {
@@ -23,9 +23,11 @@ const LegendEntry = ({name,index,removeStock}) => {
             >
                 {name}
             </label>
-            <input 
+            <input
+                className="LegendCheckBox" 
                 type="checkbox" 
-                id="legendBox" 
+                id="legendBox"
+                style={{"background-color":colors[index]}} 
                 checked={!!isChecked}
                 onChange={handleChange}
             />

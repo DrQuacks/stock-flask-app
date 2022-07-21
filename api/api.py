@@ -33,12 +33,24 @@ def set_dummy_post_value():
     #print('stockArray is: ',stockArray[0:10])
     print('stockArray type is: ',type(stockArray))
 
-    return {'message':stockArray}
+    stockFeatures = {
+        "min_price":stockData["min_price"],
+        "max_price":stockData["max_price"],
+        "start_date":stockData["start_date"],
+        "end_date":stockData["end_date"]
+    }
+
+    return {
+        'stockArray':stockArray,
+        'stockFeatures':stockFeatures
+    }
 
 
-def formatStockDf(df):
+def formatStockDf(data):
+    df = data["stock_data"]
     stockArray = []
     fakeIndex = 0
+    #need to replace iterrows for performance
     for index,value in df.iterrows():
         stockArray.append({"xValue": fakeIndex,"yValue": value[0],"date":index})
         fakeIndex += 1
