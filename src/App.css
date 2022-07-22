@@ -50,6 +50,10 @@
   min-height: 800px;
 }
 
+.tick {
+  font-size: 15px;
+}
+
 .RightMenu {
   order: 2;
   font-size: 20px;

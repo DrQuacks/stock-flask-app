@@ -1,0 +1,15 @@
+Display results as density cones.
+
+Have different potential routes for a stock to go.
+Take the upper and lower to some SD (this could be user configurable), which would create a 
+"cone" of possibilities. You'd run this out until it diverges past a certain width (also,
+user configurable). Then inside the cone, the color would be darker for prices led to by more
+paths, and lighter for less likely outcomes.
+You could also go to earlier prediction points to see how its density cone compared to its
+actual outcome. You could sort this so you could look at better behaving or worse behaving
+examples, or maybe more applicable or less applicable (ie evaluating how a declining market
+will perform is probably more applicable to look at behaviors in past decling markets).
+
+This output could also be accompanied by a summary sheet of stats about the density cone,
+and how well it has fared in the past. You could even get graphs of how well it performed
+versus time or versus price or versus derivative (or second derivative) of the price

@@ -24,7 +24,7 @@ const LineChart = ({
         (svg) => {
             const height = 700;
             const width = 1100;
-            const margin = { top: 20, right: 30, bottom: 30, left: 40 }
+            const margin = { top: 20, right: 30, bottom: 30, left: 50 }
 
             let pointerX,
                 pointerY
@@ -91,7 +91,7 @@ const LineChart = ({
 
                 const index = Math.floor(indexScale.invert(rawX - margin.left)) //I'm not sure this is accurate
                 console.log('index is: ',index)
-                const mappedY = plotData[0]['data'][index]['yValue']
+                const mappedY = plotData[0]['data'][index]['price']
                 console.log('mappedY is: ',mappedY)
                 const plotY = yScale(mappedY) + margin.top
                 console.log('plotY is: ',plotY)
@@ -130,7 +130,7 @@ const LineChart = ({
                 console.log('d is: ',d)
                 const line = d3.line()
                 .x((d) => xScale(dateToDate(d.date)))
-                .y((d) => yScale(d.yValue))
+                .y((d) => yScale(d.price))
 
                 const linePlot = line(d.data)
                 //console.log("Line is: ",linePlot)

@@ -2,5 +2,6 @@
 -draw horizantal or vertical line depending on date or value input
 -tooltip feature
     -ability to copy from tooltip
--date range selector
+
 -value range selector
+-display table of raw values as an option

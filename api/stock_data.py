@@ -13,48 +13,41 @@ def get_history(sym):
 
 print(get_history('voo'))
 
-def get_open(sym):
-    return get_history(sym).Open
 
-def get_high(sym):
-    return get_history(sym).High
-
-def get_low(sym):
-    return get_history(sym).Low
-
-def get_close(sym):
-    return get_history(sym).Close
-
-def get_volume(sym):
-    return get_history(sym).Volume
+def get_column(sym,sample_type):
+    return get_history(sym).loc[:,[sample_type]]
 
 #calculates trailing average for a specific number of days
 def trailing_avg(sym, days, avg_type, sample_type):
-    if (sample_type == 'close'):
-        stock = get_close(sym)
-    elif (sample_type == 'open'):
-        stock = get_open(sym)
-    elif (sample_type == 'high'):
-        stock = get_high(sym)
-    elif (sample_type == 'low'):
-        stock = get_low(sym)
-    else:
-        stock = get_close(sym)
-        print("sample type was: ",sample_type)
+
     #eventually should be done with a dataframe
     #like all this should be vectorizable, or whatever the fuck that is
     #if it's just like a .apply() or something, I feel like I can do that super easily
+
+    stock = get_column(sym,sample_type)
     avg_list = []
     days_list = []
-    min_price = stock.iloc[days]
+    stock_list = []
+    fakeIndex = 0
+    min_price = stock[sample_type].iloc[days]
     max_price = 0
     print("stock index is ",stock.index)
     start_date = stock.index[days]
     print("start is ",start_date)
     end_date = stock.index[(stock.size - 1)]
     print("end is ",end_date)
-    for day in range(days,stock.size): #has to start far enough along to calc a trailing average
-        day_avg = computeAvg(stock,day,days,avg_type)
+
+    #stock['avg'] = 0
+    #stock['keep'] = False
+
+    print("stock is: ",stock)
+    print("stock type is: ",type(stock))
+
+    for day in range(days,stock.size - 1): #has to start far enough along to calc a trailing average
+        day_avg = computeAvg(stock[sample_type],day,days,avg_type)
+
+        stock_list.append({"numIndex": fakeIndex,"price": day_avg,"date":stock.index[day]})
+        fakeIndex += 1
         avg_list.append(day_avg) #add average to list
         days_list.append(stock.index[day]) #add coresponding day to list
         if (day_avg < min_price):
@@ -62,14 +55,22 @@ def trailing_avg(sym, days, avg_type, sample_type):
         if (day_avg > max_price):
             max_price = day_avg
 
-    stock_data = pd.DataFrame(avg_list, index=days_list, columns =['Price']) #create dataframe
+    #print('Before masking, stock data is: ',stock)
+    #stock_masked = stock[stock['keep']]
+    #print('Masked Stock Data is: ',stock_masked)
+    
+    #I still might want this dataframe for backend calcs...
+    #stock_data = pd.DataFrame(avg_list, index=days_list, columns =['Price']) #create dataframe
+    
     return {
-        "stock_data":stock_data,
+        "stock_data":stock_list,
         "min_price":min_price,
         "max_price":max_price,
         "start_date":start_date,
         "end_date":end_date
     }
+
+
 
 def computeAvg(stock,this_day,trail_days,type):
     weighted_sum = 0
@@ -89,6 +90,8 @@ def computeAvg(stock,this_day,trail_days,type):
 
     for s,c in zip(stock.iloc[this_day-trail_days:this_day],coef_list):
         weighted_sum += s*c
+        #if(this_day == 100):
+        #    print("On day 100, weighted_sum is: ",weighted_sum)
     
     return weighted_sum/sum(coef_list)
 

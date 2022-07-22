@@ -1,0 +1,32 @@
+I should believe a binary predictor based on how often it gets each individual outcome right.
+Suppose I'm predictin whether a stock will go up or down.
+This model maybe is right 60% of the time.
+However, maybe it's really accurate when it says the market goes up, but really inaccurate 
+when it says it goes down.
+Anything it says about the market going up I should be more confident in than anything
+about it going down.
+And maybe I have another model that is worse overall, but better when it makes down predictions.
+
+In fact, I could have different models behave better in different spots.
+Maybe some are better on sharp ups or downs, or some are better in chop.
+I suppose my point is I should evaluate a model with more specificity than how right it is.
+I should care about when it is right, and if that's applicable to the current prediction.
+
+I should also keep in mind that a stock may have different "moods". What once was a bad stock
+may have clearly turned around. I don't know that it would be useful to weight those former
+"bad" stock days evenly. Maybe not fully disregarded, but at the least, underrepresented.
+
+I should really be getting the first and second derivatives.
+I can evaluate the stability of derivatives by looking at higher order derivatives.
+For instance, if my second derivative is 0, I've got a pretty good idea that my first derivative
+is accurate...though is suppose my third derivative would then tell me about the stability of
+my second derivate. But hey, you've gotta cut it somewhere. In that case, maybe I take the first 
+derivate, but look further out to figure out the second derivative.
+This is an interesting area to play around. I could get good graphical feedback, by plotting
+a curve with that first and second derivate, and function value, as initial conditions, and
+see how well I'm modeling the plot locally. If it looks good, I can take that method as another
+metric, as knowing the approximate first and second derivatives are probably JUST AS IMPORTANT
+as knowing the stock price for predicting what comes next.
+
+I also probably want a measure of "choppiness". Does this mean uncertainty? A change in
+trajectory? Something else?

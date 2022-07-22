@@ -13,7 +13,7 @@ function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
             overlayNew: false,
             customDate: false,
             avgType: "constant",
-            sampleType: "close"
+            sampleType: "Close"
         }
     )
 
@@ -155,10 +155,10 @@ function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
                         onChange={handleChange}
                         name="sampleType"
                     >
-                        <option value="close">Close</option>
-                        <option value="open">Open</option>
-                        <option value="high">High</option>
-                        <option value="low">Low</option>
+                        <option value="Close">Close</option>
+                        <option value="Open">Open</option>
+                        <option value="High">High</option>
+                        <option value="Low">Low</option>
                     </select>
                 </div>
             </div>
