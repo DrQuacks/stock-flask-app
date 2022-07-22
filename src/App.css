@@ -7,6 +7,8 @@
   justify-content: center;
   font-family: 'Lato', sans-serif;
   color: white;
+  width:fit-content;
+  min-width: 100%;
 }
 
 .TopBar {
@@ -50,18 +52,27 @@
 
 .RightMenu {
   order: 2;
-  font-size: 40px;
+  font-size: 20px;
 }
 
 .LegendEntryDiv {
   display: flex;
   flex-direction: row;
   align-items: baseline;
+  font-family: 'Lato Thin', sans-serif;
+  font-weight: 100;
 }
 
-.LegendCheckBox {
-  width: 20px;
-  height: 20px;
+.LegendName {
+  font-size: 40px;
+}
+
+.LegendDelete {
+  background-color: transparent;
+  font-size: 15px;
+  cursor: pointer;
+  color: gainsboro;
+  border-style: none;
 }
 
 
@@ -72,11 +83,18 @@
   align-items: center;
 }
 
+.PlotButton:hover {
+  cursor: pointer;
+}
+
 .SymbolDays {
   flex: 1;
   display: flex;
   min-width: 700px;
   justify-content: center;
+}
+.SymbolDays:hover {
+  cursor: text;
 }
 
 input[type=text] {

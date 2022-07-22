@@ -48,8 +48,11 @@ def trailing_avg(sym, days, avg_type, sample_type):
     days_list = []
     min_price = stock.iloc[days]
     max_price = 0
+    print("stock index is ",stock.index)
     start_date = stock.index[days]
+    print("start is ",start_date)
     end_date = stock.index[(stock.size - 1)]
+    print("end is ",end_date)
     for day in range(days,stock.size): #has to start far enough along to calc a trailing average
         day_avg = computeAvg(stock,day,days,avg_type)
         avg_list.append(day_avg) #add average to list

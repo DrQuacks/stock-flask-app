@@ -1,14 +1,17 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import LegendEntry from "./LegendEntry";
 
 
-const LegendContainer = ({stockKeys, removeStock}) => {
+const LegendContainer = ({plotData, removeStock}) => {
 
-    const legendInsides = stockKeys.map((key,index) => {
+    const legendInsides = plotData.map((element,index) => {
         return (
             <LegendEntry
-                key = {key}
-                name = {key}
+                key = {element.name}
+                name = {element.name}
+                trailingDays = {element.trailingDays}
+                avgType = {element.avgType}
+                sampleType = {element.sampleType}
                 index = {index}
                 removeStock = {removeStock}
             />

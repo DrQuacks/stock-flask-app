@@ -1,17 +1,25 @@
 import React, { useState } from "react";
 import DateRangeElement from "./DateRangeElement";
 
-const DateRangeContainer = (setStartDate,setEndDate) => {
+const DateRangeContainer = ({xDomain,updateStartDate,updateEndDate}) => {
+
+    console.log('DateRangeContainer dates are: ',xDomain)
+    const startDate = xDomain[0]
+    console.log('startDate is: ',startDate)
+    const endDate = xDomain[1]
+    console.log('endDate is: ',endDate)
 
     const StartAndEnd
         = <div className="DateRangeContainer">
             <DateRangeElement 
                 type = "Start Date"
-                setDate = {setStartDate}
+                date = {startDate}
+                updateDate = {updateStartDate}
             />
             <DateRangeElement 
                 type = "End Date"
-                setDate = {setEndDate}
+                date = {endDate}
+                updateDate = {updateEndDate}
             />
 
         </div>

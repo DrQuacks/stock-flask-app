@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 
 import sendToPython from "../helpers/sendToPython"
+import dateToDate from "../helpers/dateToDate";
 
-function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
+function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
@@ -10,6 +11,7 @@ function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
             semiLog: false, 
             overlayRaw: false, 
             overlayNew: false,
+            customDate: false,
             avgType: "constant",
             sampleType: "close"
         }
@@ -30,12 +32,17 @@ function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
         const prefs = {
             semiLog: formData.semiLog,
             overlayRaw: formData.overlayRaw,
-            overlayNew: formData.overlayNew
+            overlayNew: formData.overlayNew,
+            customDate: formData.customDate
         }
         setPrefs(prefs)
+        const stockNames = plotData.map((stock) => {
+            return stock.stockSymbol
+        })
         //don't add a stock that's already been added
-        if (!stockKeys.includes(formData.stockSymbol)){
-            //setKeys(formData.stockSymbol)
+        if (!stockNames.includes(formData.stockSymbol)){
+            //I need to handle blank inputs
+            //what's in here is working from the outside, but it's logging errors in python
             const data = sendToPython(formData)
             const resolvedData = await data
             console.log('resolvedData is: ',resolvedData)
@@ -44,8 +51,9 @@ function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
                 data:resolvedData.stockArray,
                 trailingDays:formData.trailingDays,
                 avgType:formData.avgType,
-                start:resolvedData.stockFeatures.start_date,
-                end:resolvedData.stockFeatures.end_date,
+                sampleType:formData.sampleType,
+                start:dateToDate(resolvedData.stockFeatures.start_date),
+                end:dateToDate(resolvedData.stockFeatures.end_date),
                 min:resolvedData.stockFeatures.min_price,
                 max:resolvedData.stockFeatures.max_price
             }
@@ -83,7 +91,7 @@ function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
                     value={formData.trailingDays}
                 />
 
-                <button>PLOT</button>
+                <button className = "PlotButton">PLOT</button>
             </div>
 
             <div className="OptionsContainer">
@@ -114,6 +122,15 @@ function PlotInputForm({setPlotData,handleInput,setPrefs,stockKeys}) {
                         name="overlayNew"
                     />
                     <label htmlFor="overlayNew">Overlay New</label>
+
+                    <input 
+                        type="checkbox" 
+                        id="customDate" 
+                        checked={formData.customDate}
+                        onChange={handleChange}
+                        name="customDate"
+                    />
+                    <label htmlFor="customDate">Persist Date</label>
                 </div>
                 
                 

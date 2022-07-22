@@ -1,37 +1,38 @@
-import React, { useState } from "react";
+import React, { Fragment } from "react";
 
 
-const LegendEntry = ({name,index,removeStock}) => {
-    
-    const [isChecked,setIsChecked] = useState(true)
+const LegendEntry = ({
+    name,
+    trailingDays,
+    avgType,
+    sampleType,
+    index,
+    removeStock
+}) => {
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
 
     function handleChange() {
-        setIsChecked(prevFormData => {
-            setIsChecked(!prevFormData)    
-        })
         removeStock(index)
     }
+
     console.log('key is: ',name)
 
     const legend 
-        = <div className="LegendEntryDiv">
+        = name ? <div className="LegendEntryDiv">
             <label
                  htmlFor="legendBox"
                  style={{"color":colors[index]}}
             >
-                {name}
+                <span className = "LegendName">{name}</span> {trailingDays} day average
             </label>
-            <input
-                className="LegendCheckBox" 
-                type="checkbox" 
+            <button
+                className="LegendDelete"  
                 id="legendBox"
-                style={{"background-color":colors[index]}} 
-                checked={!!isChecked}
-                onChange={handleChange}
-            />
+                onClick={handleChange}
+            > [remove] </button>
         </div>
+        :<Fragment></Fragment>
 
     return legend
 

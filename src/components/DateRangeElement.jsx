@@ -1,29 +1,38 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DatePicker from 'react-date-picker';
 
-const DateRangeElement = ({type,setDate}) => {
+const DateRangeElement = ({type,date,updateDate}) => {
 
-    const [value, setValue] = useState(new Date());
+    console.log('DateRangeElement date is: ',date)
+    const [value, setValue] = useState(date);
+
+    useEffect(() => {
+        setValue(date)
+    },[date])
 
     function handleChange() {
-        setDate(value)
+        console.log('new date value is: ',value)
+        updateDate(value)
     }
 
-    const rowValue = type == "Start Date" ? 1:2
+    const rowValue = type === "Start Date" ? 1:2
 
+    const styleElement = {
+        "gridRow":rowValue
+    }
+    
     const styleLabel = {
         "color":"white",
-        "grid-column":"1",
-        "grid-row":rowValue
+        "gridColumn":"1",
     }
 
     const stylePicker = {
-        "grid-column":"2",
-        "grid-row":rowValue
+        "gridColumn":"2",
+
     }
     
     return (
-        <div className = "DateElement">
+        <div className = "DateElement" style ={styleElement}>
             <label
                 className="DatePickerLabel"
                 htmlFor="DatePicker"

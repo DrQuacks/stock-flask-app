@@ -39,6 +39,7 @@ def set_dummy_post_value():
         "start_date":stockData["start_date"],
         "end_date":stockData["end_date"]
     }
+    print ("stockFeatures are: ",stockFeatures)
 
     return {
         'stockArray':stockArray,
