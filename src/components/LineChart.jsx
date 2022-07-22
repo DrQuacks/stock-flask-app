@@ -24,7 +24,10 @@ const LineChart = ({
         (svg) => {
             const height = 700;
             const width = 1100;
-            const margin = { top: 20, right: 30, bottom: 30, left: 40 };
+            const margin = { top: 20, right: 30, bottom: 30, left: 40 }
+
+            let pointerX,
+                pointerY
 
 
             svg.selectAll("#linePlot").remove()
@@ -35,6 +38,10 @@ const LineChart = ({
                 const thisExtent = [dateToDate(element.start),dateToDate(element.end)]
                 return [...acc,...thisExtent]
             },[]))*/
+
+            const indexScale = d3.scaleLinear()
+                .domain([0,(plotData[0].data.length - 1)])
+                .rangeRound([ 0, width - (margin.right + margin.left)]);
 
             console.log('xDomain in LineChart is: ',plotPrefs.current.xDomain)
 
@@ -65,6 +72,59 @@ const LineChart = ({
                 .attr("id","yAxis")
                 .attr("transform", `translate(${margin.left},${margin.top})`)
                 .call(d3.axisLeft(yScale));
+
+            svg.on("click", e => { 
+                console.log(d3.pointer(e))
+                const [rawX,rawY] = d3.pointer(e)
+                pointerX = xScale.invert(rawX)
+                pointerY = yScale.invert(rawY)
+                console.log('pointer is at: ',[pointerX,pointerY])
+            })
+
+            svg.on("mousedown", e => { 
+                console.log(d3.pointer(e))
+                
+                const [rawX,rawY] = d3.pointer(e)
+                pointerX = xScale.invert(rawX - margin.left)
+                pointerY = yScale.invert(rawY - margin.top)
+                console.log('pointer is at: ',[pointerX,pointerY])
+
+                const index = Math.floor(indexScale.invert(rawX - margin.left)) //I'm not sure this is accurate
+                console.log('index is: ',index)
+                const mappedY = plotData[0]['data'][index]['yValue']
+                console.log('mappedY is: ',mappedY)
+                const plotY = yScale(mappedY) + margin.top
+                console.log('plotY is: ',plotY)
+        
+                svg.append("g")
+                    .attr("id","tempMouseLine")
+                        .append("line")
+                        .attr("x1", rawX)
+                        .attr("y1", margin.top)
+                        .attr("x2", rawX)
+                        .attr("y2", height - margin.bottom)
+                        .style("stroke-width", 1)
+                        .style("stroke", "gray")
+                        .style("fill", "none");
+
+                svg.append("g")
+                    .attr("id","tempMouseLine")
+                        .append("line")
+                        .attr("x1", margin.left)
+                        .attr("y1", plotY)
+                        .attr("x2", width - margin.right)
+                        .attr("y2", plotY)
+                        .style("stroke-width", 1)
+                        .style("stroke", "gray")
+                        .style("fill", "none");
+            })
+
+            svg.on("mouseup", e => { 
+                console.log(d3.pointer(e))
+                console.log("mouse up")
+                const [rawX,rawY] = d3.pointer(e)
+                d3.selectAll("#tempMouseLine").remove()
+            })
 
             const lineVector = (d) => {
                 console.log('d is: ',d)
