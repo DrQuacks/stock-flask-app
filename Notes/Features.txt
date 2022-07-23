@@ -5,3 +5,7 @@
 
 -value range selector
 -display table of raw values as an option
+
+-plot derivatives as second y axis
+    -make them dashed lines or something 
+-calculate derivs from most recent max or min 

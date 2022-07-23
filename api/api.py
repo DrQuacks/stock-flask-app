@@ -36,7 +36,11 @@ def set_dummy_post_value():
         "min_price":stockData["min_price"],
         "max_price":stockData["max_price"],
         "start_date":stockData["start_date"],
-        "end_date":stockData["end_date"]
+        "end_date":stockData["end_date"],
+        "min_deriv":stockData["min_deriv"],
+        "max_deriv":stockData["max_deriv"],
+        "min_deriv2":stockData["min_deriv2"],
+        "max_deriv2":stockData["max_deriv2"]
     }
     print ("stockFeatures are: ",stockFeatures)
 

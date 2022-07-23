@@ -17,7 +17,11 @@ function App() {
     start:(new Date()).toISOString().split('T')[0],
     end:(new Date()).toISOString().split('T')[0],
     min:0,
-    max:0
+    max:0,
+    minDeriv:0,
+    maxDeriv:0,
+    minDeriv2:0,
+    maxDeriv2:0
   }])
 
   const [plotPrefsState, setPlotPrefsState] = useState({
