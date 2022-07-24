@@ -32,7 +32,7 @@
 
 .DateElement {
   display: grid;
-  grid-template-columns: 80px 170px;
+  grid-template-columns: 80px 140px;
   align-items: baseline;
 }
 
@@ -146,4 +146,8 @@ select {
 
 .react-date-picker {
   background-color: white;
+}
+
+.tooltip {
+  position: absolute;
 }

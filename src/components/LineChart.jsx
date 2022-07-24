@@ -1,16 +1,13 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
+import { Tooltip } from "@mui/material";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
+import dateToString from "../helpers/dateToString";
 
 const LineChart = ({
     plotData,
-    plotPrefs,
-    stockKeys,
-    setStartDate,
-    startDate,
-    setEndDate,
-    endDate
+    plotPrefs
 }) => {
     console.log("plotData outside useD3 is: ",plotData)
 
@@ -25,6 +22,7 @@ const LineChart = ({
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
 
     const ref = useD3(
+        
         (svg) => {
             const height = 700;
             const width = 1200;
@@ -36,7 +34,9 @@ const LineChart = ({
 
             svg.selectAll("#symbolGroup").remove()
             svg.select("#xAxis").remove()
+            svg.select("#xAxisGridLines").remove()
             svg.select("#yAxis").remove()
+            svg.select("#yAxisGridLines").remove()
             svg.select("#y2Axis").remove()
 
             /*const xDomain = d3.extent(plotData.reduce((acc,element) => {
@@ -46,7 +46,7 @@ const LineChart = ({
 
             const indexScale = d3.scaleLinear()
                 .domain([0,(plotData[0].data.length - 1)])
-                .rangeRound([ 0, width - (margin.right + margin.left)]);
+                .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
             console.log('xDomain in LineChart is: ',plotPrefs.current.xDomain)
 
@@ -96,14 +96,31 @@ const LineChart = ({
 
             const xAxis = svg.append("g")
                 .attr("id","xAxis")
-                //.attr("transform", `translate(${margin.left},${height - margin.bottom})`)
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale));
+
+            const xAxisGridLines = svg.append("g")
+                .attr("id","xAxisGridLines")
+                .attr("transform", `translate(0,${height - margin.bottom})`)
+                .attr("opacity",".05")
+                .call(d3.axisBottom(xScale)
+                    .tickFormat("")
+                    .tickSize(-1*(height - (margin.bottom + margin.top)))
+                )
 
             const yAxis = svg.append("g")
                 .attr("id","yAxis")
                 .attr("transform", `translate(${margin.left},${margin.top})`)
                 .call(d3.axisLeft(yScale).tickFormat(y => `$${y}`))
+
+            const yAxisGridLines = svg.append("g")
+                .attr("id","yAxisGridLines")
+                .attr("transform", `translate(${margin.left},${margin.top})`)
+                .attr("opacity",".05")
+                .call(d3.axisLeft(yScale)
+                    .tickFormat("")
+                    .tickSize(-1*(width-(margin.right + 2*margin.left)))
+                )
 
             if (firstDeriv || secondDeriv){
                 console.log("A derivative box was checked")
@@ -112,7 +129,7 @@ const LineChart = ({
                     .attr("transform", `translate(${width - margin.right - margin.left},${margin.top})`)
                     .call(d3.axisRight(rightYScale).tickFormat(d3.format('.2%')));
             }
-
+            
             svg.on("click", e => { 
                 console.log(d3.pointer(e))
                 const [rawX,rawY] = d3.pointer(e)
@@ -121,16 +138,22 @@ const LineChart = ({
                 console.log('pointer is at: ',[pointerX,pointerY])
             })
 
+            const tooltip = d3.select("body").append("div")
+                    .attr("class", "tooltip")
+            
             svg.on("mousedown", e => { 
                 console.log(d3.pointer(e))
                 
                 const [rawX,rawY] = d3.pointer(e)
-                pointerX = xScale.invert(rawX - margin.left)
+                //pointerX = xScale.invert(rawX - margin.left)
+                console.log('yDOmain is: ',yDomain)
+                pointerX = xScale.invert(rawX)
                 pointerY = yScale.invert(rawY - margin.top)
                 console.log('pointer is at: ',[pointerX,pointerY])
 
-                const index = Math.floor(indexScale.invert(rawX - margin.left)) //I'm not sure this is accurate because of floor
+                const index = Math.floor(indexScale.invert(rawX)) //I'm not sure this is accurate because of floor
                 console.log('index is: ',index)
+                const mappedX = plotData[0]['data'][index]['date']
                 const mappedY = plotData[0]['data'][index]['price']
                 console.log('mappedY is: ',mappedY)
                 const plotY = yScale(mappedY) + margin.top
@@ -152,11 +175,39 @@ const LineChart = ({
                         .append("line")
                         .attr("x1", margin.left)
                         .attr("y1", plotY)
-                        .attr("x2", width - margin.right)
+                        .attr("x2", width - margin.right - margin.left)
                         .attr("y2", plotY)
                         .style("stroke-width", 1)
                         .style("stroke", "gray")
                         .style("fill", "none");
+
+                /*tooltip.html("Hello")
+                    .style("background-color", "tan")
+                    .style("border", "1px solid black")
+                    .style("padding", "2px")
+                    .style("top", e.pageY - 10 + "px")
+                    .style("left", e.pageX + 10 + "px")
+                    .style("opacity", 1);*/
+                
+                tooltip
+                    .style("background-color", "tan")
+                    .style("border", "1px solid black")
+                    .style("padding", "2px")
+                    .style("top", e.pageY - 10 + "px")
+                    .style("left", e.pageX + 10 + "px")
+                    .style("opacity", 1)
+                    .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX)}`)
+
+
+                /*svg.append("g")	
+                    .attr("class", "tooltip")
+                    .attr("transform", `translate(${rawX},${rawY})`)				
+                    //.attr("x",rawX)
+                    //.attr("y",rawY)
+                    .append("text")
+                    .attr("class", "tooltip")
+                    .text("Hi")
+                    .call(()=>{console.log("AAAAAAAAAAHHHHHHHHHH")})*/
             })
 
             svg.on("mouseup", e => { 
@@ -164,6 +215,8 @@ const LineChart = ({
                 console.log("mouse up")
                 const [rawX,rawY] = d3.pointer(e)
                 d3.selectAll("#tempMouseLine").remove()
+                tooltip.style("opacity",0)
+                //d3.selectAll("#tooltip").remove()
             })
 
             const lineVector = (d,type) => {
@@ -210,7 +263,8 @@ const LineChart = ({
                 console.log('showPlot is: ',showPlot)
                 Object.keys(showPlot).forEach((plotType) => {
                     if (showPlot[plotType]){
-                        symbolGroupUpdateEnter.append("path")
+                        symbolGroupUpdateEnter
+                            .append("path")
                             .attr("id","linePath")
                             .attr("fill", "none")
                             .attr("stroke", (d) => {

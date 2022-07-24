@@ -3,7 +3,7 @@ import React, { useState } from "react"
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 
-function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
+function PlotInputForm({plotData,handleInput,setPrefs}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 

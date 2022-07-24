@@ -123,7 +123,6 @@ function App() {
     <div className="App">
       <div className='TopBar'>
         <PlotInputForm
-          setPlotData = {setPlotData}
           plotData = {plotData}
           handleInput = {handleInput}
           setPrefs = {setPrefs}
@@ -138,12 +137,7 @@ function App() {
         <div className='PlotArea'>
           <LineChart
             plotData = {plotData}
-            setPlotData = {setPlotData}
             plotPrefs = {plotPrefs}
-            setStartDate = {updateStartDate}
-            startDate = {startDateChart}
-            setEndDate = {updateEndDate}
-            endDate = {endDateChart}
           />
         </div>
         <div className='RightMenu'>

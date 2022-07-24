@@ -46,6 +46,7 @@ const DateRangeElement = ({type,date,updateDate}) => {
                 onBlur = {handleChange}
                 value={value} 
                 style={stylePicker}
+                clearIcon={null}
             />
         </div>
     );
