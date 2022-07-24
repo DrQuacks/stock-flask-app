@@ -62,7 +62,7 @@ function App() {
 
       } else {
 
-        if (!plotPrefs.customDate){
+        if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd([inputData])
         }
@@ -84,8 +84,12 @@ function App() {
   }
 
   const removeStock = (index) => {
+    //need to also update xDomain
     const plotDataCopy = [...plotData]
     plotDataCopy.splice(index,1)
+    const newXDomain = calcStartEnd(plotDataCopy)
+    const oldPrefsCopy = plotPrefs.current
+    plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain}
     setPlotData(plotDataCopy)
   }
 

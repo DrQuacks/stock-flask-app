@@ -31,6 +31,8 @@ function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
 
     async function handleSubmit(event) {
         event.preventDefault()
+        console.log('In handleSUbmit, button was is: ',event.nativeEvent.submitter.className)
+        const buttonType = event.nativeEvent.submitter.className
         const prefs = {
             semiLog: formData.semiLog,
             overlayRaw: formData.overlayRaw,
@@ -40,32 +42,35 @@ function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
             secondDeriv: formData.secondDeriv
         }
         setPrefs(prefs)
-        const stockNames = plotData.map((stock) => {
-            return stock.stockSymbol
-        })
-        //don't add a stock that's already been added
-        if (!stockNames.includes(formData.stockSymbol)){
-            //I need to handle blank inputs
-            //what's in here is working from the outside, but it's logging errors in python
-            const data = sendToPython(formData)
-            const resolvedData = await data
-            console.log('resolvedData is: ',resolvedData)
-            const newPlotData = {
-                name:formData.stockSymbol,
-                data:resolvedData.stockArray,
-                trailingDays:formData.trailingDays,
-                avgType:formData.avgType,
-                sampleType:formData.sampleType,
-                start:dateToDate(resolvedData.stockFeatures.start_date),
-                end:dateToDate(resolvedData.stockFeatures.end_date),
-                min:resolvedData.stockFeatures.min_price,
-                max:resolvedData.stockFeatures.max_price,
-                minDeriv:resolvedData.stockFeatures.min_deriv,
-                maxDeriv:resolvedData.stockFeatures.max_deriv,
-                minDeriv2:resolvedData.stockFeatures.min_deriv2,
-                maxDeriv2:resolvedData.stockFeatures.max_deriv2
+        
+        if (buttonType === "PlotButton"){
+            const stockNames = plotData.map((stock) => {
+                return stock.stockSymbol
+            })
+            //don't add a stock that's already been added
+            if (!stockNames.includes(formData.stockSymbol)){
+                //I need to handle blank inputs
+                //what's in here is working from the outside, but it's logging errors in python
+                const data = sendToPython(formData)
+                const resolvedData = await data
+                console.log('resolvedData is: ',resolvedData)
+                const newPlotData = {
+                    name:formData.stockSymbol,
+                    data:resolvedData.stockArray,
+                    trailingDays:formData.trailingDays,
+                    avgType:formData.avgType,
+                    sampleType:formData.sampleType,
+                    start:dateToDate(resolvedData.stockFeatures.start_date),
+                    end:dateToDate(resolvedData.stockFeatures.end_date),
+                    min:resolvedData.stockFeatures.min_price,
+                    max:resolvedData.stockFeatures.max_price,
+                    minDeriv:resolvedData.stockFeatures.min_deriv,
+                    maxDeriv:resolvedData.stockFeatures.max_deriv,
+                    minDeriv2:resolvedData.stockFeatures.min_deriv2,
+                    maxDeriv2:resolvedData.stockFeatures.max_deriv2
+                }
+                handleInput(newPlotData)
             }
-            handleInput(newPlotData)
         }
         console.log("event is: ",event)
         setFormData((priorForm) => {
@@ -100,6 +105,7 @@ function PlotInputForm({setPlotData,plotData,handleInput,setPrefs}) {
                 />
 
                 <button className = "PlotButton">PLOT</button>
+                <button className = "UpdateButton">UPDATE</button>
             </div>
 
             <div className="OptionsContainer">

@@ -28,13 +28,12 @@ const LineChart = ({
         (svg) => {
             const height = 700;
             const width = 1200;
-            const margin = { top: 20, right: 50, bottom: 30, left: 40 }
+            const margin = { top: 20, right: 50, bottom: 30, left: 50 }
 
             let pointerX,
                 pointerY
 
 
-            //svg.selectAll("#linePlot").remove()
             svg.selectAll("#symbolGroup").remove()
             svg.select("#xAxis").remove()
             svg.select("#yAxis").remove()
@@ -53,7 +52,8 @@ const LineChart = ({
 
             const xScale = d3.scaleTime()
                 .domain(plotPrefs.current.xDomain)
-                .rangeRound([ 0, width - (margin.right + margin.left)]);
+                .rangeRound([ margin.left, width - (margin.right + margin.left)])
+                .clamp(true)
 
 
             
@@ -96,7 +96,8 @@ const LineChart = ({
 
             const xAxis = svg.append("g")
                 .attr("id","xAxis")
-                .attr("transform", `translate(${margin.left},${height - margin.bottom})`)
+                //.attr("transform", `translate(${margin.left},${height - margin.bottom})`)
+                .attr("transform", `translate(0,${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale));
 
             const yAxis = svg.append("g")
@@ -108,7 +109,7 @@ const LineChart = ({
                 console.log("A derivative box was checked")
                 const y2Axis = svg.append("g")
                     .attr("id","y2Axis")
-                    .attr("transform", `translate(${width - margin.right},${margin.top})`)
+                    .attr("transform", `translate(${width - margin.right - margin.left},${margin.top})`)
                     .call(d3.axisRight(rightYScale).tickFormat(d3.format('.2%')));
             }
 
@@ -166,17 +167,9 @@ const LineChart = ({
             })
 
             const lineVector = (d,type) => {
-                /*console.log('d is: ',d)
-                const line = d3.line()
-                .x((d) => xScale(dateToDate(d.date)))
-                .y((d) => yScale(d.price))
-
-                const linePlot = line(d.data)
-                //console.log("Line is: ",linePlot)
-
-                return(linePlot)*/
 
                 console.log('In lineVector, d is: ',d)
+                console.log('In lineVector, plotPrefs is: ',plotPrefs.current)
                 const lineNoY = d3.line()
                     .x((d) => xScale(dateToDate(d.date)))
 
@@ -190,32 +183,6 @@ const LineChart = ({
                             return rightYScale(d.derivSecond)
                         }
                 })
-
-                const linePlot = line(d.data)
-                //console.log("Line is: ",linePlot)
-
-                return(linePlot)
-
-            }
-
-            const derivLineVector = (d) => {
-                console.log('d is: ',d)
-                const line = d3.line()
-                .x((d) => xScale(dateToDate(d.date)))
-                .y((d) => rightYScale(d.derivFirst))
-
-                const linePlot = line(d.data)
-                //console.log("Line is: ",linePlot)
-
-                return(linePlot)
-
-            }
-
-            const deriv2LineVector = (d) => {
-                console.log('d is: ',d)
-                const line = d3.line()
-                .x((d) => xScale(dateToDate(d.date)))
-                .y((d) => rightYScale(d.derivSecond))
 
                 const linePlot = line(d.data)
                 //console.log("Line is: ",linePlot)
@@ -255,77 +222,15 @@ const LineChart = ({
                                 console.log("plotType is: ",plotType)
                                 return lineVector(d,plotType)
                             })
-                            .attr("transform", `translate(${margin.left},${margin.top})`)
+                            //.attr("transform", `translate(${margin.left},${margin.top})`)
+                            .attr("transform", `translate(0,${margin.top})`)
+                            .attr("opacity","1")
                         }
                     })
                 
                     symbolGroupUpdate.exit().remove()
                 
                 console.log('updateLines was called, and plotData is: ',plotData)
-
-                /*const lineUpdate = d3.select('.plotArea')
-                    .selectAll('.linePlot')
-                    .data(plotData)
-
-                const lineUpdateEnter = lineUpdate.enter()
-                    .append("g")
-                        .attr("id","linePlot")
-                        .append("path")
-                            .attr("id","linePath")
-                            .attr("fill", "none")
-                            .attr("stroke", (d) => {
-                                return myColor(d)
-                            })
-                            .attr("stroke-width", 1.5)
-                            .attr("d", lineVector)
-                            .attr("transform", `translate(${margin.left},${margin.top})`)
-
-                lineUpdate.exit().remove()
-                
-                console.log('updateLines was called, and plotData is: ',plotData)
-
-                
-                const derivLineUpdate = d3.select('.plotArea')
-                    .selectAll('.derivLinePlot')
-                    .data(plotData)
-
-                const derivLineUpdateEnter = derivLineUpdate.enter()
-                    .append("g")
-                        .attr("id","derivLinePlot")
-                        .append("path")
-                            .attr("id","linePath")
-                            .attr("fill", "none")
-                            .attr("stroke", (d) => {
-                                return myColor(d)
-                            })
-                            .attr("stroke-width", 1.5)
-                            .attr("d", derivLineVector)
-                            .attr("transform", `translate(${margin.left},${margin.top})`)
-
-                derivLineUpdate.exit().remove()
-
-                const deriv2LineUpdate = d3.select('.plotArea')
-                    .selectAll('.deriv2LinePlot')
-                    .data(plotData)
-                
-                const deriv2LineUpdateEnter = deriv2LineUpdate.enter()
-                    .append("g")
-                        .attr("id","deriv2LinePlot")
-                        .append("path")
-                            .attr("id","linePath")
-                            .attr("fill", "none")
-                            .attr("stroke", (d) => {
-                                return myColor(d)
-                            })
-                            .attr("stroke-width", 1.5)
-                            .attr("d", deriv2LineVector)
-                            .attr("transform", `translate(${margin.left},${margin.top})`)
-
-                derivLineUpdate.exit().remove() */
-                
-
-
-
                 
             }
 
