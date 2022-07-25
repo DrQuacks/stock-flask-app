@@ -133,214 +133,7 @@ const LineChart = ({
                     .attr("transform", `translate(${width - margin.right - margin.left},${margin.top})`)
                     .call(d3.axisRight(rightYScale).tickFormat(d3.format('.2%')));
             }
-            
-            svg.on("click", e => { 
-                console.log(d3.pointer(e))
-                const [rawX,rawY] = d3.pointer(e)
-                pointerX = xScale.invert(rawX)
-                pointerY = yScale.invert(rawY)
-                console.log('pointer is at: ',[pointerX,pointerY])
-            })
 
-            const tooltip = d3.select("body").append("div")
-                    .attr("class", "tooltip")
-
-            const calcXandY = (e) => {
-                const [rawX,rawY] = d3.pointer(e)
-                //pointerX = xScale.invert(rawX - margin.left)
-                console.log('yDOmain is: ',yDomain)
-
-
-                const rangePoints = xScaleInverse.domain()
-                console.log('[rangePoints] is: ',[rangePoints]) 
-                const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
-                const roundedRawX = rangePoints[roundedRawXIndex]
-                console.log('roundedRawX is: ',roundedRawX)
-                const pointerX = xScaleInverse(roundedRawX)
-
-                //pointerX = xScale.invert(rawX)
-                pointerY = yScale.invert(rawY - margin.top)
-                console.log('pointer is at: ',[pointerX,pointerY])
-
-                /*const index = Math.floor(indexScale.invert(rawX)) //I'm not sure this is accurate because of floor
-                console.log('index is: ',index)
-                const mappedX = plotData[0]['data'][index]['date']
-                const mappedY = plotData[0]['data'][index]['price']*/
-                
-                const mappedX = pointerX
-                const mappedY = plotData[0].datePriceScale(mappedX)
-                console.log('mappedX is: ',mappedX)
-                console.log('mappedX type is: ',(typeof mappedX))
-                console.log('mappedY is: ',mappedY)
-                const plotY = yScale(mappedY) + margin.top
-                console.log('plotY is: ',plotY)
-                return {rawX,rawY,mappedX,mappedY,plotY}
-            }
-            
-            //for some reason this breaks when I switch browser windows
-            svg.on("mousedown", e => { 
-                console.log(d3.pointer(e))
-
-                const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(e)
-                const actions = svg.on("mousemove",eDrag => {
-                    console.log("eDrag is: ",d3.pointer(eDrag))
-                    console.log("e is: ",d3.pointer(e))
-                    mouseMove(eDrag)
-                })
-
-                function mouseMove(eDrag) {
-                    console.log('mouse is moving')
-                    const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(eDrag)
-
-                    d3.selectAll("#tempVerticalMouseLine")
-                        .attr("x1", () => {
-                            console.log('rawX was altered with a value of: ',rawX)
-                            return rawX
-                        })
-                        .attr("x2", rawX)
-
-                    d3.selectAll("#tempHorizontalMouseLine")
-                        .attr("y1", plotY)
-                        .attr("y2", plotY)
-
-                    tooltip
-                        .style("top", eDrag.pageY - 10 + "px")
-                        .style("left", eDrag.pageX + 10 + "px")
-                        .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
-                }
-                
-                /*const [rawX,rawY] = d3.pointer(e)
-                //pointerX = xScale.invert(rawX - margin.left)
-                console.log('yDOmain is: ',yDomain)
-                pointerX = xScale.invert(rawX)
-                pointerY = yScale.invert(rawY - margin.top)
-                console.log('pointer is at: ',[pointerX,pointerY])
-
-                const index = Math.floor(indexScale.invert(rawX)) //I'm not sure this is accurate because of floor
-                console.log('index is: ',index)
-                const mappedX = plotData[0]['data'][index]['date']
-                const mappedY = plotData[0]['data'][index]['price']
-                console.log('mappedY is: ',mappedY)
-                const plotY = yScale(mappedY) + margin.top
-                console.log('plotY is: ',plotY)*/
-
-        
-                console.log('I only want this once per drag')
-                svg.append("g")
-                    .attr("id","tempVerticalMouseLine")
-                        .append("line")
-                        .attr("id","tempVerticalMouseLine")
-                        .attr("x1", rawX)
-                        .attr("y1", margin.top)
-                        .attr("x2", rawX)
-                        .attr("y2", height - margin.bottom)
-                        .style("stroke-width", 1)
-                        .style("stroke", "gray")
-                        .style("fill", "none");
-
-                svg.append("g")
-                    .attr("id","tempHorizontalMouseLine")
-                        .append("line")
-                        .attr("id","tempHorizontalMouseLine")
-                        .attr("x1", margin.left)
-                        .attr("y1", plotY)
-                        .attr("x2", width - margin.right - margin.left)
-                        .attr("y2", plotY)
-                        .style("stroke-width", 1)
-                        .style("stroke", "gray")
-                        .style("fill", "none");
-                
-                tooltip
-                    .style("background-color", "tan")
-                    .style("border", "1px solid black")
-                    .style("padding", "2px")
-                    .style("top", e.pageY - 10 + "px")
-                    .style("left", e.pageX + 10 + "px")
-                    .style("opacity", 1)
-                    .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
-            })
-
-            svg.on("mouseup", e => { 
-                console.log(d3.pointer(e))
-                console.log("mouse up")
-                const [rawX,rawY] = d3.pointer(e)
-                d3.selectAll("#tempVerticalMouseLine").remove()
-                d3.selectAll("#tempHorizontalMouseLine").remove()
-                tooltip.style("opacity",0)
-                svg.on("mousemove",null)
-                //d3.selectAll("#tooltip").remove()
-            })
-
-            /*function tooltipDrag() {
-                console.log('Tooltip drag was called')
-                function dragstarted(e, d) {
-                    console.log('Tooltip dragstarted was called')
-                    console.log(d3.pointer(e))
-                
-                    const [rawX,rawY] = d3.pointer(e)
-                    //pointerX = xScale.invert(rawX - margin.left)
-                    console.log('yDOmain is: ',yDomain)
-                    pointerX = xScale.invert(rawX)
-                    pointerY = yScale.invert(rawY - margin.top)
-                    console.log('pointer is at: ',[pointerX,pointerY])
-
-                    const index = Math.floor(indexScale.invert(rawX)) //I'm not sure this is accurate because of floor
-                    console.log('index is: ',index)
-                    const mappedX = plotData[0]['data'][index]['date']
-                    const mappedY = plotData[0]['data'][index]['price']
-                    console.log('mappedY is: ',mappedY)
-                    const plotY = yScale(mappedY) + margin.top
-                    console.log('plotY is: ',plotY)
-            
-                    svg.append("g")
-                        .attr("id","tempMouseLine")
-                            .append("line")
-                            .attr("x1", rawX)
-                            .attr("y1", margin.top)
-                            .attr("x2", rawX)
-                            .attr("y2", height - margin.bottom)
-                            .style("stroke-width", 1)
-                            .style("stroke", "gray")
-                            .style("fill", "none");
-
-                    svg.append("g")
-                        .attr("id","tempMouseLine")
-                            .append("line")
-                            .attr("x1", margin.left)
-                            .attr("y1", plotY)
-                            .attr("x2", width - margin.right - margin.left)
-                            .attr("y2", plotY)
-                            .style("stroke-width", 1)
-                            .style("stroke", "gray")
-                            .style("fill", "none");
-                    
-                    tooltip
-                        .style("background-color", "tan")
-                        .style("border", "1px solid black")
-                        .style("padding", "2px")
-                        .style("top", e.pageY - 10 + "px")
-                        .style("left", e.pageX + 10 + "px")
-                        .style("opacity", 1)
-                        .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX)}`)
-                  }
-                
-                  function dragged(e, d) {
-                    
-                  }
-                
-                  function dragended(e, d) {
-                    console.log(d3.pointer(e))
-                    console.log("mouse up")
-                    const [rawX,rawY] = d3.pointer(e)
-                    d3.selectAll("#tempMouseLine").remove()
-                    tooltip.style("opacity",0)
-                  }
-                
-                  return d3.drag()
-                      .on("start", dragstarted)
-                      .on("drag", dragged)
-                      .on("end", dragended);
-            }*/
 
             const lineVector = (d,type) => {
 
@@ -411,8 +204,130 @@ const LineChart = ({
                 
             }
 
-            //d3.select(this).call(tooltipDrag)
+            function dragPointer() {
+                const tooltip = d3.select("body").append("div")
+                //const tooltip = d3.select(".PlotArea").append("div")
+                    .attr("class", "tooltip")
+
+                const calcXandY = (e) => {
+                    const [rawX,rawY] = d3.pointer(e)
+                    console.log('yDOmain is: ',yDomain)
+
+                    const rangePoints = xScaleInverse.domain()
+                    console.log('[rangePoints] is: ',[rangePoints]) 
+                    const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
+                    const roundedRawX = rangePoints[roundedRawXIndex]
+                    console.log('roundedRawX is: ',roundedRawX)
+                    pointerX = xScaleInverse(roundedRawX)
+
+                    pointerY = yScale.invert(rawY - margin.top)
+                    console.log('pointer is at: ',[pointerX,pointerY])
+                    
+                    const mappedX = pointerX
+                    //eventually I need to make this more dynamic
+                    const mappedY = plotData[0].datePriceScale(mappedX)
+                    console.log('mappedX is: ',mappedX)
+                    console.log('mappedX type is: ',(typeof mappedX))
+                    console.log('mappedY is: ',mappedY)
+                    const plotY = yScale(mappedY) + margin.top
+                    console.log('plotY is: ',plotY)
+                    return {rawX,rawY,mappedX,mappedY,plotY}
+                }
+            
+                //for some reason this breaks when I switch browser windows
+                svg.on("mousedown", e => { 
+                    console.log(d3.pointer(e))
+                    e.preventDefault()
+
+                    const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(e)
+                    svg.on("mousemove",eDrag => {
+                        console.log("eDrag is: ",d3.pointer(eDrag))
+                        console.log("e is: ",d3.pointer(e))
+                        mouseMove(eDrag)
+                    })
+
+                    function mouseMove(eDrag) {
+                        console.log('mouse is moving')
+                        
+                        eDrag.preventDefault()
+                        const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(eDrag)
+
+                        /*console.log('numericMappedX is: ',mappedX.getTime())
+                        console.log('numericDay0 is: ',plotData[0].daysList[0].getTime())
+                        console.log('numericDayEnd is: ',plotData[0].daysList[plotData[0].daysList.length - 1].getTime())*/
+
+                        if (mappedX.getTime() >= plotData[0].daysList[0].getTime() && rawX <= (width - margin.left - margin.right)){
+                            d3.selectAll("#tempVerticalMouseLine")
+                                .attr("x1", () => {
+                                    console.log('rawX was altered with a value of: ',rawX)
+                                    return rawX
+                                })
+                                .attr("x2", rawX)
+
+                            d3.selectAll("#tempHorizontalMouseLine")
+                                .attr("y1", plotY)
+                                .attr("y2", plotY)
+
+                            tooltip
+                                .style("top", eDrag.pageY - 10 + "px")
+                                .style("left", eDrag.pageX + 10 + "px")
+                                .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                        }
+                    }
+
+                    if (mappedX.getTime() >= plotData[0].daysList[0].getTime() && rawX <= (width - margin.left - margin.right)){
+                        console.log('I only want this once per drag')
+                        svg.append("g")
+                            .attr("id","tempVerticalMouseLine")
+                                .append("line")
+                                .attr("id","tempVerticalMouseLine")
+                                .attr("x1", rawX)
+                                .attr("y1", margin.top)
+                                .attr("x2", rawX)
+                                .attr("y2", height - margin.bottom)
+                                .style("stroke-width", 1)
+                                .style("stroke", "gray")
+                                .style("fill", "none");
+
+                        svg.append("g")
+                            .attr("id","tempHorizontalMouseLine")
+                                .append("line")
+                                .attr("id","tempHorizontalMouseLine")
+                                .attr("x1", margin.left)
+                                .attr("y1", plotY)
+                                .attr("x2", width - margin.right - margin.left)
+                                .attr("y2", plotY)
+                                .style("stroke-width", 1)
+                                .style("stroke", "gray")
+                                .style("fill", "none");
+                        
+                        tooltip
+                            .style("background-color", "tan")
+                            .style("border", "1px solid black")
+                            .style("padding", "2px")
+                            .style("top", e.pageY - 10 + "px")
+                            .style("left", e.pageX + 10 + "px")
+                            .style("opacity", 1)
+                            .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                    }
+                })
+
+                svg.on("mouseup", e => { 
+                    console.log(d3.pointer(e))
+                    console.log("mouse up")
+                    const [rawX,rawY] = d3.pointer(e)
+                    d3.selectAll("#tempVerticalMouseLine").remove()
+                    d3.selectAll("#tempHorizontalMouseLine").remove()
+                    tooltip.style("opacity",0)
+                    svg.on("mousemove",null)
+                    d3.selectAll("#tooltip").remove()
+                })
+
+            }
+
+            //boot
             updateLines()
+            dragPointer()
         },
         [plotData,semiLog]
     )

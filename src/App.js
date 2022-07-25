@@ -86,13 +86,17 @@ function App() {
     }
   }
 
+  //I need to check to see if prefs updated for persist date
   const removeStock = (index) => {
     //need to also update xDomain
     const plotDataCopy = [...plotData]
     plotDataCopy.splice(index,1)
-    const newXDomain = calcStartEnd(plotDataCopy)
-    const oldPrefsCopy = plotPrefs.current
-    plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain}
+    if (!plotPrefs.current.customDate){
+      const newXDomain = calcStartEnd(plotDataCopy)
+      const newDayValues = calcDayValues(plotDataCopy)
+      const oldPrefsCopy = plotPrefs.current
+      plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues}
+    }
     setPlotData(plotDataCopy)
   }
 

@@ -1,4 +1,7 @@
 -normalize starting at certain date
+    -this might be as simple as a vertical shift
+    -maybe not...or at least it'd need a vertical stretch/shrink as well
+    -or...is it a vertical stretch pinned at (0,0)?
 
 -value range selector
 -display table of raw values as an option
