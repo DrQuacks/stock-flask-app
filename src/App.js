@@ -21,7 +21,9 @@ function App() {
     minDeriv:0,
     maxDeriv:0,
     minDeriv2:0,
-    maxDeriv2:0
+    maxDeriv2:0,
+    datePriceScale: new d3.scaleLinear(),
+    daysList:[]
   }])
 
   const [plotPrefsState, setPlotPrefsState] = useState({
@@ -35,11 +37,9 @@ function App() {
     overlayRaw:false,
     overlayNew:false,
     customDate:false,
-    xDomain:[(new Date()).toISOString().split('T')[0],(new Date()).toISOString().split('T')[0]]
+    xDomain:[(new Date()).toISOString().split('T')[0],(new Date()).toISOString().split('T')[0]],
+    dayValues:[(new Date()).toISOString().split('T')[0]]
   })
-
-  const startDateChart = useRef(new Date())
-  const endDateChart = useRef(new Date())
 
 
   const handleInput = (inputData) => {
@@ -50,10 +50,12 @@ function App() {
       //this is where a new plot is added to plotData
       if (plotPrefs.current.overlayNew){
         const newPlotData = [...plotData,inputData]
+        console.log('newPlotData is: ',newPlotData)
 
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd(newPlotData)
+          plotPrefs.current.dayValues = calcDayValues(newPlotData)
         }
 
         console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
@@ -65,6 +67,7 @@ function App() {
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd([inputData])
+          plotPrefs.current.dayValues = inputData.daysList
         }
 
         console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
@@ -101,6 +104,20 @@ function App() {
   return xDomain
 }
 
+  const calcDayValues = (plots) => {
+    console.log("In calc day values, plots is: ",plots)
+    const indexLongest = plots.reduce((acc,stock,index)=>{
+      const thisLength = stock.daysList.length
+        if (thisLength > acc){
+          return index
+        }
+        return acc
+    },0)
+    const longestDayList = plots[indexLongest].daysList
+    console.log('[Longest Day List] is: ',[longestDayList])
+    return longestDayList
+  }
+
   /*useEffect(() => { 
     if (!plotPrefs.current.customDate){
       plotPrefs.current.xDomain = calcStartEnd(plotData)
@@ -110,8 +127,6 @@ function App() {
 
 
   const updateStartDate = (newDate) => {
-    console.log('old start date was: ',startDateChart)
-    console.log('newDate is: ',newDate)
     plotPrefs.current.xDomain[0] = newDate
   }
 

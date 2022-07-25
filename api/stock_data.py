@@ -103,6 +103,7 @@ def trailing_avg(sym, days, avg_type, sample_type):
     
     return {
         "stock_data":stock_list,
+        "days_list":days_list,
         "min_price":min_price,
         "max_price":max_price,
         "start_date":start_date,

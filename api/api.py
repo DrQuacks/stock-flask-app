@@ -40,9 +40,10 @@ def set_dummy_post_value():
         "min_deriv":stockData["min_deriv"],
         "max_deriv":stockData["max_deriv"],
         "min_deriv2":stockData["min_deriv2"],
-        "max_deriv2":stockData["max_deriv2"]
+        "max_deriv2":stockData["max_deriv2"],
+        "days_list":stockData["days_list"]
     }
-    print ("stockFeatures are: ",stockFeatures)
+    #print ("stockFeatures are: ",stockFeatures)
 
     return {
         'stockArray':stockData["stock_data"],

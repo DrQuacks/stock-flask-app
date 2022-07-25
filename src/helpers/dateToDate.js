@@ -1,5 +1,5 @@
 const dateToDate = (str) => {
-    const d = new Date();
+    const d = new Date("July 21, 1983 00:00:00");
     if (str) {  
       /*const mnths = {
             Jan: "01",

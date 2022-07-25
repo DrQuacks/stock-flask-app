@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-
+import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 
@@ -29,6 +29,28 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
         })
     }
 
+    function generateScale(dataArray) {
+        /*const [domain,range] = dataArray.reduce((acc,row) => {
+            const d = dateToDate(row.date)
+            const r = row.price
+            console.log('acc.dateArray is: ',acc.dateArray)
+            acc.dateArray.push(d)
+            acc.priceArray.push(r)
+            return acc
+        },{dateArray:[],priceArray:[]})*/
+
+        //const domain = dataArray.map((row) => dateToDate(row.date))
+        const domain = dataArray.map((row) => dateToDate(row.date))
+        const range = dataArray.map((row) => row.price)
+
+        console.log('[domain,range] is: ',[domain,range])
+        return (
+            d3.scaleOrdinal()
+                .domain(domain)
+                .range(range)
+        )
+    }
+
     async function handleSubmit(event) {
         event.preventDefault()
         console.log('In handleSUbmit, button was is: ',event.nativeEvent.submitter.className)
@@ -54,6 +76,9 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                 const data = sendToPython(formData)
                 const resolvedData = await data
                 console.log('resolvedData is: ',resolvedData)
+                const formattedDays = (resolvedData.stockFeatures.days_list)
+                    .map(day => dateToDate(day))
+                console.log('[formattedDays] is: ',[formattedDays])
                 const newPlotData = {
                     name:formData.stockSymbol,
                     data:resolvedData.stockArray,
@@ -67,7 +92,9 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                     minDeriv:resolvedData.stockFeatures.min_deriv,
                     maxDeriv:resolvedData.stockFeatures.max_deriv,
                     minDeriv2:resolvedData.stockFeatures.min_deriv2,
-                    maxDeriv2:resolvedData.stockFeatures.max_deriv2
+                    maxDeriv2:resolvedData.stockFeatures.max_deriv2,
+                    datePriceScale:generateScale(resolvedData.stockArray),
+                    daysList:formattedDays
                 }
                 handleInput(newPlotData)
             }
