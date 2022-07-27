@@ -37,8 +37,12 @@ function App() {
     overlayRaw:false,
     overlayNew:false,
     customDate:false,
-    xDomain:[(new Date()).toISOString().split('T')[0],(new Date()).toISOString().split('T')[0]],
-    dayValues:[(new Date()).toISOString().split('T')[0]]
+   /* xDomain:[(new Date()).toISOString().split('T')[0],(new Date()).toISOString().split('T')[0]],
+    dayValues:[(new Date()).toISOString().split('T')[0]],
+    selectedDayValues:[(new Date()).toISOString().split('T')[0]]*/
+    xDomain:[(new Date()),(new Date())],
+    dayValues:[(new Date())],
+    selectedDayValues:[(new Date())]
   })
 
 
@@ -56,6 +60,7 @@ function App() {
           console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd(newPlotData)
           plotPrefs.current.dayValues = calcDayValues(newPlotData)
+          plotPrefs.current.selectedDayValues = calcSelectedDayValues()
         }
 
         console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
@@ -68,6 +73,7 @@ function App() {
           console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd([inputData])
           plotPrefs.current.dayValues = inputData.daysList
+          plotPrefs.current.selectedDayValues = calcSelectedDayValues()
         }
 
         console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
@@ -94,8 +100,9 @@ function App() {
     if (!plotPrefs.current.customDate){
       const newXDomain = calcStartEnd(plotDataCopy)
       const newDayValues = calcDayValues(plotDataCopy)
+      const newSelectedDayValues = calcSelectedDayValues()
       const oldPrefsCopy = plotPrefs.current
-      plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues}
+      plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues,selectedDayValues:newSelectedDayValues}
     }
     setPlotData(plotDataCopy)
   }
@@ -122,20 +129,33 @@ function App() {
     return longestDayList
   }
 
-  /*useEffect(() => { 
-    if (!plotPrefs.current.customDate){
-      plotPrefs.current.xDomain = calcStartEnd(plotData)
-    }
-    console.log('xDomain is: ',plotPrefs.current.xDomain)
-  },[plotData.length,plotData[0]['name'],plotData[0]['trailingDays']])*/
+  const calcSelectedDayValues = () => {
+    const {xDomain,dayValues} = plotPrefs.current
+    /*const startIndex = dayValues.indexOf(xDomain[0])
+    const endIndex = dayValues.indexOf(xDomain[1])*/
+    const xDomainTime = [plotPrefs.current.xDomain[0].getTime(),plotPrefs.current.xDomain[1].getTime()]
+    console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,plotPrefs.current.xDomain,dayValues])
+    const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
+    const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
+    console.log("In calcSelectedDayValues, startIndex and endIndex are: ",[startIndex,endIndex])
+    const checkedStartIndex = startIndex === -1 ? 0:startIndex
+    const checkedEndIndex = endIndex === -1 ? (dayValues.length - 1):endIndex
+    console.log("In calcSelectedDayValues, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
+
+    const newSelectedDays = dayValues.slice(checkedStartIndex,checkedEndIndex+1)
+    console.log("In calcSelectedDayValues, [xDomain,dayValues,newSelectedDays] is: ",[plotPrefs.current.xDomain,dayValues,newSelectedDays])
+    return newSelectedDays
+  }
 
 
   const updateStartDate = (newDate) => {
     plotPrefs.current.xDomain[0] = newDate
+    plotPrefs.current.selectedDayValues = calcSelectedDayValues()
   }
 
   const updateEndDate = (newDate) => {
     plotPrefs.current.xDomain[1] = newDate
+    plotPrefs.current.selectedDayValues = calcSelectedDayValues()
   }
 
   return (

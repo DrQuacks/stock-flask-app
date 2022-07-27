@@ -14,7 +14,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
             customDate: false,
             firstDeriv: false,
             secondDeriv: false,
-            avgType: "constant",
+            avgType: "Constant",
             sampleType: "Close"
         }
     )
@@ -203,10 +203,10 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                         onChange={handleChange}
                         name="avgType"
                     >
-                        <option value="constant">Constant</option>
-                        <option value="linear">Linear</option>
-                        <option value="quadratic">Quadratic</option>
-                        <option value="exponential">Exponential</option>
+                        <option value="Constant">Constant</option>
+                        <option value="Linear">Linear</option>
+                        <option value="Quadratic">Quadratic</option>
+                        <option value="Exponential">Exponential</option>
                     </select>
 
                     <label htmlFor="sampleType">Sample</label>

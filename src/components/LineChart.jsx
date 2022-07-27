@@ -11,7 +11,7 @@ const LineChart = ({
 }) => {
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,dayValues} = plotPrefs.current
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues} = plotPrefs.current
     const showPlot = {
         price:true,
         firstDeriv:firstDeriv,
@@ -39,22 +39,24 @@ const LineChart = ({
             svg.select("#yAxis").remove()
             svg.select("#yAxisGridLines").remove()
             svg.select("#y2Axis").remove()
+            d3.selectAll(".tooltip").remove()
 
             const indexScale = d3.scaleLinear()
                 .domain([0,(plotData[0].data.length - 1)])
                 .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
-            console.log('xDomain in LineChart is: ',plotPrefs.current.xDomain)
+            console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
 
             const xScaleRange = [ margin.left, width - (margin.right + margin.left)]
 
             const xScaleShow = d3.scaleTime()
-                .domain(plotPrefs.current.xDomain)
+                .domain(xDomain)
                 .rangeRound(xScaleRange)
                 .clamp(true)
 
             const xScale = d3.scalePoint()
-                .domain(dayValues)
+                //.domain(dayValues)
+                .domain(selectedDayValues)
                 .range(xScaleRange)
 
             const xScaleInverse = d3.scaleOrdinal()
@@ -153,7 +155,21 @@ const LineChart = ({
                         }
                 })
 
-                const linePlot = line(d.data)
+                const newData = [...d.data]
+                
+                const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
+                console.log("In the start of lineVector, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,xDomain,dayValues])
+                const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
+                const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
+                console.log("In lineVector, startIndex and endIndex are: ",[startIndex,endIndex])
+                const checkedStartIndex = startIndex === -1 ? 0:startIndex
+                const checkedEndIndex = endIndex === -1 ? (dayValues.length - 1):endIndex
+                console.log("In lineVector, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
+            
+                const newSelectedData = newData.slice(checkedStartIndex,checkedEndIndex+1)
+                console.log("In lineVector, [xDomain,newData,newSelectedData] is: ",[xDomain,newData,newSelectedData])
+
+                const linePlot = line(newSelectedData)
                 //console.log("Line is: ",linePlot)
 
                 return(linePlot)
@@ -256,7 +272,11 @@ const LineChart = ({
                         console.log('numericDay0 is: ',plotData[0].daysList[0].getTime())
                         console.log('numericDayEnd is: ',plotData[0].daysList[plotData[0].daysList.length - 1].getTime())*/
 
-                        if (mappedX.getTime() >= plotData[0].daysList[0].getTime() && rawX <= (width - margin.left - margin.right)){
+                        if (
+                            mappedX.getTime() >= plotData[0].daysList[0].getTime() 
+                            && rawX <= (width - margin.left - margin.right) 
+                            && rawX >= (margin.left)
+                        ){
                             d3.selectAll("#tempVerticalMouseLine")
                                 .attr("x1", () => {
                                     console.log('rawX was altered with a value of: ',rawX)
@@ -275,7 +295,11 @@ const LineChart = ({
                         }
                     }
 
-                    if (mappedX.getTime() >= plotData[0].daysList[0].getTime() && rawX <= (width - margin.left - margin.right)){
+                    if (
+                        mappedX.getTime() >= plotData[0].daysList[0].getTime() 
+                        && rawX <= (width - margin.left - margin.right) 
+                        && rawX >= (margin.left)
+                    ){
                         console.log('I only want this once per drag')
                         svg.append("g")
                             .attr("id","tempVerticalMouseLine")
@@ -320,7 +344,6 @@ const LineChart = ({
                     d3.selectAll("#tempHorizontalMouseLine").remove()
                     tooltip.style("opacity",0)
                     svg.on("mousemove",null)
-                    d3.selectAll("#tooltip").remove()
                 })
 
             }

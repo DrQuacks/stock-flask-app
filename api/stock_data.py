@@ -29,6 +29,7 @@ def trailing_avg(sym, days, avg_type, sample_type):
     days_list = []
     stock_list = []
     deriv_list = []
+    raw_deriv_list = []
     deriv2_list = []
     fakeIndex = 0
     min_price = stock[sample_type].iloc[days]
@@ -37,6 +38,9 @@ def trailing_avg(sym, days, avg_type, sample_type):
     max_deriv = 0
     min_deriv2 = 0
     max_deriv2 = 0
+
+    w = 0.01
+
     print("stock index is ",stock.index)
     start_date = stock.index[days]
     print("start is ",start_date)
@@ -46,21 +50,37 @@ def trailing_avg(sym, days, avg_type, sample_type):
     #stock['avg'] = 0
     #stock['keep'] = False
 
-    print("stock is: ",stock)
+    #print("stock is: ",stock)
     print("stock type is: ",type(stock))
 
-    for day in range(days,stock.size - 1): #has to start far enough along to calc a trailing average
-        day_avg = computeAvg(stock[sample_type],day,days,avg_type)        
+    stock['derivative'] = stock[sample_type].pct_change()
+    
+    #feels a bit hacky
+    stock['derivative'].iloc[0] = 0
+    print('derivative is: ',stock['derivative'])
+    print('stock shape[0] is: ',stock.shape[0])
+    #print("stock is: ",stock)
+    
+    for day in range(days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
+        day_avg = computeAvg(stock[sample_type],day,days,avg_type)
+        deriv_avg = computeAvg(stock['derivative'],day,days,avg_type)    
         
         avg_list.append(day_avg) #add average to list
         days_list.append(stock.index[day]) #add coresponding day to list
+        raw_deriv_list.append(deriv_avg)
         
         #makes it a percentage instead of absolute derivative
         #might wanna do both though?
         if (fakeIndex >= 1):
-            deriv_list.append(((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex]))
+            #deriv_list.append(((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex]))
+            #new_deriv = ((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex])
+            new_deriv = (w * raw_deriv_list[fakeIndex]) + ((1-w) * raw_deriv_list[fakeIndex-1])
         else:
-            deriv_list.append(0)
+            #deriv_list.append(0)
+            new_deriv = 0
+
+        deriv_list.append(new_deriv)
+        
         
         if (fakeIndex >= 1):
             deriv2_list.append(deriv_list[fakeIndex] - deriv_list[fakeIndex - 1])
@@ -71,7 +91,8 @@ def trailing_avg(sym, days, avg_type, sample_type):
             "numIndex": fakeIndex,
             "price": day_avg,
             "date":stock.index[day],
-            "derivFirst":deriv_list[fakeIndex],
+            #"derivFirst":deriv_list[fakeIndex],
+            "derivFirst":deriv_avg,
             "derivSecond":deriv2_list[fakeIndex]
         })
         
@@ -101,6 +122,7 @@ def trailing_avg(sym, days, avg_type, sample_type):
     #I still might want this dataframe for backend calcs...
     #stock_data = pd.DataFrame(avg_list, index=days_list, columns =['Price']) #create dataframe
     
+    #print(stock_list[0:5])
     return {
         "stock_data":stock_list,
         "days_list":days_list,
@@ -132,9 +154,11 @@ def computeAvg(stock,this_day,trail_days,type):
         coef_list = [d**0 for d in day_list]
         #print(type)
 
+    if(this_day == 100):
+        print('coef list and type is: ',[coef_list,type])
     for s,c in zip(stock.iloc[this_day-trail_days+1:this_day+1],coef_list):
         weighted_sum += s*c
-        if(this_day == 5):
+        if(this_day == 100):
             print("On day 100, weighted_sum is: ",weighted_sum)
             print("On day 100, s is: ",s)
             print("On day 100, c is: ",c)

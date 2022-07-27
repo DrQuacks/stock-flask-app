@@ -7,3 +7,7 @@
 -display table of raw values as an option
 
 -calculate derivs from most recent max or min 
+
+-need a way to make one stock "active"
+    -tooltip and other things would ping off of it
+    -I could store it in plotPrefs
