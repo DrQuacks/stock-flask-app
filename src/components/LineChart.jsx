@@ -14,6 +14,7 @@ const LineChart = ({
     const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues} = plotPrefs.current
     const showPlot = {
         price:true,
+        raw:true,
         firstDeriv:firstDeriv,
         secondDeriv:secondDeriv
     }
@@ -144,10 +145,14 @@ const LineChart = ({
                 const lineNoY = d3.line()
                     .x((d) => xScale(dateToDate(d.date)))
 
+                console.log('In lineVector, d.data is: ',d.data)
                 const line = lineNoY
                     .y((d) => {
                         if (type === "price"){
                             return yScale(d.price)
+                        } else if (type === "raw") {
+                            console.log('@@@@@@@@@@@@@@@@@@@@@Raw Data@@@@@@@@@@@@@@@@@@@@@@')
+                            return yScale(d.rawPrice)
                         } else if (type === "firstDeriv") {
                             return rightYScale(d.derivFirst)
                         } else {
@@ -158,12 +163,14 @@ const LineChart = ({
                 const newData = [...d.data]
                 
                 const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
-                console.log("In the start of lineVector, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,xDomain,dayValues])
-                const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
-                const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
+                console.log("In the start of lineVector, [xDomainTime,xDomain,dayValues,d.daysList] is: ",[xDomainTime,xDomain,dayValues,d.daysList])
+                //const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
+                //const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
+                const startIndex = d.daysList.findIndex(day => day.getTime() === xDomainTime[0])
+                const endIndex = d.daysList.findIndex(day => day.getTime() === xDomainTime[1])
                 console.log("In lineVector, startIndex and endIndex are: ",[startIndex,endIndex])
                 const checkedStartIndex = startIndex === -1 ? 0:startIndex
-                const checkedEndIndex = endIndex === -1 ? (dayValues.length - 1):endIndex
+                const checkedEndIndex = endIndex === -1 ? (d.daysList.length - 1):endIndex
                 console.log("In lineVector, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
             
                 const newSelectedData = newData.slice(checkedStartIndex,checkedEndIndex+1)
@@ -202,15 +209,14 @@ const LineChart = ({
                             .attr("stroke", (d) => {
                                 return myColor(d)
                             })
-                            .attr("stroke-width", 1.5)
+                            .attr("stroke-width", plotType === "price" ? 4:0.75)
                             .attr("d", (d)=>{
                                 console.log("d is: ",d)
                                 console.log("plotType is: ",plotType)
                                 return lineVector(d,plotType)
                             })
-                            //.attr("transform", `translate(${margin.left},${margin.top})`)
                             .attr("transform", `translate(0,${margin.top})`)
-                            .attr("opacity","1")
+                            .attr("opacity",plotType === "raw" ? 1:0.5)
                         }
                     })
                 
@@ -227,44 +233,42 @@ const LineChart = ({
 
                 const calcXandY = (e) => {
                     const [rawX,rawY] = d3.pointer(e)
-                    console.log('yDOmain is: ',yDomain)
+                    //console.log('yDOmain is: ',yDomain)
 
                     const rangePoints = xScaleInverse.domain()
-                    console.log('[rangePoints] is: ',[rangePoints]) 
+                    //console.log('[rangePoints] is: ',[rangePoints]) 
                     const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
                     const roundedRawX = rangePoints[roundedRawXIndex]
-                    console.log('roundedRawX is: ',roundedRawX)
+                    //console.log('roundedRawX is: ',roundedRawX)
                     pointerX = xScaleInverse(roundedRawX)
 
                     pointerY = yScale.invert(rawY - margin.top)
-                    console.log('pointer is at: ',[pointerX,pointerY])
+                    //console.log('pointer is at: ',[pointerX,pointerY])
                     
                     const mappedX = pointerX
                     //eventually I need to make this more dynamic
                     const mappedY = plotData[0].datePriceScale(mappedX)
-                    console.log('mappedX is: ',mappedX)
-                    console.log('mappedX type is: ',(typeof mappedX))
-                    console.log('mappedY is: ',mappedY)
+                    //console.log('mappedX is: ',mappedX)
+                    //console.log('mappedX type is: ',(typeof mappedX))
+                    //console.log('mappedY is: ',mappedY)
                     const plotY = yScale(mappedY) + margin.top
-                    console.log('plotY is: ',plotY)
+                    //console.log('plotY is: ',plotY)
                     return {rawX,rawY,mappedX,mappedY,plotY}
                 }
             
                 //for some reason this breaks when I switch browser windows
                 svg.on("mousedown", e => { 
-                    console.log(d3.pointer(e))
+                    //console.log(d3.pointer(e))
                     e.preventDefault()
 
                     const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(e)
                     svg.on("mousemove",eDrag => {
-                        console.log("eDrag is: ",d3.pointer(eDrag))
-                        console.log("e is: ",d3.pointer(e))
+                        //console.log("eDrag is: ",d3.pointer(eDrag))
+                        //console.log("e is: ",d3.pointer(e))
                         mouseMove(eDrag)
                     })
 
                     function mouseMove(eDrag) {
-                        console.log('mouse is moving')
-                        
                         eDrag.preventDefault()
                         const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(eDrag)
 
@@ -279,7 +283,7 @@ const LineChart = ({
                         ){
                             d3.selectAll("#tempVerticalMouseLine")
                                 .attr("x1", () => {
-                                    console.log('rawX was altered with a value of: ',rawX)
+                                    //console.log('rawX was altered with a value of: ',rawX)
                                     return rawX
                                 })
                                 .attr("x2", rawX)
@@ -300,7 +304,7 @@ const LineChart = ({
                         && rawX <= (width - margin.left - margin.right) 
                         && rawX >= (margin.left)
                     ){
-                        console.log('I only want this once per drag')
+                        //console.log('I only want this once per drag')
                         svg.append("g")
                             .attr("id","tempVerticalMouseLine")
                                 .append("line")
@@ -337,8 +341,8 @@ const LineChart = ({
                 })
 
                 svg.on("mouseup", e => { 
-                    console.log(d3.pointer(e))
-                    console.log("mouse up")
+                    //console.log(d3.pointer(e))
+                    //console.log("mouse up")
                     const [rawX,rawY] = d3.pointer(e)
                     d3.selectAll("#tempVerticalMouseLine").remove()
                     d3.selectAll("#tempHorizontalMouseLine").remove()

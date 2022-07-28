@@ -90,6 +90,7 @@ def trailing_avg(sym, days, avg_type, sample_type):
         stock_list.append({
             "numIndex": fakeIndex,
             "price": day_avg,
+            "rawPrice":stock[sample_type].iloc[day],
             "date":stock.index[day],
             #"derivFirst":deriv_list[fakeIndex],
             "derivFirst":deriv_avg,
@@ -158,10 +159,10 @@ def computeAvg(stock,this_day,trail_days,type):
         print('coef list and type is: ',[coef_list,type])
     for s,c in zip(stock.iloc[this_day-trail_days+1:this_day+1],coef_list):
         weighted_sum += s*c
-        if(this_day == 100):
-            print("On day 100, weighted_sum is: ",weighted_sum)
-            print("On day 100, s is: ",s)
-            print("On day 100, c is: ",c)
+        #if(this_day == 100):
+            #print("On day 100, weighted_sum is: ",weighted_sum)
+            #print("On day 100, s is: ",s)
+            #print("On day 100, c is: ",c)
 
     
     return weighted_sum/sum(coef_list)

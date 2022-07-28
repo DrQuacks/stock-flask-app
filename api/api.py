@@ -20,15 +20,12 @@ def get_dummy_response():
 def set_dummy_post_value():
     data = request.get_json(force=True)
 
-    #rawData = sd.get_close(data['stockSymbol'])
-
     stockData = sd.trailing_avg(
         data['stockSymbol'],
         int(data['trailingDays']),
         data['avgType'],
         data['sampleType']
     )
-
     print('stockArray type is: ',type(stockData["stock_data"]))
     print('stockData is: ',stockData["stock_data"][0:10])
 

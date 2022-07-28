@@ -168,6 +168,7 @@ function App() {
         />
         <DateRangeContainer
           xDomain = {plotPrefs.current.xDomain}
+          dayValues = {plotPrefs.current.dayValues}
           updateStartDate = {updateStartDate}
           updateEndDate = {updateEndDate}
         />

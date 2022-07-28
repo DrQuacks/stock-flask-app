@@ -27,13 +27,18 @@
 .DateRangeContainer {
   order:2;
   display: grid;
-  grid-template-rows: 40px 40px;
+  grid-template-rows: 30px 30px;
 }
 
 .DateElement {
   display: grid;
   grid-template-columns: 80px 140px;
   align-items: baseline;
+}
+
+.ResetDateButton {
+  order:3;
+  height:20px;
 }
 
 .MainSection {
