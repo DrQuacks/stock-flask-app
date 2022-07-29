@@ -11,3 +11,6 @@
 -need a way to make one stock "active"
     -tooltip and other things would ping off of it
     -I could store it in plotPrefs
+
+-a way to select start and end with the tooltip
+    activate a set start date and set end date thing, and it'd trigger on mouse up

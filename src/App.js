@@ -5,6 +5,7 @@ import './App.css';
 import PlotInputForm from './components/PlotInputForm';
 import LegendContainer from './components/LegendContainer';
 import DateRangeContainer from './components/DateRangeContainer';
+import PriceRangeContainer from './components/PriceRangeContainer';
 
 function App() {
 
@@ -28,13 +29,11 @@ function App() {
 
   const [plotPrefsState, setPlotPrefsState] = useState({
     semiLog:false,
-    overlayRaw:false,
     overlayNew:false
   })
 
   const plotPrefs = useRef({
     semiLog:false,
-    overlayRaw:false,
     overlayNew:false,
     customDate:false,
    /* xDomain:[(new Date()).toISOString().split('T')[0],(new Date()).toISOString().split('T')[0]],
@@ -42,7 +41,8 @@ function App() {
     selectedDayValues:[(new Date()).toISOString().split('T')[0]]*/
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
-    selectedDayValues:[(new Date())]
+    selectedDayValues:[(new Date())],
+    priceRange:[0,0]
   })
 
 
@@ -55,6 +55,7 @@ function App() {
       if (plotPrefs.current.overlayNew){
         const newPlotData = [...plotData,inputData]
         console.log('newPlotData is: ',newPlotData)
+        plotPrefs.current.priceRange = calcMinMax(newPlotData)
 
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
@@ -68,6 +69,7 @@ function App() {
         //setPlotData((prevData) => [...prevData,inputData])
 
       } else {
+        plotPrefs.current.priceRange = calcMinMax([inputData])
 
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
@@ -100,9 +102,13 @@ function App() {
     if (!plotPrefs.current.customDate){
       const newXDomain = calcStartEnd(plotDataCopy)
       const newDayValues = calcDayValues(plotDataCopy)
-      const newSelectedDayValues = calcSelectedDayValues()
       const oldPrefsCopy = plotPrefs.current
-      plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues,selectedDayValues:newSelectedDayValues}
+      plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues}
+      const newSelectedDayValues = calcSelectedDayValues()
+      const newMinMax = calcMinMax(plotDataCopy)
+      const oldPrefsCopy2 = plotPrefs.current
+      plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues,priceRange:newMinMax}
+      console.log('After removal, plotPrefs is: ',plotPrefs)
     }
     setPlotData(plotDataCopy)
   }
@@ -111,9 +117,17 @@ function App() {
     const xDomain = d3.extent(stockArray.reduce((acc,element) => {
       const thisExtent = [element.start,element.end]
       return [...acc,...thisExtent]
-  },[]))
-  return xDomain
-}
+    },[]))
+    return xDomain
+  }
+
+  const calcMinMax = (stockArray) => {
+    const yRange = d3.extent(stockArray.reduce((acc,element) => {
+      const thisExtent = [element.min,element.max]
+      return [...acc,...thisExtent]
+    },[]))
+    return yRange
+  }
 
   const calcDayValues = (plots) => {
     console.log("In calc day values, plots is: ",plots)
@@ -133,7 +147,9 @@ function App() {
     const {xDomain,dayValues} = plotPrefs.current
     /*const startIndex = dayValues.indexOf(xDomain[0])
     const endIndex = dayValues.indexOf(xDomain[1])*/
-    const xDomainTime = [plotPrefs.current.xDomain[0].getTime(),plotPrefs.current.xDomain[1].getTime()]
+    //const xDomainTime = [plotPrefs.current.xDomain[0].getTime(),plotPrefs.current.xDomain[1].getTime()]
+    const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
+
     console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,plotPrefs.current.xDomain,dayValues])
     const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
     const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
@@ -158,6 +174,14 @@ function App() {
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
   }
 
+  const updateMinPrice = (price) => {
+    plotPrefs.current.priceRange[0] = price
+  }
+
+  const updateMaxPrice = (price) => {
+    plotPrefs.current.priceRange[1] = price
+  }
+
   return (
     <div className="App">
       <div className='TopBar'>
@@ -171,6 +195,12 @@ function App() {
           dayValues = {plotPrefs.current.dayValues}
           updateStartDate = {updateStartDate}
           updateEndDate = {updateEndDate}
+        />
+        <PriceRangeContainer
+          min = {plotPrefs.current.priceRange[0]}
+          max = {plotPrefs.current.priceRange[1]}
+          updateMinPrice = {updateMinPrice}
+          updateMaxPrice = {updateMaxPrice}
         />
       </div>
       <div className="MainSection">

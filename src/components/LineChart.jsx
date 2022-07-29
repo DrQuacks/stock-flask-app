@@ -11,7 +11,7 @@ const LineChart = ({
 }) => {
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues} = plotPrefs.current
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,priceRange} = plotPrefs.current
     const showPlot = {
         price:true,
         raw:true,
@@ -66,11 +66,13 @@ const LineChart = ({
             
             const yScaleType = semiLog ? d3.scaleLog() : d3.scaleLinear()
 
-            const yDomain = d3.extent(plotData.reduce((acc,element) => {
+            /*const yDomain = d3.extent(plotData.reduce((acc,element) => {
                 const thisExtent = [element.min,element.max]
                 return [...acc,...thisExtent]
             },[]))
-            console.log('yDomain is: ',yDomain)
+            console.log('yDomain is: ',yDomain)*/
+
+            const yDomain = priceRange
 
             const y2Domain = d3.extent(plotData.reduce((acc,element) => {
                 const thisDerivExtent = [element.minDeriv,element.maxDeriv]
@@ -151,7 +153,6 @@ const LineChart = ({
                         if (type === "price"){
                             return yScale(d.price)
                         } else if (type === "raw") {
-                            console.log('@@@@@@@@@@@@@@@@@@@@@Raw Data@@@@@@@@@@@@@@@@@@@@@@')
                             return yScale(d.rawPrice)
                         } else if (type === "firstDeriv") {
                             return rightYScale(d.derivFirst)
@@ -247,13 +248,14 @@ const LineChart = ({
                     
                     const mappedX = pointerX
                     //eventually I need to make this more dynamic
-                    const mappedY = plotData[0].datePriceScale(mappedX)
+                    const [mappedY,mappedYRaw] = plotData[0].datePriceScale(mappedX)
                     //console.log('mappedX is: ',mappedX)
                     //console.log('mappedX type is: ',(typeof mappedX))
                     //console.log('mappedY is: ',mappedY)
                     const plotY = yScale(mappedY) + margin.top
+                    const plotYRaw = yScale(mappedYRaw) + margin.top
                     //console.log('plotY is: ',plotY)
-                    return {rawX,rawY,mappedX,mappedY,plotY}
+                    return {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw}
                 }
             
                 //for some reason this breaks when I switch browser windows
@@ -261,7 +263,7 @@ const LineChart = ({
                     //console.log(d3.pointer(e))
                     e.preventDefault()
 
-                    const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(e)
+                    const {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(e)
                     svg.on("mousemove",eDrag => {
                         //console.log("eDrag is: ",d3.pointer(eDrag))
                         //console.log("e is: ",d3.pointer(e))
@@ -270,7 +272,7 @@ const LineChart = ({
 
                     function mouseMove(eDrag) {
                         eDrag.preventDefault()
-                        const {rawX,rawY,mappedX,mappedY,plotY} = calcXandY(eDrag)
+                        const {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(eDrag)
 
                         /*console.log('numericMappedX is: ',mappedX.getTime())
                         console.log('numericDay0 is: ',plotData[0].daysList[0].getTime())
@@ -292,10 +294,14 @@ const LineChart = ({
                                 .attr("y1", plotY)
                                 .attr("y2", plotY)
 
+                            d3.selectAll("#tempRawHorizontalMouseLine")
+                                .attr("y1", plotYRaw)
+                                .attr("y2", plotYRaw)
+
                             tooltip
                                 .style("top", eDrag.pageY - 10 + "px")
                                 .style("left", eDrag.pageX + 10 + "px")
-                                .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                                .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
                         }
                     }
 
@@ -325,7 +331,19 @@ const LineChart = ({
                                 .attr("y1", plotY)
                                 .attr("x2", width - margin.right - margin.left)
                                 .attr("y2", plotY)
-                                .style("stroke-width", 1)
+                                .style("stroke-width", 2.5)
+                                .style("stroke", "gray")
+                                .style("fill", "none");
+
+                        svg.append("g")
+                            .attr("id","tempRawHorizontalMouseLine")
+                                .append("line")
+                                .attr("id","tempRawHorizontalMouseLine")
+                                .attr("x1", margin.left)
+                                .attr("y1", plotYRaw)
+                                .attr("x2", width - margin.right - margin.left)
+                                .attr("y2", plotYRaw)
+                                .style("stroke-width", 0.9)
                                 .style("stroke", "gray")
                                 .style("fill", "none");
                         
@@ -336,8 +354,8 @@ const LineChart = ({
                             .style("top", e.pageY - 10 + "px")
                             .style("left", e.pageX + 10 + "px")
                             .style("opacity", 1)
-                            .html(`$${mappedY.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
-                    }
+                            .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                        }
                 })
 
                 svg.on("mouseup", e => { 
@@ -346,6 +364,7 @@ const LineChart = ({
                     const [rawX,rawY] = d3.pointer(e)
                     d3.selectAll("#tempVerticalMouseLine").remove()
                     d3.selectAll("#tempHorizontalMouseLine").remove()
+                    d3.selectAll("#tempRawHorizontalMouseLine").remove()
                     tooltip.style("opacity",0)
                     svg.on("mousemove",null)
                 })

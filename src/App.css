@@ -16,6 +16,8 @@
   display: flex;
   flex-direction: row;
   margin-top: 15px;
+  justify-content: space-around;
+  width:1400px;
 }
 
 .PlotInputForm {
@@ -39,6 +41,21 @@
 .ResetDateButton {
   order:3;
   height:20px;
+}
+
+.PriceRangeForm {
+  order:0;
+  display: grid;
+  grid-template-rows: 30px 30px;
+  width:150px;
+}
+
+.PriceInput {
+  width:140px;
+}
+
+.ResetPriceButton {
+  width:140px;
 }
 
 .MainSection {

@@ -9,7 +9,6 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
             stockSymbol: "", 
             trailingDays: "", 
             semiLog: false, 
-            overlayRaw: false, 
             overlayNew: false,
             customDate: false,
             firstDeriv: false,
@@ -30,18 +29,8 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
     }
 
     function generateScale(dataArray) {
-        /*const [domain,range] = dataArray.reduce((acc,row) => {
-            const d = dateToDate(row.date)
-            const r = row.price
-            console.log('acc.dateArray is: ',acc.dateArray)
-            acc.dateArray.push(d)
-            acc.priceArray.push(r)
-            return acc
-        },{dateArray:[],priceArray:[]})*/
-
-        //const domain = dataArray.map((row) => dateToDate(row.date))
         const domain = dataArray.map((row) => dateToDate(row.date))
-        const range = dataArray.map((row) => row.price)
+        const range = dataArray.map((row) => [row.price,row.rawPrice])
 
         console.log('[domain,range] is: ',[domain,range])
         return (
@@ -57,7 +46,6 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
         const buttonType = event.nativeEvent.submitter.className
         const prefs = {
             semiLog: formData.semiLog,
-            overlayRaw: formData.overlayRaw,
             overlayNew: formData.overlayNew,
             customDate: formData.customDate,
             firstDeriv: formData.firstDeriv,
@@ -145,15 +133,6 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                         name="semiLog"
                     />
                     <label htmlFor="semiLog">Semi-Log</label>
-
-                    <input 
-                        type="checkbox" 
-                        id="overlayRaw" 
-                        checked={formData.overlayRaw}
-                        onChange={handleChange}
-                        name="overlayRaw"
-                    />
-                    <label htmlFor="overlayRaw">Overlay Raw</label>
 
                     <input 
                         type="checkbox" 
