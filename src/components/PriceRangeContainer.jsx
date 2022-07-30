@@ -1,16 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 const PriceRangeContainer = ({min,max,updateMinPrice,updateMaxPrice}) => {
 
-    const [formData, setFormData] = useState({"min":min,"max":max})
+    console.log("[min,max] is: ",[min,max])
+    const [formData, setFormData] = useState({"min":0,"max":0})
+
+    useEffect(() => {
+        const newMin = +min
+        const newMax = +max
+        setFormData({"min":newMin.toFixed(2),"max":newMax.toFixed(2)})
+    },[min,max])
+
+    console.log("stateful [min,max] is: ",[formData.min,formData.max])
+    console.log('formData is: ',formData)
 
 
     const changeHandler = (event) => {
         const {name, value} = event.target
+        const numValue = +(value.substring(1))
         setFormData(prevFormData => {
             return {
                 ...prevFormData,
-                [name]: value
+                [name]: numValue
             }
         })
     }
@@ -29,20 +40,20 @@ const PriceRangeContainer = ({min,max,updateMinPrice,updateMaxPrice}) => {
             <input
                 type="text"
                 className="PriceInput"
-                placeholder={min}
                 onChange={changeHandler}
-                name="min"
-                value={formData.stockSymbol}
+                name="max"
+                value={`$${formData.max}`}
             />
-
+            
             <input
                 type="text"
                 className="PriceInput"
-                placeholder={max}
                 onChange={changeHandler}
-                name="max"
-                value={formData.trailingDays}
+                name="min"
+                value={`$${formData.min}`}
             />
+
+            
             <button className = "ResetPriceButton">UPDATE PRICE</button>
 
         </form>

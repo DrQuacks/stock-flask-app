@@ -125,6 +125,89 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
 
             <div className="OptionsContainer">
                 <div className="StockChecks">
+
+                    <input 
+                        type="checkbox" 
+                        id="overlayNew" 
+                        checked={formData.overlayNew}
+                        onChange={handleChange}
+                        name="overlayNew"
+                    />
+                    <label htmlFor="overlayNew">Overlay New</label>
+
+                    <input 
+                        type="checkbox" 
+                        id="customDate" 
+                        checked={formData.customDate}
+                        onChange={handleChange}
+                        name="customDate"
+                    />
+                    <label htmlFor="customDate">Persist Date</label>
+
+                </div>
+                
+                
+                
+                <div className="StockDropDowns">
+                <label htmlFor="avgType">Avg Type</label>
+                    <select 
+                        id="avgType" 
+                        value={formData.avgType}
+                        onChange={handleChange}
+                        name="avgType"
+                    >
+                        <option value="Constant">Constant</option>
+                        <option value="Linear">Linear</option>
+                        <option value="Quadratic">Quadratic</option>
+                        <option value="Exponential">Exponential</option>
+                    </select>
+
+                    <label htmlFor="sampleType">Sample</label>
+                    <select 
+                        id="sampleType" 
+                        value={formData.sampleType}
+                        onChange={handleChange}
+                        name="sampleType"
+                    >
+                        <option value="Close">Close</option>
+                        <option value="Open">Open</option>
+                        <option value="High">High</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+            </div>
+
+        </form>
+    )
+
+    /*return (
+        <form
+            className="PlotInputForm"
+            onSubmit={handleSubmit}
+        >
+            <div className="SymbolDays">
+                <input
+                    type="text"
+                    placeholder="Stock Symbol"
+                    onChange={handleChange}
+                    name="stockSymbol"
+                    value={formData.stockSymbol}
+                />
+
+                <input
+                    type="text"
+                    placeholder="Trailing Days"
+                    onChange={handleChange}
+                    name="trailingDays"
+                    value={formData.trailingDays}
+                />
+
+                <button className = "PlotButton">PLOT</button>
+                <button className = "UpdateButton">UPDATE</button>
+            </div>
+
+            <div className="OptionsContainer">
+                <div className="StockChecks">
                     <input 
                         type="checkbox" 
                         id="semiLog" 
@@ -204,7 +287,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
             </div>
 
         </form>
-    )
+    )*/
 
 }
 

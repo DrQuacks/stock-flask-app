@@ -6,6 +6,7 @@ import PlotInputForm from './components/PlotInputForm';
 import LegendContainer from './components/LegendContainer';
 import DateRangeContainer from './components/DateRangeContainer';
 import PriceRangeContainer from './components/PriceRangeContainer';
+import GraphOptions from './components/GraphOptions';
 
 function App() {
 
@@ -36,9 +37,6 @@ function App() {
     semiLog:false,
     overlayNew:false,
     customDate:false,
-   /* xDomain:[(new Date()).toISOString().split('T')[0],(new Date()).toISOString().split('T')[0]],
-    dayValues:[(new Date()).toISOString().split('T')[0]],
-    selectedDayValues:[(new Date()).toISOString().split('T')[0]]*/
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
@@ -188,6 +186,9 @@ function App() {
         <PlotInputForm
           plotData = {plotData}
           handleInput = {handleInput}
+          setPrefs = {setPrefs}
+        />
+        <GraphOptions
           setPrefs = {setPrefs}
         />
         <DateRangeContainer
