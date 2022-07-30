@@ -32,7 +32,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
         const domain = dataArray.map((row) => dateToDate(row.date))
         const range = dataArray.map((row) => [row.price,row.rawPrice])
 
-        console.log('[domain,range] is: ',[domain,range])
+        //console.log('[domain,range] is: ',[domain,range])
         return (
             d3.scaleOrdinal()
                 .domain(domain)
@@ -42,7 +42,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
 
     async function handleSubmit(event) {
         event.preventDefault()
-        console.log('In handleSUbmit, button was is: ',event.nativeEvent.submitter.className)
+        //console.log('In handleSUbmit, button was is: ',event.nativeEvent.submitter.className)
         const buttonType = event.nativeEvent.submitter.className
         const prefs = {
             semiLog: formData.semiLog,
@@ -66,7 +66,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                 console.log('resolvedData is: ',resolvedData)
                 const formattedDays = (resolvedData.stockFeatures.days_list)
                     .map(day => dateToDate(day))
-                console.log('[formattedDays] is: ',[formattedDays])
+                //console.log('[formattedDays] is: ',[formattedDays])
                 const newPlotData = {
                     name:formData.stockSymbol,
                     data:resolvedData.stockArray,
@@ -120,7 +120,6 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                 />
 
                 <button className = "PlotButton">PLOT</button>
-                <button className = "UpdateButton">UPDATE</button>
             </div>
 
             <div className="OptionsContainer">
@@ -179,115 +178,6 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
 
         </form>
     )
-
-    /*return (
-        <form
-            className="PlotInputForm"
-            onSubmit={handleSubmit}
-        >
-            <div className="SymbolDays">
-                <input
-                    type="text"
-                    placeholder="Stock Symbol"
-                    onChange={handleChange}
-                    name="stockSymbol"
-                    value={formData.stockSymbol}
-                />
-
-                <input
-                    type="text"
-                    placeholder="Trailing Days"
-                    onChange={handleChange}
-                    name="trailingDays"
-                    value={formData.trailingDays}
-                />
-
-                <button className = "PlotButton">PLOT</button>
-                <button className = "UpdateButton">UPDATE</button>
-            </div>
-
-            <div className="OptionsContainer">
-                <div className="StockChecks">
-                    <input 
-                        type="checkbox" 
-                        id="semiLog" 
-                        checked={formData.semiLog}
-                        onChange={handleChange}
-                        name="semiLog"
-                    />
-                    <label htmlFor="semiLog">Semi-Log</label>
-
-                    <input 
-                        type="checkbox" 
-                        id="overlayNew" 
-                        checked={formData.overlayNew}
-                        onChange={handleChange}
-                        name="overlayNew"
-                    />
-                    <label htmlFor="overlayNew">Overlay New</label>
-
-                    <input 
-                        type="checkbox" 
-                        id="customDate" 
-                        checked={formData.customDate}
-                        onChange={handleChange}
-                        name="customDate"
-                    />
-                    <label htmlFor="customDate">Persist Date</label>
-
-                <input 
-                        type="checkbox" 
-                        id="firstDeriv" 
-                        checked={formData.firstDeriv}
-                        onChange={handleChange}
-                        name="firstDeriv"
-                    />
-                    <label htmlFor="firstDeriv">First Derivative</label>
-
-                <input 
-                    type="checkbox" 
-                    id="secondDeriv" 
-                    checked={formData.secondDeriv}
-                    onChange={handleChange}
-                    name="secondDeriv"
-                />
-                <label htmlFor="secondDeriv">Second Derivative</label>
-
-                </div>
-                
-                
-                
-                <div className="StockDropDowns">
-                <label htmlFor="avgType">Avg Type</label>
-                    <select 
-                        id="avgType" 
-                        value={formData.avgType}
-                        onChange={handleChange}
-                        name="avgType"
-                    >
-                        <option value="Constant">Constant</option>
-                        <option value="Linear">Linear</option>
-                        <option value="Quadratic">Quadratic</option>
-                        <option value="Exponential">Exponential</option>
-                    </select>
-
-                    <label htmlFor="sampleType">Sample</label>
-                    <select 
-                        id="sampleType" 
-                        value={formData.sampleType}
-                        onChange={handleChange}
-                        name="sampleType"
-                    >
-                        <option value="Close">Close</option>
-                        <option value="Open">Open</option>
-                        <option value="High">High</option>
-                        <option value="Low">Low</option>
-                    </select>
-                </div>
-            </div>
-
-        </form>
-    )*/
 
 }
 

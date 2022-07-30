@@ -3,7 +3,7 @@ import DatePicker from 'react-date-picker';
 
 const DateRangeElement = ({type,date,updateDate}) => {
 
-    console.log('DateRangeElement date is: ',date)
+    //console.log('DateRangeElement date is: ',date)
     const [value, setValue] = useState(date);
 
     useEffect(() => {
@@ -11,7 +11,7 @@ const DateRangeElement = ({type,date,updateDate}) => {
     },[date])
 
     function handleChange() {
-        console.log('new date value is: ',value)
+        //console.log('new date value is: ',value)
         updateDate(value)
     }
 

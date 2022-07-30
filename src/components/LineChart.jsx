@@ -11,7 +11,7 @@ const LineChart = ({
 }) => {
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,priceRange} = plotPrefs.current
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange} = plotPrefs.current
     const showPlot = {
         price:true,
         raw:true,
@@ -46,7 +46,7 @@ const LineChart = ({
                 .domain([0,(plotData[0].data.length - 1)])
                 .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
-            console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
+            //console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
 
             const xScaleRange = [ margin.left, width - (margin.right + margin.left)]
 
@@ -72,7 +72,7 @@ const LineChart = ({
             },[]))
             console.log('yDomain is: ',yDomain)*/
 
-            const yDomain = priceRange
+            const yDomain = selectedPriceRange
 
             const y2Domain = d3.extent(plotData.reduce((acc,element) => {
                 const thisDerivExtent = [element.minDeriv,element.maxDeriv]
@@ -91,8 +91,8 @@ const LineChart = ({
                 const thisExtent = d3.extent(values)
                 return [...acc,...thisExtent]
             },[]))
-            console.log('yDomain2 is: ',y2Domain)
-            console.log('After yDomain2, yDomain is: ',yDomain)
+            //console.log('yDomain2 is: ',y2Domain)
+            //console.log('After yDomain2, yDomain is: ',yDomain)
 
 
             const yScale = yScaleType
@@ -147,7 +147,7 @@ const LineChart = ({
                 const lineNoY = d3.line()
                     .x((d) => xScale(dateToDate(d.date)))
 
-                console.log('In lineVector, d.data is: ',d.data)
+                //console.log('In lineVector, d.data is: ',d.data)
                 const line = lineNoY
                     .y((d) => {
                         if (type === "price"){
@@ -164,18 +164,17 @@ const LineChart = ({
                 const newData = [...d.data]
                 
                 const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
-                console.log("In the start of lineVector, [xDomainTime,xDomain,dayValues,d.daysList] is: ",[xDomainTime,xDomain,dayValues,d.daysList])
-                //const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
-                //const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
+                //console.log("In the start of lineVector, [xDomainTime,xDomain,dayValues,d.daysList] is: ",[xDomainTime,xDomain,dayValues,d.daysList])
+
                 const startIndex = d.daysList.findIndex(day => day.getTime() === xDomainTime[0])
                 const endIndex = d.daysList.findIndex(day => day.getTime() === xDomainTime[1])
-                console.log("In lineVector, startIndex and endIndex are: ",[startIndex,endIndex])
+                //console.log("In lineVector, startIndex and endIndex are: ",[startIndex,endIndex])
                 const checkedStartIndex = startIndex === -1 ? 0:startIndex
                 const checkedEndIndex = endIndex === -1 ? (d.daysList.length - 1):endIndex
-                console.log("In lineVector, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
+                //console.log("In lineVector, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
             
                 const newSelectedData = newData.slice(checkedStartIndex,checkedEndIndex+1)
-                console.log("In lineVector, [xDomain,newData,newSelectedData] is: ",[xDomain,newData,newSelectedData])
+                //console.log("In lineVector, [xDomain,newData,newSelectedData] is: ",[xDomain,newData,newSelectedData])
 
                 const linePlot = line(newSelectedData)
                 //console.log("Line is: ",linePlot)
@@ -223,7 +222,7 @@ const LineChart = ({
                 
                     symbolGroupUpdate.exit().remove()
                 
-                console.log('updateLines was called, and plotData is: ',plotData)
+                //console.log('updateLines was called, and plotData is: ',plotData)
                 
             }
 

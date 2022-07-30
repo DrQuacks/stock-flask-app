@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 
-const PriceRangeContainer = ({min,max,updateMinPrice,updateMaxPrice}) => {
+const PriceRangeContainer = ({min,max,minData,maxData,updateMinPrice,updateMaxPrice,setPrefs}) => {
 
     console.log("[min,max] is: ",[min,max])
+    console.log("[minData,maxData] is: ",[minData,maxData])
     const [formData, setFormData] = useState({"min":0,"max":0})
 
     useEffect(() => {
+        console.log('min and max changed to: ',[min,max])
         const newMin = +min
         const newMax = +max
         setFormData({"min":newMin.toFixed(2),"max":newMax.toFixed(2)})
@@ -30,6 +32,20 @@ const PriceRangeContainer = ({min,max,updateMinPrice,updateMaxPrice}) => {
         event.preventDefault()
         updateMinPrice(formData.min)
         updateMaxPrice(formData.max)
+        setPrefs({"selectedPriceRange":[formData.min,formData.max]})
+    }
+
+    const resetHandler = (event) => {
+        event.preventDefault()
+        updateMinPrice(minData)
+        updateMaxPrice(maxData)
+        setPrefs({"selectedPriceRange":[minData,maxData]})
+    }
+
+    
+    const styleLabel = {
+        "color":"white",
+        "gridColumn":"1",
     }
 
     const PriceRange
@@ -37,24 +53,45 @@ const PriceRangeContainer = ({min,max,updateMinPrice,updateMaxPrice}) => {
         className="PriceRangeForm"
         onSubmit={updateHandler}
     >
-            <input
-                type="text"
-                className="PriceInput"
-                onChange={changeHandler}
-                name="max"
-                value={`$${formData.max}`}
-            />
+            <div className = "DateElement" style ={{"gridRow":1}}>
+                <label
+                    className="DatePickerLabel"
+                    htmlFor="DatePicker"
+                    style={styleLabel}
+                >
+                    Max Price: 
+                </label>
+                    <input
+                        type="text"
+                        className="PriceInput"
+                        onChange={changeHandler}
+                        name="max"
+                        value={`$${formData.max}`}
+                    />
+            </div>
             
-            <input
-                type="text"
-                className="PriceInput"
-                onChange={changeHandler}
-                name="min"
-                value={`$${formData.min}`}
-            />
+            <div className = "DateElement" style ={{"gridRow":2}}>
+                <label
+                    className="DatePickerLabel"
+                    htmlFor="DatePicker"
+                    style={styleLabel}
+                >
+                    Min Price: 
+                </label>
+                <input
+                    type="text"
+                    className="PriceInput"
+                    onChange={changeHandler}
+                    name="min"
+                    value={`$${formData.min}`}
+                />
+            </div>
 
             
-            <button className = "ResetPriceButton">UPDATE PRICE</button>
+            <div className="DateButtons">
+                <button onClick = {updateHandler} className = "UpdateDateButton">UPDATE</button>
+                <button onClick = {resetHandler} className = "ResetDateButton">RESET</button>
+            </div>
 
         </form>
     

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import DateRangeElement from "./DateRangeElement";
 
 const GraphOptions = ({setPrefs}) => {
 

@@ -1,4 +1,4 @@
-import React, { useState , useRef, useEffect } from 'react';
+import React, { useState , useRef } from 'react';
 import * as d3 from "d3";
 import LineChart from './components/LineChart';
 import './App.css';
@@ -30,7 +30,13 @@ function App() {
 
   const [plotPrefsState, setPlotPrefsState] = useState({
     semiLog:false,
-    overlayNew:false
+    overlayNew:false,
+    customDate:false,
+    xDomain:[(new Date()),(new Date())],
+    dayValues:[(new Date())],
+    selectedDayValues:[(new Date())],
+    priceRange:[0,0],
+    selectedPriceRange:[0,0]
   })
 
   const plotPrefs = useRef({
@@ -40,7 +46,8 @@ function App() {
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
-    priceRange:[0,0]
+    priceRange:[0,0],
+    selectedPriceRange:[0,0]
   })
 
 
@@ -54,6 +61,7 @@ function App() {
         const newPlotData = [...plotData,inputData]
         console.log('newPlotData is: ',newPlotData)
         plotPrefs.current.priceRange = calcMinMax(newPlotData)
+        plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
@@ -68,6 +76,7 @@ function App() {
 
       } else {
         plotPrefs.current.priceRange = calcMinMax([inputData])
+        plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
@@ -89,6 +98,7 @@ function App() {
       setPlotPrefsState(prefs) //this seems needless, but I wasn't getting a re-render without it
       const oldPrefsCopy = plotPrefs.current
       plotPrefs.current = {...oldPrefsCopy,...prefs}
+      console.log("new Prefs is: ",plotPrefs.current)
     }
   }
 
@@ -105,7 +115,7 @@ function App() {
       const newSelectedDayValues = calcSelectedDayValues()
       const newMinMax = calcMinMax(plotDataCopy)
       const oldPrefsCopy2 = plotPrefs.current
-      plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues,priceRange:newMinMax}
+      plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues,priceRange:newMinMax,selectedPriceRange:newMinMax}
       console.log('After removal, plotPrefs is: ',plotPrefs)
     }
     setPlotData(plotDataCopy)
@@ -173,11 +183,11 @@ function App() {
   }
 
   const updateMinPrice = (price) => {
-    plotPrefs.current.priceRange[0] = price
+    plotPrefs.current.selectedPriceRange[0] = price
   }
 
   const updateMaxPrice = (price) => {
-    plotPrefs.current.priceRange[1] = price
+    plotPrefs.current.selectedPriceRange[1] = price
   }
 
   return (
@@ -196,12 +206,16 @@ function App() {
           dayValues = {plotPrefs.current.dayValues}
           updateStartDate = {updateStartDate}
           updateEndDate = {updateEndDate}
+          setPrefs = {setPrefs}
         />
         <PriceRangeContainer
-          min = {plotPrefs.current.priceRange[0]}
-          max = {plotPrefs.current.priceRange[1]}
+          min = {plotPrefs.current.selectedPriceRange[0]}
+          max = {plotPrefs.current.selectedPriceRange[1]}
+          minData = {plotPrefs.current.priceRange[0]}
+          maxData = {plotPrefs.current.priceRange[1]}
           updateMinPrice = {updateMinPrice}
           updateMaxPrice = {updateMaxPrice}
+          setPrefs = {setPrefs}
         />
       </div>
       <div className="MainSection">
