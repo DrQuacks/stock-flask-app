@@ -11,12 +11,14 @@ const LineChart = ({
 }) => {
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange} = plotPrefs.current
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs} = plotPrefs.current
     const showPlot = {
         price:true,
         raw:true,
         firstDeriv:firstDeriv,
-        secondDeriv:secondDeriv
+        secondDeriv:secondDeriv,
+        localMins:localMins,
+        localMaxs:localMaxs
     }
     console.log('semilog is: ',semiLog)
 
@@ -140,9 +142,9 @@ const LineChart = ({
             }
 
 
-            const lineVector = (d,type) => {
+            const lineVector = (lineVectorData,type) => {
 
-                console.log('In lineVector, d is: ',d)
+                console.log('In lineVector, lineVectorData is: ',lineVectorData)
                 console.log('In lineVector, plotPrefs is: ',plotPrefs.current)
                 const lineNoY = d3.line()
                     .x((d) => xScale(dateToDate(d.date)))
@@ -156,27 +158,51 @@ const LineChart = ({
                             return yScale(d.rawPrice)
                         } else if (type === "firstDeriv") {
                             return rightYScale(d.derivFirst)
-                        } else {
+                        } else if (type === "secondDeriv") {
                             return rightYScale(d.derivSecond)
+                        } else if (type === "localMins") {
+                            return yScale(d.price)
+                        } else if (type === "localMaxs") {
+                            return yScale(d.price)
                         }
                 })
 
-                const newData = [...d.data]
+                const newData = [...lineVectorData.data]
+                const newMinData = [...lineVectorData.localMins]
                 
                 const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
                 //console.log("In the start of lineVector, [xDomainTime,xDomain,dayValues,d.daysList] is: ",[xDomainTime,xDomain,dayValues,d.daysList])
 
-                const startIndex = d.daysList.findIndex(day => day.getTime() === xDomainTime[0])
-                const endIndex = d.daysList.findIndex(day => day.getTime() === xDomainTime[1])
+                const startIndex = lineVectorData.daysList.findIndex(day => day.getTime() === xDomainTime[0])
+                const endIndex = lineVectorData.daysList.findIndex(day => day.getTime() === xDomainTime[1])
                 //console.log("In lineVector, startIndex and endIndex are: ",[startIndex,endIndex])
                 const checkedStartIndex = startIndex === -1 ? 0:startIndex
-                const checkedEndIndex = endIndex === -1 ? (d.daysList.length - 1):endIndex
+                const checkedEndIndex = endIndex === -1 ? (lineVectorData.daysList.length - 1):endIndex
                 //console.log("In lineVector, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
-            
+                if(lineVectorData.data[0]){
+                    console.log('types of d.date,daysList, and min.date are: ',
+                        [lineVectorData.data[0].date,lineVectorData.daysList[0],dateToDate(lineVectorData.localMins[0].date)])
+                }
                 const newSelectedData = newData.slice(checkedStartIndex,checkedEndIndex+1)
-                //console.log("In lineVector, [xDomain,newData,newSelectedData] is: ",[xDomain,newData,newSelectedData])
+                console.log("In lineVector, [xDomain,newData,newSelectedData] is: ",[xDomain,newData,newSelectedData])
 
-                const linePlot = line(newSelectedData)
+                const startIndexMin = lineVectorData.localMins.findIndex(min => dateToDate(min.date).getTime() >= xDomainTime[0])
+                const endIndexMin = lineVectorData.localMins.findLastIndex(min => dateToDate(min.date).getTime() <= xDomainTime[1])
+
+                const checkedStartIndexMin = startIndexMin === -1 ? 0:startIndexMin
+                const checkedEndIndexMin = endIndexMin === -1 ? (lineVectorData.localMins.length - 1):endIndexMin
+
+                const newSelectedMinData = newMinData.slice(checkedStartIndexMin,checkedEndIndexMin+1)
+                console.log("In lineVector, [xDomain,newMinData,newSelectedMinData] is: ",[xDomain,newMinData,newSelectedMinData])
+                
+                let linePlot
+                if (type === "localMins") {
+                    console.log('newSelectedMinData is: ',newMinData)
+                    linePlot = line(newSelectedMinData)
+                    console.log('linePlot is: ',[linePlot])
+                } else {
+                    linePlot = line(newSelectedData)
+                }
                 //console.log("Line is: ",linePlot)
 
                 return(linePlot)

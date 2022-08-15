@@ -82,7 +82,9 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                     minDeriv2:resolvedData.stockFeatures.min_deriv2,
                     maxDeriv2:resolvedData.stockFeatures.max_deriv2,
                     datePriceScale:generateScale(resolvedData.stockArray),
-                    daysList:formattedDays
+                    daysList:formattedDays,
+                    localMins:resolvedData.localMinsandMaxs[0],
+                    localMaxs:resolvedData.localMinsandMaxs[1]
                 }
                 handleInput(newPlotData)
             }

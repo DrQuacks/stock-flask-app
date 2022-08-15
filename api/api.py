@@ -29,6 +29,8 @@ def set_dummy_post_value():
     print('stockArray type is: ',type(stockData["stock_data"]))
     print('stockData is: ',stockData["stock_data"][0:10])
 
+    localMinsandMaxs = sd.findLocalMinsandMaxs(data['stockSymbol'])
+
     stockFeatures = {
         "min_price":stockData["min_price"],
         "max_price":stockData["max_price"],
@@ -44,5 +46,6 @@ def set_dummy_post_value():
 
     return {
         'stockArray':stockData["stock_data"],
-        'stockFeatures':stockFeatures
+        'stockFeatures':stockFeatures,
+        'localMinsandMaxs':localMinsandMaxs
     }

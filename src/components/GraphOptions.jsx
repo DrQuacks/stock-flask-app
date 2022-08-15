@@ -5,7 +5,9 @@ const GraphOptions = ({setPrefs}) => {
     const [plotPrefsState,setPlotPrefsState] = useState({
         "semilog":false,
         "firstDeriv":false,
-        "secondDeriv":false
+        "secondDeriv":false,
+        "localMins":false,
+        "localMaxs":false
     })
     
     const handleChange = (event) => {
@@ -49,7 +51,28 @@ const GraphOptions = ({setPrefs}) => {
                 className="OptionsInput"
             />
             <label className="OptionsLabel" htmlFor="secondDeriv">Second Derivative</label>
+
+            <input 
+                type="checkbox" 
+                id="localMins" 
+                checked={plotPrefsState.localMins}
+                onChange={handleChange}
+                name="localMins"
+                className="OptionsInput2"
+                style={{"grid-row":"1"}}
+            />
+            <label className="OptionsLabel2" style={{"grid-row":"1"}} htmlFor="localMins">Local Mins</label>
             
+            <input 
+                type="checkbox" 
+                id="localMaxs" 
+                checked={plotPrefsState.localMaxs}
+                onChange={handleChange}
+                name="localMaxs"
+                className="OptionsInput2"
+                style={{"grid-row":"2"}}
+            />
+            <label className="OptionsLabel2" style={{"grid-row":"2"}} htmlFor="localMaxs">Local Maxs</label>
         </div>
     )
 }

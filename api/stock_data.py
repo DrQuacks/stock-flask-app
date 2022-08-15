@@ -167,5 +167,25 @@ def computeAvg(stock,this_day,trail_days,type):
     
     return weighted_sum/sum(coef_list)
 
-def findLocalMins(sym):
-    stock = get_low(sym)
+def findLocalMinsandMaxs(sym):
+    stock = get_history(sym)[['Low','High']]
+
+    #days_list = []
+    #price_list = []
+    min_list = []
+    max_list = []
+
+    for day in range(1,stock.shape[0] - 2):
+        today_day = stock.index[day]
+        today_price_low = stock['Low'].iloc[day]
+        today_price_high = stock['High'].iloc[day]
+        if (today_price_low <= stock['Low'].iloc[day-1] and today_price_low <= stock['Low'].iloc[day+1]):
+            #days_list.append(stock['Low'].index[day])
+            #price_list.append(stock['Low'].iloc[day])
+            min_list.append({"date":today_day,"price":today_price_low})
+        if (today_price_high >= stock['High'].iloc[day-1] and today_price_high >= stock['High'].iloc[day+1]):
+            #days_list.append(stock['Low'].index[day])
+            #price_list.append(stock['Low'].iloc[day])
+            max_list.append({"date":today_day,"price":today_price_high})
+    return [min_list,max_list]
+

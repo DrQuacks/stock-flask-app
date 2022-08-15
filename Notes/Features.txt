@@ -14,3 +14,6 @@
 
 -a way to select start and end with the tooltip
     activate a set start date and set end date thing, and it'd trigger on mouse up
+
+-get max of maxes and min of mins
+    -maybe like it has to be a bigger max than the last local max

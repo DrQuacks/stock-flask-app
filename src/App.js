@@ -25,7 +25,9 @@ function App() {
     minDeriv2:0,
     maxDeriv2:0,
     datePriceScale: new d3.scaleLinear(),
-    daysList:[]
+    daysList:[],
+    localMins:[],
+    localMaxs:[]
   }])
 
   const [plotPrefsState, setPlotPrefsState] = useState({
@@ -64,13 +66,13 @@ function App() {
         plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
-          console.log('customDate is: ',plotPrefs.current.customDate)
+          //console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd(newPlotData)
           plotPrefs.current.dayValues = calcDayValues(newPlotData)
           plotPrefs.current.selectedDayValues = calcSelectedDayValues()
         }
 
-        console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
+        //console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
         setPlotData(newPlotData)
         //setPlotData((prevData) => [...prevData,inputData])
 
@@ -79,7 +81,7 @@ function App() {
         plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
-          console.log('customDate is: ',plotPrefs.current.customDate)
+          //console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd([inputData])
           plotPrefs.current.dayValues = inputData.daysList
           plotPrefs.current.selectedDayValues = calcSelectedDayValues()
@@ -110,14 +112,18 @@ function App() {
     if (!plotPrefs.current.customDate){
       const newXDomain = calcStartEnd(plotDataCopy)
       const newDayValues = calcDayValues(plotDataCopy)
-      const oldPrefsCopy = plotPrefs.current
+      const oldPrefsCopy = {...plotPrefs.current}
       plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues}
       const newSelectedDayValues = calcSelectedDayValues()
-      const newMinMax = calcMinMax(plotDataCopy)
-      const oldPrefsCopy2 = plotPrefs.current
-      plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues,priceRange:newMinMax,selectedPriceRange:newMinMax}
+      const oldPrefsCopy2 = {...plotPrefs.current}
+      plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues}
       console.log('After removal, plotPrefs is: ',plotPrefs)
     }
+    const oldPrefsCopy = {...plotPrefs.current}
+    const newMinMax = calcMinMax(plotDataCopy)
+    plotPrefs.current = {...oldPrefsCopy,priceRange:newMinMax,selectedPriceRange:newMinMax}
+    console.log('After removal, plotPrefs is: ',plotPrefs)
+
     setPlotData(plotDataCopy)
   }
 
@@ -138,36 +144,33 @@ function App() {
   }
 
   const calcDayValues = (plots) => {
-    console.log("In calc day values, plots is: ",plots)
+    //console.log("In calc day values, plots is: ",plots)
     const indexLongest = plots.reduce((acc,stock,index)=>{
       const thisLength = stock.daysList.length
-        if (thisLength > acc){
-          return index
+        if (thisLength > acc["length"]){
+          return {"index":index,"length":stock.daysList.length}
         }
         return acc
-    },0)
-    const longestDayList = plots[indexLongest].daysList
-    console.log('[Longest Day List] is: ',[longestDayList])
+    },{"index":0,"length":0})
+    const longestDayList = plots[indexLongest["index"]].daysList
+    //console.log('[Longest Day List] is: ',[longestDayList])
     return longestDayList
   }
 
   const calcSelectedDayValues = () => {
     const {xDomain,dayValues} = plotPrefs.current
-    /*const startIndex = dayValues.indexOf(xDomain[0])
-    const endIndex = dayValues.indexOf(xDomain[1])*/
-    //const xDomainTime = [plotPrefs.current.xDomain[0].getTime(),plotPrefs.current.xDomain[1].getTime()]
     const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
 
-    console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,plotPrefs.current.xDomain,dayValues])
+    //console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,plotPrefs.current.xDomain,dayValues])
     const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
     const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
-    console.log("In calcSelectedDayValues, startIndex and endIndex are: ",[startIndex,endIndex])
+    //console.log("In calcSelectedDayValues, startIndex and endIndex are: ",[startIndex,endIndex])
     const checkedStartIndex = startIndex === -1 ? 0:startIndex
     const checkedEndIndex = endIndex === -1 ? (dayValues.length - 1):endIndex
-    console.log("In calcSelectedDayValues, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
+    //console.log("In calcSelectedDayValues, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
 
     const newSelectedDays = dayValues.slice(checkedStartIndex,checkedEndIndex+1)
-    console.log("In calcSelectedDayValues, [xDomain,dayValues,newSelectedDays] is: ",[plotPrefs.current.xDomain,dayValues,newSelectedDays])
+    //console.log("In calcSelectedDayValues, [xDomain,dayValues,newSelectedDays] is: ",[plotPrefs.current.xDomain,dayValues,newSelectedDays])
     return newSelectedDays
   }
 
