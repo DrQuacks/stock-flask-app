@@ -39,6 +39,7 @@ def setup_data(sym):
     max_days = 100
 
     feature_cols = ['Open','Close','High','Low','Volume']
+    feature_cols_semi_normalized = ['Open','Close','High','Low','Volume']
 
     stock_history = sd.get_history(sym)
     stock_history['target_close_price'] = stock_history['Close'].shift(-1)
@@ -46,14 +47,23 @@ def setup_data(sym):
     stock_history['Close_change'] = stock_history['Close'].pct_change()
     for days_to_trail in range(step,max_days,step):
         col_name_avg = 'Avg_Close_'+str(days_to_trail)
+        col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
         feature_cols.append(col_name_avg)
+        feature_cols_semi_normalized.append(col_name_avg_sn)
         stock_history[col_name_avg] = 0
+        stock_history[col_name_avg_sn] = 0
         col_name_min = 'Min_'+str(days_to_trail)
+        col_name_min_sn = 'Min_sn_'+str(days_to_trail)
         feature_cols.append(col_name_min)
+        feature_cols_semi_normalized.append(col_name_min_sn)
         stock_history[col_name_min] = 0
+        stock_history[col_name_min_sn] = 0
         col_name_max = 'Max_'+str(days_to_trail)
+        col_name_max_sn = 'Max_'+str(days_to_trail)
         feature_cols.append(col_name_max)
+        feature_cols_semi_normalized.append(col_name_max)
         stock_history[col_name_max] = 0
+        stock_history[col_name_max_sn] = 0
 
         avg_list = []
         for day in range(days_to_trail,stock_history.shape[0] - 1): #has to start far enough along to calc a trailing average
@@ -66,12 +76,17 @@ def setup_data(sym):
             stock_history.loc[today_day,col_name_min] = day_min
             stock_history.loc[today_day,col_name_max] = day_max
 
+            raw_price = stock_history.loc[today_day,"Close"]
 
+            day_avg_sn = (day_avg - raw_price)/raw_price
+            day_min_sn = (raw_price - day_min)/raw_price
+            day_max_sn = (day_max - raw_price)/raw_price
+            stock_history.loc[today_day,col_name_avg_sn] = day_avg_sn
+            stock_history.loc[today_day,col_name_min_sn] = day_min_sn
+            stock_history.loc[today_day,col_name_max_sn] = day_max_sn
+    
 
-
-    #regressor = DecisionTreeRegressor(random_state=0)
-
-    return {"data":stock_history,"features":feature_cols}
+    return {"data":stock_history,"features":feature_cols_semi_normalized}
 
 def trailingMinsAndMaxs(stock_df,this_day,trail_days):
     

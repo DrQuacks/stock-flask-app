@@ -36,3 +36,7 @@ I could run ML with the target column being good prediction or bad prediction. I
 with correlations, and that would tell me what features to look out for or seize upon. Perhaps I could 
 set something up where this output then informs the ML how to re-run. Or maybe this informs what model 
 does better in what situations, and then triages incoming test data as to which model it should go into.
+
+I should be dividing all my derived prices through by that day's price. A recent high of 135 doesn't mean
+anything on its own. It means something different to a current price of 134 vs a current price of 50.
+The way I'm doing things right now, that's not clear to the algorithm.
