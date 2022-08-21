@@ -1,0 +1,29 @@
+I need to derive a bunch of features. I think all of these should be logs.
+
+-trailing averages. Maybe every 10 days?
+
+-raw value obviously
+    -if trailing avgs were 1, 11, 21, etc... would that make more sense? Maybe, but not for 1. You
+    already have that value stupid
+
+-first derivative
+
+-most recent min and max
+
+-so many days week min and max (like 10 day min and max)
+    -should be done with Low and High 
+
+-both binary target column and target price column
+    -next days price and whether next days price was higher or lower 
+
+
+Start at day 90:
+    calculate trailling avgs of 1,11,...91. Each goes into a new column.
+    in each period, I should also be finding the min and max
+        -this can be done within my compute avg function, like it can return lowest low and highest high
+    keep track of most recent min and max and probably their dates too, though I may not use that
+        -this is a variable that gets updated in my for loop when checked against current days low/high 
+        -no additional looping needed
+    use pct_change() to calc deriv column all at once 
+    next day's price is target price 
+    comparing next day's price gives binary target column 

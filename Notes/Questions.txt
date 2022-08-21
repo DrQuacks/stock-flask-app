@@ -1,1 +1,4 @@
 How many days trailing average do stocks tend to fall before they rebound?
+
+Is recent distances between max and min lines indicative of anything? Does greater space mean the market
+is changing moods?

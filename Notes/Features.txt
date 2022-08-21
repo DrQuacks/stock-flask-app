@@ -3,7 +3,6 @@
     -maybe not...or at least it'd need a vertical stretch/shrink as well
     -or...is it a vertical stretch pinned at (0,0)?
 
--value range selector
 -display table of raw values as an option
 
 -calculate derivs from most recent max or min 
@@ -17,3 +16,5 @@
 
 -get max of maxes and min of mins
     -maybe like it has to be a bigger max than the last local max
+
+-plot raw data and predicted data, and color the lines with a heat map depending on accuracy

@@ -6,6 +6,7 @@ when it says it goes down.
 Anything it says about the market going up I should be more confident in than anything
 about it going down.
 And maybe I have another model that is worse overall, but better when it makes down predictions.
+Could I have it analyze what attributes it does well with and which it doesn't?
 
 In fact, I could have different models behave better in different spots.
 Maybe some are better on sharp ups or downs, or some are better in chop.
@@ -30,3 +31,8 @@ as knowing the stock price for predicting what comes next.
 
 I also probably want a measure of "choppiness". Does this mean uncertainty? A change in
 trajectory? Something else?
+
+I could run ML with the target column being good prediction or bad prediction. I could ouput something
+with correlations, and that would tell me what features to look out for or seize upon. Perhaps I could 
+set something up where this output then informs the ML how to re-run. Or maybe this informs what model 
+does better in what situations, and then triages incoming test data as to which model it should go into.

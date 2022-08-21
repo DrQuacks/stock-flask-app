@@ -17,6 +17,9 @@ print(get_history('voo'))
 def get_column(sym,sample_type):
     return get_history(sym).loc[:,[sample_type]]
 
+def get_columns(sym,sample_types):
+    return get_history(sym).loc[:,sample_types]
+
 #calculates trailing average for a specific number of days
 def trailing_avg(sym, days, avg_type, sample_type):
 
@@ -155,8 +158,8 @@ def computeAvg(stock,this_day,trail_days,type):
         coef_list = [d**0 for d in day_list]
         #print(type)
 
-    if(this_day == 100):
-        print('coef list and type is: ',[coef_list,type])
+    #if(this_day == 100):
+        #print('coef list and type is: ',[coef_list,type])
     for s,c in zip(stock.iloc[this_day-trail_days+1:this_day+1],coef_list):
         weighted_sum += s*c
         #if(this_day == 100):
