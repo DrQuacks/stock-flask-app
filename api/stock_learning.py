@@ -17,11 +17,44 @@ def make_predictions(model,data,features):
 
 def analyze_predictions(preds,data):
     test = data.iloc[-300:-100]
-    print(test['target_close_binary'])
+    target = test['target_close_binary']
+    print(target)
     print(preds)
-    score = precision_score(test['target_close_binary'],preds)
+    score = precision_score(target,preds)
     print("prediction score: "+str(score))
-    combined = pd.concat([test['target_close_binary'],preds],axis=1)
+
+    combined = pd.concat([target,preds],axis=1)
+    #cols = combined.columns
+    #combined.rename(columns={cols[1]:"prediction_close_binary"})
+    combined.columns = ['target_close_binary','prediction_close_binary']
+    print(combined.head())
+    print(combined.columns)
+    comparison = pd.DataFrame()
+    comparison['targetUp_predictionUp'] = (combined['target_close_binary'] == 1) & (combined['prediction_close_binary'] == 1)
+    comparison['targetDown_predictionDown'] = (combined['target_close_binary'] == 0) & (combined['prediction_close_binary'] == 0)
+    comparison['targetUp_predictionDown'] = (combined['target_close_binary'] == 1) & (combined['prediction_close_binary'] == 0)
+    comparison['targetDown_predictionUp'] = (combined['target_close_binary'] == 0) & (combined['prediction_close_binary'] == 1)
+
+    trials = len(combined.index)
+    comparison['targetUp'] = (combined['target_close_binary'] == 1)
+    comparison['targetDown'] = (combined['target_close_binary'] == 0)
+
+    comparison['predictionUp'] = (combined['prediction_close_binary'] == 1)
+    comparison['predictionDown'] = (combined['prediction_close_binary'] == 0)
+
+    split = {
+        'against targets':{'targetUp_predictionUp':(comparison['targetUp_predictionUp'].sum()/comparison['targetUp'].sum())*100,
+        'targetDown_predictionDown':(comparison['targetDown_predictionDown'].sum()/comparison['targetDown'].sum())*100,
+        'targetUp_predictionDown':(comparison['targetUp_predictionDown'].sum()/comparison['targetUp'].sum())*100,
+        'targetDown_predictionUp':(comparison['targetDown_predictionUp'].sum()/comparison['targetDown'].sum())*100},
+
+        'against predictions':{'targetUp_predictionUp':(comparison['targetUp_predictionUp'].sum()/comparison['predictionUp'].sum())*100,
+        'targetDown_predictionDown':(comparison['targetDown_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
+        'targetUp_predictionDown':(comparison['targetUp_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
+        'targetDown_predictionUp':(comparison['targetDown_predictionUp'].sum()/comparison['predictionUp'].sum())*100}
+    }
+    print(split)
+
     combined.plot()
     plt.show()
 

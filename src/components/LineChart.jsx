@@ -153,7 +153,7 @@ const LineChart = ({
                     .x((d) => xScale(dateToDate(d.date)))
 
                 //console.log('In lineVector, d.data is: ',d.data)
-                const line = lineNoY
+                let line = lineNoY
                     .y((d) => {
                         if (type === "price"){
                             return yScale(d.price)
@@ -172,9 +172,11 @@ const LineChart = ({
                 if (type === "localMins"){
                     newData = [...lineVectorData.localMins]
                     console.log('newData is: ',newData)
+                    line = line.curve(d3.curveStepAfter)
                 } else if (type === "localMaxs") {
                     newData = [...lineVectorData.localMaxs]
                     console.log('newData is: ',newData)
+                    line = line.curve(d3.curveStepAfter)
                 }
 
 
