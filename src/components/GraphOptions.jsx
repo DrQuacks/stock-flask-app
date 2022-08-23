@@ -54,25 +54,27 @@ const GraphOptions = ({setPrefs}) => {
 
             <input 
                 type="checkbox" 
-                id="localMins" 
-                checked={plotPrefsState.localMins}
-                onChange={handleChange}
-                name="localMins"
-                className="OptionsInput2"
-                style={{"grid-row":"1"}}
-            />
-            <label className="OptionsLabel2" style={{"grid-row":"1"}} htmlFor="localMins">Local Mins</label>
-            
-            <input 
-                type="checkbox" 
                 id="localMaxs" 
                 checked={plotPrefsState.localMaxs}
                 onChange={handleChange}
                 name="localMaxs"
                 className="OptionsInput2"
+                style={{"grid-row":"1"}}
+            />
+            <label className="OptionsLabel2" style={{"grid-row":"1"}} htmlFor="localMaxs">Local Maxs</label>
+            
+            <input 
+                type="checkbox" 
+                id="localMins" 
+                checked={plotPrefsState.localMins}
+                onChange={handleChange}
+                name="localMins"
+                className="OptionsInput2"
                 style={{"grid-row":"2"}}
             />
-            <label className="OptionsLabel2" style={{"grid-row":"2"}} htmlFor="localMaxs">Local Maxs</label>
+            <label className="OptionsLabel2" style={{"grid-row":"2"}} htmlFor="localMins">Local Mins</label>
+            
+            
         </div>
     )
 }

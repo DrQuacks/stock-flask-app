@@ -42,7 +42,11 @@ def analyze_predictions(preds,data):
     comparison['predictionUp'] = (combined['prediction_close_binary'] == 1)
     comparison['predictionDown'] = (combined['prediction_close_binary'] == 0)
 
-    split = {
+    comparison['correct'] = combined['target_close_binary'] == combined['prediction_close_binary']
+    comparison.index = combined.index
+    print(comparison.head())
+
+    splits = {
         'against targets':{'targetUp_predictionUp':(comparison['targetUp_predictionUp'].sum()/comparison['targetUp'].sum())*100,
         'targetDown_predictionDown':(comparison['targetDown_predictionDown'].sum()/comparison['targetDown'].sum())*100,
         'targetUp_predictionDown':(comparison['targetUp_predictionDown'].sum()/comparison['targetUp'].sum())*100,
@@ -51,9 +55,10 @@ def analyze_predictions(preds,data):
         'against predictions':{'targetUp_predictionUp':(comparison['targetUp_predictionUp'].sum()/comparison['predictionUp'].sum())*100,
         'targetDown_predictionDown':(comparison['targetDown_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
         'targetUp_predictionDown':(comparison['targetUp_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
-        'targetDown_predictionUp':(comparison['targetDown_predictionUp'].sum()/comparison['predictionUp'].sum())*100}
+        'targetDown_predictionUp':(comparison['targetDown_predictionUp'].sum()/comparison['predictionUp'].sum())*100},
+        'correct':{comparison['correct'].sum()/trials}
     }
-    print(split)
+    print(splits)
 
     combined.plot()
     plt.show()
@@ -78,6 +83,8 @@ def setup_data(sym):
     stock_history['target_close_price'] = stock_history['Close'].shift(-1)
     stock_history['target_close_binary'] = (stock_history['target_close_price'] > stock_history['Close']).astype(int)
     stock_history['Close_change'] = stock_history['Close'].pct_change()
+    feature_cols.append('Close_change')
+    feature_cols_semi_normalized.append('Close_change')
     for days_to_trail in range(step,max_days,step):
         col_name_avg = 'Avg_Close_'+str(days_to_trail)
         col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
