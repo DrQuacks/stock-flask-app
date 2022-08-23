@@ -60,8 +60,10 @@ def analyze_predictions(preds,data):
     }
     print(splits)
 
-    combined.plot()
-    plt.show()
+    return comparison
+
+    #combined.plot()
+    #plt.show()
 
 
 def first_model(data,features):
@@ -72,9 +74,9 @@ def first_model(data,features):
     model.fit(train[features],train['target_close_binary'])
     return model
 
-def setup_data(sym):
-    step = 20
-    max_days = 100
+def setup_data(sym,step,max_days):
+    #step = 20
+    #max_days = 100
 
     feature_cols = ['Open','Close','High','Low','Volume']
     feature_cols_semi_normalized = ['Open','Close','High','Low','Volume']

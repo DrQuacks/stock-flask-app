@@ -1,8 +1,11 @@
 import React, { useState , useRef } from 'react';
 import * as d3 from "d3";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 import LineChart from './components/LineChart';
 import './App.css';
 import PlotInputForm from './components/PlotInputForm';
+import ModelInputForm from './components/ModelInputForm';
 import LegendContainer from './components/LegendContainer';
 import DateRangeContainer from './components/DateRangeContainer';
 import PriceRangeContainer from './components/PriceRangeContainer';
@@ -196,30 +199,49 @@ function App() {
   return (
     <div className="App">
       <div className='TopBar'>
-        <PlotInputForm
-          plotData = {plotData}
-          handleInput = {handleInput}
-          setPrefs = {setPrefs}
-        />
-        <GraphOptions
-          setPrefs = {setPrefs}
-        />
-        <DateRangeContainer
-          xDomain = {plotPrefs.current.xDomain}
-          dayValues = {plotPrefs.current.dayValues}
-          updateStartDate = {updateStartDate}
-          updateEndDate = {updateEndDate}
-          setPrefs = {setPrefs}
-        />
-        <PriceRangeContainer
-          min = {plotPrefs.current.selectedPriceRange[0]}
-          max = {plotPrefs.current.selectedPriceRange[1]}
-          minData = {plotPrefs.current.priceRange[0]}
-          maxData = {plotPrefs.current.priceRange[1]}
-          updateMinPrice = {updateMinPrice}
-          updateMaxPrice = {updateMaxPrice}
-          setPrefs = {setPrefs}
-        />
+        <Tabs>
+          <TabList className='TabTops'>
+            <Tab>Plot</Tab>
+            <Tab>Model</Tab>
+          </TabList>
+          <TabPanel>
+          <div className='TopBar'>
+            <PlotInputForm
+              plotData = {plotData}
+              handleInput = {handleInput}
+              setPrefs = {setPrefs}
+            />
+            <GraphOptions
+              setPrefs = {setPrefs}
+            />
+            <DateRangeContainer
+              xDomain = {plotPrefs.current.xDomain}
+              dayValues = {plotPrefs.current.dayValues}
+              updateStartDate = {updateStartDate}
+              updateEndDate = {updateEndDate}
+              setPrefs = {setPrefs}
+            />
+            <PriceRangeContainer
+              min = {plotPrefs.current.selectedPriceRange[0]}
+              max = {plotPrefs.current.selectedPriceRange[1]}
+              minData = {plotPrefs.current.priceRange[0]}
+              maxData = {plotPrefs.current.priceRange[1]}
+              updateMinPrice = {updateMinPrice}
+              updateMaxPrice = {updateMaxPrice}
+              setPrefs = {setPrefs}
+            />
+          </div>
+          </TabPanel>
+          <TabPanel>
+            <div className='TopBar'>
+              <ModelInputForm
+                plotData = {plotData}
+                handleInput = {handleInput}
+                setPrefs = {setPrefs}
+              />
+            </div>
+          </TabPanel>
+        </Tabs>
       </div>
       <div className="MainSection">
         <div className='PlotArea'>

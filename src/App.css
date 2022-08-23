@@ -21,6 +21,13 @@
   width:1400px;
 }
 
+.TabTops {
+  margin-top: 0;
+  margin-bottom: 0;
+  border-bottom-color: white;
+  border-bottom-style: solid;
+}
+
 .PlotInputForm {
   order:1;
   display: flex;

@@ -16,7 +16,7 @@ def access_data():
         return(loaded_result)
 
 
-#create_data('voo')
+#create_data('voo',20,100)
 result = access_data()
 model = sl.first_model(result['data'],result['features'])
 predictions = sl.make_predictions(model,result['data'],result['features'])
