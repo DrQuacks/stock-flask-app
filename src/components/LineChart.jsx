@@ -141,6 +141,40 @@ const LineChart = ({
                     .call(d3.axisRight(rightYScale).tickFormat(d3.format('.2%')));
             }
 
+            const modelPerformanceScale = d3.scaleOrdinal()
+                .domain([0,1])
+                .range(["red","green"])
+
+
+            function displayModelPerformance() {
+                const modelPerformanceGroupUpdate = d3.select('.plotArea')
+                    .selectAll('.modelPerformanceGroup')
+                    .data(plotData['modelAnalysis'])
+
+                const modelPerformanceGroupUpdateEnter = modelPerformanceGroupUpdate.enter()
+                    .append("g")
+                        .attr("id","modelPerformanceGroup")
+
+                symbolGroupUpdateEnter
+                    .append("path")
+                    .attr("id","linePath")
+                    .attr("fill", "none")
+                    .attr("stroke", (d) => {
+                        return myColor(d)
+                    })
+                    .attr("stroke-width", plotType === "price" ? 4:0.75)
+                    .attr("d", (d)=>{
+                        console.log("d is: ",d)
+                        console.log("plotType is: ",plotType)
+                        return lineVector(d,plotType)
+                    })
+                    .attr("transform", `translate(0,${margin.top})`)
+                    .attr("opacity",plotType === "raw" ? 1:0.5)
+
+                    
+                symbolGroupUpdate.exit().remove()
+
+            }
 
             const lineVector = (lineVectorData,type) => {
 
@@ -232,10 +266,9 @@ const LineChart = ({
                     })
                 
                     symbolGroupUpdate.exit().remove()
-                
-                //console.log('updateLines was called, and plotData is: ',plotData)
-                
+                                
             }
+
 
             function dragPointer() {
                 const tooltip = d3.select("body").append("div")

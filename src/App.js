@@ -30,7 +30,8 @@ function App() {
     datePriceScale: new d3.scaleLinear(),
     daysList:[],
     localMins:[],
-    localMaxs:[]
+    localMaxs:[],
+    modelAnalysis:[]
   }])
 
   const [plotPrefsState, setPlotPrefsState] = useState({
