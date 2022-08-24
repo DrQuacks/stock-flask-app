@@ -13,7 +13,7 @@ import GraphOptions from './components/GraphOptions';
 
 function App() {
 
-  const [plotData, setPlotData] = useState([{
+  const initialPlotState = [{
     name:"",
     data:[],
     trailingDays:"",
@@ -32,7 +32,9 @@ function App() {
     localMins:[],
     localMaxs:[],
     modelAnalysis:[]
-  }])
+  }]
+
+  const [plotData, setPlotData] = useState(initialPlotState)
 
   const [plotPrefsState, setPlotPrefsState] = useState({
     semiLog:false,
@@ -45,7 +47,22 @@ function App() {
     selectedPriceRange:[0,0]
   })
 
+  const initialSemiPlotPrefsState = {
+    xDomain:[(new Date()),(new Date())],
+    dayValues:[(new Date())],
+    selectedDayValues:[(new Date())],
+    priceRange:[0,0],
+    selectedPriceRange:[0,0]
+  }
+
   const plotPrefs = useRef({
+    ...initialSemiPlotPrefsState,
+    semiLog:false,
+    overlayNew:false,
+    customDate:false
+  })
+
+  /*const plotPrefs = useRef({
     semiLog:false,
     overlayNew:false,
     customDate:false,
@@ -54,7 +71,7 @@ function App() {
     selectedDayValues:[(new Date())],
     priceRange:[0,0],
     selectedPriceRange:[0,0]
-  })
+  })*/
 
 
   const handleInput = (inputData) => {
@@ -113,22 +130,30 @@ function App() {
     //need to also update xDomain
     const plotDataCopy = [...plotData]
     plotDataCopy.splice(index,1)
-    if (!plotPrefs.current.customDate){
-      const newXDomain = calcStartEnd(plotDataCopy)
-      const newDayValues = calcDayValues(plotDataCopy)
-      const oldPrefsCopy = {...plotPrefs.current}
-      plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues}
-      const newSelectedDayValues = calcSelectedDayValues()
-      const oldPrefsCopy2 = {...plotPrefs.current}
-      plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues}
-      console.log('After removal, plotPrefs is: ',plotPrefs)
-    }
-    const oldPrefsCopy = {...plotPrefs.current}
-    const newMinMax = calcMinMax(plotDataCopy)
-    plotPrefs.current = {...oldPrefsCopy,priceRange:newMinMax,selectedPriceRange:newMinMax}
-    console.log('After removal, plotPrefs is: ',plotPrefs)
 
-    setPlotData(plotDataCopy)
+    if (plotDataCopy.length === 0){
+      plotPrefs.current = {...plotPrefs.current,...initialSemiPlotPrefsState}
+      console.log('After removal, plotPrefs is: ',plotPrefs)
+      setPlotData(initialPlotState)
+    } else {
+      if (!plotPrefs.current.customDate){
+        const newXDomain = calcStartEnd(plotDataCopy)
+        const newDayValues = calcDayValues(plotDataCopy)
+        const oldPrefsCopy = {...plotPrefs.current}
+        plotPrefs.current = {...oldPrefsCopy,xDomain:newXDomain,dayValues:newDayValues}
+        const newSelectedDayValues = calcSelectedDayValues()
+        const oldPrefsCopy2 = {...plotPrefs.current}
+        plotPrefs.current = {...oldPrefsCopy2,selectedDayValues:newSelectedDayValues}
+        console.log('After removal, plotPrefs is: ',plotPrefs)
+      }
+      const newMinMax = calcMinMax(plotDataCopy)
+    
+      const oldPrefsCopy = {...plotPrefs.current}
+      plotPrefs.current = {...oldPrefsCopy,priceRange:newMinMax,selectedPriceRange:newMinMax}
+      console.log('After removal, plotPrefs is: ',plotPrefs)
+
+      setPlotData(plotDataCopy)
+    }
   }
 
   const calcStartEnd = (stockArray) => {
@@ -148,7 +173,7 @@ function App() {
   }
 
   const calcDayValues = (plots) => {
-    //console.log("In calc day values, plots is: ",plots)
+    console.log("In calc day values, plots is: ",plots)
     const indexLongest = plots.reduce((acc,stock,index)=>{
       const thisLength = stock.daysList.length
         if (thisLength > acc["length"]){
@@ -156,6 +181,7 @@ function App() {
         }
         return acc
     },{"index":0,"length":0})
+    console.log("In calc day values, idenxLongest is: ",indexLongest)
     const longestDayList = plots[indexLongest["index"]].daysList
     //console.log('[Longest Day List] is: ',[longestDayList])
     return longestDayList

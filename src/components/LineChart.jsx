@@ -37,6 +37,7 @@ const LineChart = ({
 
             //I feel like I'm mis-using d3 here. Shouldn't this be accomplished with exit()?
             svg.selectAll("#symbolGroup").remove()
+            svg.selectAll("#modelPerformanceGroup").remove()
             svg.select("#xAxis").remove()
             svg.select("#xAxisGridLines").remove()
             svg.select("#yAxis").remove()
@@ -58,6 +59,11 @@ const LineChart = ({
                 .clamp(true)
 
             const xScale = d3.scalePoint()
+                //.domain(dayValues)
+                .domain(selectedDayValues)
+                .range(xScaleRange)
+
+            const xScaleBand = d3.scaleBand()
                 //.domain(dayValues)
                 .domain(selectedDayValues)
                 .range(xScaleRange)
@@ -142,37 +148,39 @@ const LineChart = ({
             }
 
             const modelPerformanceScale = d3.scaleOrdinal()
-                .domain([0,1])
+                .domain([false,true])
                 .range(["red","green"])
 
 
             function displayModelPerformance() {
-                const modelPerformanceGroupUpdate = d3.select('.plotArea')
-                    .selectAll('.modelPerformanceGroup')
-                    .data(plotData['modelAnalysis'])
+                console.log('plotData is: ',plotData)
+                if (plotData[0]['modelAnalysis']){
+                    console.log('modelAnalysis is: ',plotData[0]['modelAnalysis'])
+                    const modelPerformanceGroupUpdate = d3.select('.plotArea')
+                        .selectAll('.modelPerformanceGroup')
+                        .data(plotData[0]['modelAnalysis'])
 
-                const modelPerformanceGroupUpdateEnter = modelPerformanceGroupUpdate.enter()
-                    .append("g")
-                        .attr("id","modelPerformanceGroup")
+                    const modelPerformanceGroupUpdateEnter = modelPerformanceGroupUpdate.enter()
+                        .append("g")
+                            .attr("id","modelPerformanceGroup")
 
-                symbolGroupUpdateEnter
-                    .append("path")
-                    .attr("id","linePath")
-                    .attr("fill", "none")
-                    .attr("stroke", (d) => {
-                        return myColor(d)
-                    })
-                    .attr("stroke-width", plotType === "price" ? 4:0.75)
-                    .attr("d", (d)=>{
-                        console.log("d is: ",d)
-                        console.log("plotType is: ",plotType)
-                        return lineVector(d,plotType)
-                    })
-                    .attr("transform", `translate(0,${margin.top})`)
-                    .attr("opacity",plotType === "raw" ? 1:0.5)
+                    modelPerformanceGroupUpdateEnter
+                        .append('rect')
+                        .attr("id","rectAnalysis")
+                        .attr("fill", (d) => {
+                            return modelPerformanceScale(d[1]['correct'])
+                        })
+                        .attr("x",(d) => {
+                            return xScaleBand(dateToDate(d[0]))
+                        })
+                        .attr("y",margin.top)
+                        .attr('width',xScaleBand.bandwidth)
+                        .attr('height',height - (margin.bottom+margin.bottom))
+                        .attr("opacity",0.15)
 
-                    
-                symbolGroupUpdate.exit().remove()
+                        
+                    modelPerformanceGroupUpdate.exit().remove()
+                }
 
             }
 
@@ -416,6 +424,7 @@ const LineChart = ({
 
             //boot
             updateLines()
+            displayModelPerformance()
             dragPointer()
         },
         [plotData,semiLog]
