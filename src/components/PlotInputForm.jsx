@@ -91,6 +91,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
             handleInput={handleInput}
             setPrefs={setPrefs}
             inputFormBuilder={inputFormBuilder}
+            route={'/api/setPlot'}
         />
     )
 

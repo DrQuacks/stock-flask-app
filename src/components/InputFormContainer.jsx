@@ -3,11 +3,13 @@ import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 
-function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder}) {
+function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,route}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
-            trailingDays: "", 
+            trailingDays: "",
+            stepSize:"",
+            max:"",
             overlayNew: false,
             customDate: false,
             avgType: "Constant",
@@ -60,7 +62,7 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder}) {
             if (!stockNames.includes(formData.stockSymbol)){
                 //I need to handle blank inputs
                 //what's in here is working from the outside, but it's logging errors in python
-                const data = sendToPython(formData,'/api/setPlot')
+                const data = sendToPython(formData,route)
                 const resolvedData = await data
                 //console.log('almostResolvedData is: ',almostResolvedData)
                 //const resolvedData = almostResolvedData['jsonResponse']
@@ -85,7 +87,8 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder}) {
                     datePriceScale:generateScale(resolvedData.stockArray),
                     daysList:formattedDays,
                     localMins:resolvedData.localMinsandMaxs[0],
-                    localMaxs:resolvedData.localMinsandMaxs[1]
+                    localMaxs:resolvedData.localMinsandMaxs[1],
+                    modelAnalysis:resolvedData.modelAnalysis
                 }
                 handleInput(newPlotData)
             }
@@ -94,7 +97,9 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder}) {
         setFormData((priorForm) => {
             const clearedForm = {...priorForm,
                 stockSymbol: "", 
-                trailingDays: ""
+                trailingDays: "",
+                stepSize: "",
+                max: ""
             }
             return clearedForm
         })
