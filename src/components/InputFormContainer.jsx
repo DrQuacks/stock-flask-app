@@ -3,17 +3,13 @@ import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 
-function ModelInputForm({plotData,handleInput,setPrefs}) {
+function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
-            stepSize: "",
-            max:"",
-            semiLog: false, 
+            trailingDays: "", 
             overlayNew: false,
             customDate: false,
-            firstDeriv: false,
-            secondDeriv: false,
             avgType: "Constant",
             sampleType: "Close"
         }
@@ -30,10 +26,15 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
     }
 
     function generateScale(dataArray) {
-        const domain = dataArray.map((row) => dateToDate(row.date))
+        const domain = dataArray.map((row) => {
+            if (row.type){
+                return dateToDate(row.date,row.type)
+            }
+            return dateToDate(row.date)
+        })
         const range = dataArray.map((row) => [row.price,row.rawPrice])
 
-        //console.log('[domain,range] is: ',[domain,range])
+        console.log('[domain,range] is: ',[domain,range])
         return (
             d3.scaleOrdinal()
                 .domain(domain)
@@ -46,11 +47,8 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
         //console.log('In handleSUbmit, button was is: ',event.nativeEvent.submitter.className)
         const buttonType = event.nativeEvent.submitter.className
         const prefs = {
-            semiLog: formData.semiLog,
             overlayNew: formData.overlayNew,
             customDate: formData.customDate,
-            firstDeriv: formData.firstDeriv,
-            secondDeriv: formData.secondDeriv
         }
         setPrefs(prefs)
         
@@ -62,8 +60,10 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
             if (!stockNames.includes(formData.stockSymbol)){
                 //I need to handle blank inputs
                 //what's in here is working from the outside, but it's logging errors in python
-                const data = sendToPython(formData,'/api/setModel')
+                const data = sendToPython(formData,'/api/setPlot')
                 const resolvedData = await data
+                //console.log('almostResolvedData is: ',almostResolvedData)
+                //const resolvedData = almostResolvedData['jsonResponse']
                 console.log('resolvedData is: ',resolvedData)
                 const formattedDays = (resolvedData.stockFeatures.days_list)
                     .map(day => dateToDate(day))
@@ -85,8 +85,7 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
                     datePriceScale:generateScale(resolvedData.stockArray),
                     daysList:formattedDays,
                     localMins:resolvedData.localMinsandMaxs[0],
-                    localMaxs:resolvedData.localMinsandMaxs[1],
-                    modelAnalysis:resolvedData.modelAnalysis
+                    localMaxs:resolvedData.localMinsandMaxs[1]
                 }
                 handleInput(newPlotData)
             }
@@ -95,48 +94,24 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
         setFormData((priorForm) => {
             const clearedForm = {...priorForm,
                 stockSymbol: "", 
-                stepSize: "",
-                max:""
+                trailingDays: ""
             }
             return clearedForm
         })
     }
+
+    const InputForm = inputFormBuilder(formData,handleChange)
+    console.log('InputForm is: ',InputForm)
 
     return (
         <form
             className="PlotInputForm"
             onSubmit={handleSubmit}
         >
-            <div className="SymbolDays">
-                <input
-                    type="text"
-                    placeholder="Stock Symbol"
-                    onChange={handleChange}
-                    name="stockSymbol"
-                    value={formData.stockSymbol}
-                />
-
-                <input
-                    type="text"
-                    placeholder="Step Size"
-                    onChange={handleChange}
-                    name="stepSize"
-                    value={formData.stepSize}
-                />
-
-                <input
-                    type="text"
-                    placeholder="Max"
-                    onChange={handleChange}
-                    name="max"
-                    value={formData.max}
-                />
-
-                <button className = "PlotButton">Model</button>
-            </div>
+           {InputForm}
         </form>
     )
 
 }
 
-export default ModelInputForm
+export default InputFormContainer
