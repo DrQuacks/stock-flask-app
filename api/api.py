@@ -21,12 +21,20 @@ def get_dummy_response():
 def set_dummy_post_value():
     data = request.get_json(force=True)
 
-    stockData = sd.trailing_avg(
-        data['stockSymbol'],
-        int(data['trailingDays']),
-        data['avgType'],
-        data['sampleType']
-    )
+    if (data['sampleType'] == "Open/Close"):
+        stockData = sd.trailing_avg_double(
+            data['stockSymbol'],
+            int(data['trailingDays']),
+            data['avgType'],
+            data['sampleType']
+        )
+    else:
+        stockData = sd.trailing_avg(
+            data['stockSymbol'],
+            int(data['trailingDays']),
+            data['avgType'],
+            data['sampleType']
+        )
     print('stockArray type is: ',type(stockData["stock_data"]))
     print('stockData is: ',stockData["stock_data"][0:10])
 

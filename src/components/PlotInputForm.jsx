@@ -29,10 +29,15 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
     }
 
     function generateScale(dataArray) {
-        const domain = dataArray.map((row) => dateToDate(row.date))
+        const domain = dataArray.map((row) => {
+            if (row.type){
+                return dateToDate(row.date,row.type)
+            }
+            return dateToDate(row.date)
+        })
         const range = dataArray.map((row) => [row.price,row.rawPrice])
 
-        //console.log('[domain,range] is: ',[domain,range])
+        console.log('[domain,range] is: ',[domain,range])
         return (
             d3.scaleOrdinal()
                 .domain(domain)
@@ -174,6 +179,7 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
                         <option value="Open">Open</option>
                         <option value="High">High</option>
                         <option value="Low">Low</option>
+                        <option value="Open/Close">Open/Close</option>
                     </select>
                 </div>
             </div>

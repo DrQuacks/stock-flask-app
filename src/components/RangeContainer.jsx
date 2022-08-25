@@ -10,6 +10,7 @@ const RangeContainer = ({xDomain,dayValues,updateStartDate,updateEndDate}) => {
     console.log('endDate is: ',endDate)
 
     const updateHandler = () => {
+        console.log('update start date was called')
         updateStartDate(dayValues[0])
         updateEndDate(dayValues[dayValues.length - 1])
     }

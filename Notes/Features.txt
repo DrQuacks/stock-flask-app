@@ -18,3 +18,7 @@
     -maybe like it has to be a bigger max than the last local max
 
 -plot raw data and predicted data, and color the lines with a heat map depending on accuracy
+
+-I should be plotting open and close
+    -And then I should predict one from the previous.
+    -ie. close predicts open, open predicts close. Having close predict close is moronic.

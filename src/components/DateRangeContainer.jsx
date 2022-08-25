@@ -12,13 +12,13 @@ const DateRangeContainer = ({xDomain,dayValues,updateStartDate,updateEndDate,set
     const [formData, setFormData] = useState({"start":startDate,"end":endDate})
 
     useEffect(() => {
-        //console.log('In DateRange, xDomain changed: ',[startDate,endDate])
+        console.log('In DateRange, xDomain changed: ',[startDate,endDate])
         setFormData({"start":startDate,"end":endDate})
     },[startDate,endDate])
 
     const updateHandler = () => { 
         setPrefs({"xDomain":xDomain})
-        //console.log('DateRange formData update is: ',formData)
+        console.log('DateRange formData update is: ',formData)
     }
 
     const resetHandler = () => {

@@ -1,4 +1,14 @@
 How many days trailing average do stocks tend to fall before they rebound?
+    -I should try to see if I can predict just based on the order of trailing averages used, as well
+        as the raw price. That might be simple to run, if I make columns for each, and put a 1 in whatever
+        state it's in. I could also try making it an ordinal thing, so like the highest average is a 6, and
+        then the next highest is a 5, and so on. I could even try normalizing all of them...
+        Maybe I wanna do both? I could do the binary columns thing (that'll get unwieldy for too many 
+        averages). And then I can also do the normalization thing. I should try this for different spacings
+        and different numbers of averages.
 
 Is recent distances between max and min lines indicative of anything? Does greater space mean the market
 is changing moods?
+    -If I go with the plan above, I could test if this gives me a sense for when things are changing.
+
+How do I quantify double peaks and double troughs?

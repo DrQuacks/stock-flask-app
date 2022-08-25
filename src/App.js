@@ -78,6 +78,7 @@ function App() {
     console.log("handleInput was called")
     if (inputData){
       console.log("inputData is: ",inputData)
+      console.log('plotPrefs.current in handleInput is: ',plotPrefs.current)
 
       //this is where a new plot is added to plotData
       if (plotPrefs.current.overlayNew){
@@ -87,7 +88,7 @@ function App() {
         plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
-          //console.log('customDate is: ',plotPrefs.current.customDate)
+          console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd(newPlotData)
           plotPrefs.current.dayValues = calcDayValues(newPlotData)
           plotPrefs.current.selectedDayValues = calcSelectedDayValues()
@@ -102,7 +103,7 @@ function App() {
         plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
-          //console.log('customDate is: ',plotPrefs.current.customDate)
+          console.log('customDate is: ',plotPrefs.current.customDate)
           plotPrefs.current.xDomain = calcStartEnd([inputData])
           plotPrefs.current.dayValues = inputData.daysList
           plotPrefs.current.selectedDayValues = calcSelectedDayValues()
@@ -191,23 +192,25 @@ function App() {
     const {xDomain,dayValues} = plotPrefs.current
     const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
 
-    //console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,plotPrefs.current.xDomain,dayValues])
-    const startIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[0])
-    const endIndex = dayValues.findIndex(day => day.getTime() === xDomainTime[1])
-    //console.log("In calcSelectedDayValues, startIndex and endIndex are: ",[startIndex,endIndex])
+    console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,plotPrefs.current.xDomain,dayValues])
+    const startIndex = dayValues.findIndex(day => day.getTime() >= xDomainTime[0])
+    const endIndex = dayValues.findLastIndex(day => day.getTime() <= xDomainTime[1])
+    console.log("In calcSelectedDayValues, startIndex and endIndex are: ",[startIndex,endIndex])
     const checkedStartIndex = startIndex === -1 ? 0:startIndex
     const checkedEndIndex = endIndex === -1 ? (dayValues.length - 1):endIndex
-    //console.log("In calcSelectedDayValues, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
+    console.log("In calcSelectedDayValues, checkedstartIndex and checkedendIndex are: ",[checkedStartIndex,checkedEndIndex])
 
     const newSelectedDays = dayValues.slice(checkedStartIndex,checkedEndIndex+1)
-    //console.log("In calcSelectedDayValues, [xDomain,dayValues,newSelectedDays] is: ",[plotPrefs.current.xDomain,dayValues,newSelectedDays])
+    console.log("In calcSelectedDayValues, [xDomain,dayValues,newSelectedDays] is: ",[plotPrefs.current.xDomain,dayValues,newSelectedDays])
     return newSelectedDays
   }
 
 
   const updateStartDate = (newDate) => {
+    console.log('update start date is being called, for prefs: ',plotPrefs.current)
     plotPrefs.current.xDomain[0] = newDate
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
+    console.log('update start date was called, for prefs: ',plotPrefs.current)
   }
 
   const updateEndDate = (newDate) => {

@@ -49,7 +49,7 @@ const LineChart = ({
                 .domain([0,(plotData[0].data.length - 1)])
                 .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
-            //console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
+            console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
 
             const xScaleRange = [ margin.left, width - (margin.right + margin.left)]
 
@@ -175,7 +175,7 @@ const LineChart = ({
                         })
                         .attr("y",margin.top)
                         .attr('width',xScaleBand.bandwidth)
-                        .attr('height',height - (margin.bottom+margin.bottom))
+                        .attr('height',height - (margin.top+margin.bottom))
                         .attr("opacity",0.15)
 
                         
