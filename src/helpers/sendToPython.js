@@ -1,10 +1,9 @@
 
 
-async function sendToPython(data){
-    //let asyncData
+async function sendToPython(data,route){
     console.log("in sendToPython, data is: ",data)
     const dataPackage = JSON.stringify(data)
-    const rawResponse = await fetch('/api/dummypost',{
+    const rawResponse = await fetch(route,{
         method: 'POST', 
         headers: {
         'Content-Type': 'application/json'
@@ -14,8 +13,8 @@ async function sendToPython(data){
     const jsonResponse = await rawResponse.json()
 
     console.log('jsonResponse is: ',jsonResponse)
-    
-    return {"stockArray":jsonResponse.stockArray,"stockFeatures":jsonResponse.stockFeatures,"localMinsandMaxs":jsonResponse.localMinsandMaxs}
+
+    return jsonResponse
 }
 
 export default sendToPython

@@ -21,7 +21,7 @@ def tryModel(data):
     step = int(data['stepSize'])
     max = int(data['max'])
 
-    #create_data(sym,step,max)
+    create_data(sym,step,max)
     result = access_data()
     model = sl.first_model(result['data'],result['features'])
     predictions = sl.make_predictions(model,result['data'],result['features'])

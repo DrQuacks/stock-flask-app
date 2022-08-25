@@ -17,7 +17,7 @@ def get_current_time():
 def get_dummy_response():
     return {'dummy': "Hey, I'm a dummy!"}
 
-@app.route('/api/dummypost',methods=['GET','POST'])
+@app.route('/api/setPlot',methods=['GET','POST'])
 def set_dummy_post_value():
     data = request.get_json(force=True)
 

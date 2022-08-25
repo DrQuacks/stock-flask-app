@@ -66,8 +66,10 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
             if (!stockNames.includes(formData.stockSymbol)){
                 //I need to handle blank inputs
                 //what's in here is working from the outside, but it's logging errors in python
-                const data = sendToPython(formData)
+                const data = sendToPython(formData,'/api/setPlot')
                 const resolvedData = await data
+                //console.log('almostResolvedData is: ',almostResolvedData)
+                //const resolvedData = almostResolvedData['jsonResponse']
                 console.log('resolvedData is: ',resolvedData)
                 const formattedDays = (resolvedData.stockFeatures.days_list)
                     .map(day => dateToDate(day))

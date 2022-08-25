@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import * as d3 from "d3";
-import sendToPythonAlt from "../helpers/sendToPythonAlt"
+import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 
 function ModelInputForm({plotData,handleInput,setPrefs}) {
@@ -62,7 +62,7 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
             if (!stockNames.includes(formData.stockSymbol)){
                 //I need to handle blank inputs
                 //what's in here is working from the outside, but it's logging errors in python
-                const data = sendToPythonAlt(formData)
+                const data = sendToPython(formData,'/api/setModel')
                 const resolvedData = await data
                 console.log('resolvedData is: ',resolvedData)
                 const formattedDays = (resolvedData.stockFeatures.days_list)
