@@ -20,4 +20,4 @@ def set_model():
     plotData = apihelp.get_plot_data(data,1)
     modelAnalysis = list(lm.tryModel(data).to_dict('index').items())
 
-    return {**plotData,'modelAnalysis':modelAnalysis}
+    return ({**plotData,'modelAnalysis':modelAnalysis})
