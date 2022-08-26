@@ -7,7 +7,8 @@ def get_average_data(data,trailing_days=None):
         data['stockSymbol'],
         days,
         data['avgType'],
-        data['sampleType']
+        data['sampleType'],
+        sd.prep_data
     )
 
     return stockData

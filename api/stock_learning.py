@@ -74,7 +74,7 @@ def first_model(data,features):
     model.fit(train[features],train['target_close_binary'])
     return model
 
-def setup_data(sym,step,max_days):
+def setup_data(sym,step,max_days,features):
     #step = 20
     #max_days = 100
 

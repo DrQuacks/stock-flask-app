@@ -23,13 +23,16 @@ def get_columns(sym,sample_types):
 
 
 #calculates trailing average for a specific number of days
-def trailing_avg(sym, days, avg_type, sample_type):
+def trailing_avg(sym, days, avg_type, sample_type,data_prep_callback):
+    #prepared_data = prep_data(sym, days, avg_type, sample_type)
+    prepared_data = data_prep_callback(sym, days, avg_type, sample_type)
+    print('prepared data is: ',prepared_data.keys())    
+    results = build_stock_list(**prepared_data)
+    return({**results})
 
-    #eventually should be done with a dataframe
-    #like all this should be vectorizable, or whatever the fuck that is
-    #if it's just like a .apply() or something, I feel like I can do that super easily
 
-    if (sample_type == "Open/Close"):
+def prep_data(sym, days, avg_type, sample_name):
+    if (sample_name == "Open/Close"):
         days = days*2 #accounts for 2 rows with same date
         stock = get_columns(sym,["Open","Close"])
         stock = stock.stack()
@@ -40,30 +43,28 @@ def trailing_avg(sym, days, avg_type, sample_type):
         print("DF-d: ")
         print(stock)
 
-        index_list = [item[0] for item in stock.index]
-        type_list = [item[1] for item in stock.index]
-        print('index_list: ',index_list)
-        sample_name = 'price'
+        date_index = [item[0] for item in stock.index]
+        type_index = [item[1] for item in stock.index]
+        sample_type = 'price'
     else:
-        stock = get_column(sym,sample_type)
-        index_list = stock.index
-        type_list = [sample_type for item in stock.index]
-        sample_name = sample_type
+        stock = get_column(sym,sample_name)
+        date_index = stock.index
+        type_index = [sample_name for item in stock.index]
+        sample_type = sample_name
 
     print("stock index is ",stock.index)
     print("stock type is: ",type(stock))
 
-    stock['derivative'] = stock[sample_name].pct_change()
+    stock['derivative'] = stock[sample_type].pct_change()
     
     #feels a bit hacky
     stock['derivative'].iloc[0] = 0
     print('derivative is: ',stock['derivative'])
     print('stock shape[0] is: ',stock.shape[0])
     #print("stock is: ",stock)
-    
-    results = build_stock_list(stock,index_list,type_list,days,sample_name,avg_type)
-    return({**results})
-
+    names = ['stock','date_index','type_index','days','sample_type','avg_type']
+    results = apihelp.make_dict(names,locals())
+    return({**results})    
 
 
 def computeAvg(stock,this_day,trail_days,type):
@@ -172,8 +173,6 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
             "derivSecond":deriv2_list[fakeIndex],
             "type":type_index[day]
         })
-        
-        
 
         if (day_avg < min_price):
             min_price = day_avg
