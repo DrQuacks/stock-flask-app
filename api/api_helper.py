@@ -2,20 +2,13 @@ import stock_data as sd
 
 def get_average_data(data,trailing_days=None):
     days = trailing_days or int(data['trailingDays'])
-    if (data['sampleType'] == "Open/Close"):
-        stockData = sd.trailing_avg_double(
-            data['stockSymbol'],
-            days,
-            data['avgType'],
-            data['sampleType']
-        )
-    else:
-        stockData = sd.trailing_avg(
-            data['stockSymbol'],
-            days,
-            data['avgType'],
-            data['sampleType']
-        )
+
+    stockData = sd.trailing_avg(
+        data['stockSymbol'],
+        days,
+        data['avgType'],
+        data['sampleType']
+    )
 
     return stockData
 

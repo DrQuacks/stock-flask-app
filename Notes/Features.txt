@@ -22,3 +22,5 @@
 -I should be plotting open and close
     -And then I should predict one from the previous.
     -ie. close predicts open, open predicts close. Having close predict close is moronic.
+
+-Make bars to show days range based on high and low
