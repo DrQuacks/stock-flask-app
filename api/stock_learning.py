@@ -17,7 +17,7 @@ def make_predictions(model,data,features):
 
 def analyze_predictions(preds,data):
     test = data.iloc[-300:-100]
-    target = test['target_close_binary']
+    target = test['target_binary']
     print(target)
     print(preds)
     score = precision_score(target,preds)
@@ -26,7 +26,7 @@ def analyze_predictions(preds,data):
     combined = pd.concat([target,preds],axis=1)
     #cols = combined.columns
     #combined.rename(columns={cols[1]:"prediction_close_binary"})
-    combined.columns = ['target_close_binary','prediction_close_binary']
+    combined.columns = ['target_binary','prediction_binary']
     print(combined.head())
     print(combined.columns)
     comparison = pd.DataFrame()
@@ -71,22 +71,38 @@ def first_model(data,features):
     #test = data.iloc[-500:-200]
 
     model = RandomForestClassifier(n_estimators=100,min_samples_split=100,random_state=1)
-    model.fit(train[features],train['target_close_binary'])
+    model.fit(train[features],train['target_binary'])
     return model
 
-def setup_data(sym,step,max_days,features):
-    #step = 20
-    #max_days = 100
+#def setup_data(history,step,max_days,features):
+def setup_model_data(history,step,max_days):
 
-    feature_cols = ['Open','Close','High','Low','Volume']
-    feature_cols_semi_normalized = ['Open','Close','High','Low','Volume']
+    history_columns = history.columns
+    feature_cols = ['High','Low','Volume']
+    feature_cols_semi_normalized = ['High','Low','Volume']
 
-    stock_history = sd.get_history(sym)
-    stock_history['target_close_price'] = stock_history['Close'].shift(-1)
-    stock_history['target_close_binary'] = (stock_history['target_close_price'] > stock_history['Close']).astype(int)
-    stock_history['Close_change'] = stock_history['Close'].pct_change()
-    feature_cols.append('Close_change')
-    feature_cols_semi_normalized.append('Close_change')
+    prepared_data = sd.prep_data(history, 1, 'Linear', 'Open/Close')
+    stock_output = prepared_data['stock']
+
+    #I need a last price column
+
+    stock_history = pd.merge(stock_output,history,on='Date',how='inner')
+    stock_history['Type'] = prepared_data['type_index']
+    print('stock_history is: ',stock_history.head())
+    print('columns are: ',stock_history.columns)
+    stock_history['last_price'] = stock_history['price'].shift(1)
+    print('stock_history is: ',stock_history.head())
+    print('columns are: ',stock_history.columns)
+    stock_history[history_columns] = stock_history[history_columns].shift(2)
+    print('stock_history is: ',stock_history.head())
+    print('columns are: ',stock_history.columns)
+    #stock_history['target_close_price'] = stock_history['Close'].shift(-1)
+
+
+    stock_history['target_binary'] = (stock_history['price'] > stock_history['last_price']).astype(int)
+    stock_history['price_change'] = stock_history['price'].pct_change()
+    feature_cols.append('price_change')
+    feature_cols_semi_normalized.append('price_change')
     for days_to_trail in range(step,max_days,step):
         col_name_avg = 'Avg_Close_'+str(days_to_trail)
         col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
@@ -109,7 +125,7 @@ def setup_data(sym,step,max_days,features):
 
         avg_list = []
         for day in range(days_to_trail,stock_history.shape[0] - 1): #has to start far enough along to calc a trailing average
-            day_avg = sd.computeAvg(stock_history['Close'],day,days_to_trail,'Constant')
+            day_avg = sd.computeAvg(stock_history['price'],day,days_to_trail,'Constant')
             avg_list.append(day_avg) #add average to list
             today_day = stock_history.index[day]
             stock_history.loc[today_day,col_name_avg] = day_avg
@@ -118,7 +134,7 @@ def setup_data(sym,step,max_days,features):
             stock_history.loc[today_day,col_name_min] = day_min
             stock_history.loc[today_day,col_name_max] = day_max
 
-            raw_price = stock_history.loc[today_day,"Close"]
+            raw_price = stock_history.loc[today_day,"price"]
 
             day_avg_sn = (day_avg - raw_price)/raw_price
             day_min_sn = (raw_price - day_min)/raw_price

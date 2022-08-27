@@ -1,5 +1,7 @@
 import yfinance as yf
 import stock_data as sd
+import learning_manager as lm
+
 
 def get_history(sym):
     stock = yf.Ticker(sym)
@@ -11,7 +13,6 @@ def get_average_data(stock_history,data,trailing_days=None):
     days = trailing_days or int(data['trailingDays'])
 
     stockData = sd.trailing_avg(
-        #data['stockSymbol'],
         stock_history,
         days,
         data['avgType'],
@@ -85,3 +86,5 @@ def plot_rubric(data):
 def model_rubric(data):
     stock_history = get_history(data['stockSymbol'])
     plotData = get_plot_data(stock_history,data,1)
+    modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
+    return ({**plotData,'modelAnalysis':modelAnalysis})

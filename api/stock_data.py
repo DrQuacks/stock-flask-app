@@ -1,4 +1,3 @@
-import yfinance as yf
 import pandas as pd
 import api_helper as apihelp
 
@@ -6,24 +5,6 @@ average_list = ['Constant','Linear','Quadratic','Exponential']
 sample_list = ['Close','Open','High','Low']
 
 
-
-#gets the entire stock's price history
-#def get_history(sym):
-    #stock = yf.Ticker(sym)
-    #return(stock.history(period = 'max'))
-
-#print(get_history('voo'))
-
-
-#def get_column(sym,sample_type):
-#    return get_history(sym).loc[:,[sample_type]]
-
-#def get_columns(sym,sample_types):
-#    return get_history(sym).loc[:,sample_types]
-
-
-#calculates trailing average for a specific number of days
-#def trailing_avg(sym, days, avg_type, sample_type,data_prep_callback):
 def trailing_avg(history, days, avg_type, sample_type,data_prep_callback):
     #prepared_data = prep_data(sym, days, avg_type, sample_type)
     prepared_data = data_prep_callback(history, days, avg_type, sample_type)
@@ -33,17 +14,16 @@ def trailing_avg(history, days, avg_type, sample_type,data_prep_callback):
     return(results)
 
 
-#def prep_data(sym, days, avg_type, sample_name):
 def prep_data(history, days, avg_type, sample_name):
     if (sample_name == "Open/Close"):
         days = days*2 #accounts for 2 rows with same date
-        #stock = get_columns(sym,["Open","Close"])
         stock = history.loc[:,["Open","Close"]]
         stock = stock.stack()
         print("Stacked:")
         print(stock)
         stock = stock.to_frame()
         stock = stock.rename(columns= {0: 'price'})
+        #stock = pd.melt(history,id_vars=['High','Low','Volume','Dividends','Stock Splits'],value_vars=['Open','Close'])
         print("DF-d: ")
         print(stock)
 
@@ -51,7 +31,6 @@ def prep_data(history, days, avg_type, sample_name):
         type_index = [item[1] for item in stock.index]
         sample_type = 'price'
     else:
-        #stock = get_column(sym,sample_name)
         stock = history.loc[:,[sample_name]]
         date_index = stock.index
         type_index = [sample_name for item in stock.index]
@@ -103,7 +82,6 @@ def computeAvg(stock,this_day,trail_days,type):
 
 
 def findLocalMinsandMaxs(history):
-    #stock = get_history(sym)[['Low','High']]
     stock = history.loc[:,['Low','High']]
 
     #days_list = []
@@ -125,9 +103,9 @@ def findLocalMinsandMaxs(history):
             max_list.append({"date":today_day,"price":today_price_high})
     return [min_list,max_list]
 
-def trailingMinsAndMaxs(stock_df,this_day,trail_days):
+def trailingMinsAndMaxs(history,this_day,trail_days):
     
-    short_stock_df = stock_df.iloc[this_day-trail_days+1:this_day+1]
+    short_stock_df = history.iloc[this_day-trail_days+1:this_day+1]
     current_min = short_stock_df['Low'].min()
     current_max = short_stock_df['High'].max()
 
@@ -164,7 +142,7 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
         avg_list.append(day_avg) #add average to list
         days_list.append(date_index[day]) #add coresponding day to list
         raw_deriv_list.append(deriv_avg)
-        #[day_min,day_max] = trailingMinsAndMaxs(stock[sample_type],day,days)
+        [day_min,day_max] = trailingMinsAndMaxs(history,day,days)
     
         #makes it a percentage instead of absolute derivative
         #might wanna do both though?
@@ -193,8 +171,8 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
             "derivFirst":raw_deriv_list[fakeIndex],
             "derivSecond":deriv2_list[fakeIndex],
             "type":type_index[day],
-            #"trailing_min":day_min,
-            #"trailing_max":day_max
+            "trailing_min":day_min,
+            "trailing_max":day_max
         })
 
         if (day_avg < min_price):
