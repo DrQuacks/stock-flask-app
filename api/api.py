@@ -12,7 +12,8 @@ def set_plot():
     data = request.get_json(force=True)
     plotData = apihelp.get_plot_data(data)
 
-    return ({**plotData})
+    #return ({**plotData})
+    return plotData
 
 @app.route('/api/setModel',methods=['GET','POST'])
 def set_model():
