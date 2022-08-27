@@ -8,34 +8,37 @@ sample_list = ['Close','Open','High','Low']
 
 
 #gets the entire stock's price history
-def get_history(sym):
-    stock = yf.Ticker(sym)
-    return(stock.history(period = 'max'))
+#def get_history(sym):
+    #stock = yf.Ticker(sym)
+    #return(stock.history(period = 'max'))
 
-print(get_history('voo'))
+#print(get_history('voo'))
 
 
-def get_column(sym,sample_type):
-    return get_history(sym).loc[:,[sample_type]]
+#def get_column(sym,sample_type):
+#    return get_history(sym).loc[:,[sample_type]]
 
-def get_columns(sym,sample_types):
-    return get_history(sym).loc[:,sample_types]
+#def get_columns(sym,sample_types):
+#    return get_history(sym).loc[:,sample_types]
 
 
 #calculates trailing average for a specific number of days
-def trailing_avg(sym, days, avg_type, sample_type,data_prep_callback):
+#def trailing_avg(sym, days, avg_type, sample_type,data_prep_callback):
+def trailing_avg(history, days, avg_type, sample_type,data_prep_callback):
     #prepared_data = prep_data(sym, days, avg_type, sample_type)
-    prepared_data = data_prep_callback(sym, days, avg_type, sample_type)
+    prepared_data = data_prep_callback(history, days, avg_type, sample_type)
     print('prepared data is: ',prepared_data.keys())    
     results = build_stock_list(**prepared_data)
     #return({**results})
     return(results)
 
 
-def prep_data(sym, days, avg_type, sample_name):
+#def prep_data(sym, days, avg_type, sample_name):
+def prep_data(history, days, avg_type, sample_name):
     if (sample_name == "Open/Close"):
         days = days*2 #accounts for 2 rows with same date
-        stock = get_columns(sym,["Open","Close"])
+        #stock = get_columns(sym,["Open","Close"])
+        stock = history.loc[:,["Open","Close"]]
         stock = stock.stack()
         print("Stacked:")
         print(stock)
@@ -48,7 +51,8 @@ def prep_data(sym, days, avg_type, sample_name):
         type_index = [item[1] for item in stock.index]
         sample_type = 'price'
     else:
-        stock = get_column(sym,sample_name)
+        #stock = get_column(sym,sample_name)
+        stock = history.loc[:,[sample_name]]
         date_index = stock.index
         type_index = [sample_name for item in stock.index]
         sample_type = sample_name
@@ -63,7 +67,7 @@ def prep_data(sym, days, avg_type, sample_name):
     print('derivative is: ',stock['derivative'])
     print('stock shape[0] is: ',stock.shape[0])
     #print("stock is: ",stock)
-    names = ['stock','date_index','type_index','days','sample_type','avg_type']
+    names = ['stock','date_index','type_index','days','sample_type','avg_type','history']
     results = apihelp.make_dict(names,locals())
     return({**results})    
 
@@ -98,8 +102,9 @@ def computeAvg(stock,this_day,trail_days,type):
     return avg
 
 
-def findLocalMinsandMaxs(sym):
-    stock = get_history(sym)[['Low','High']]
+def findLocalMinsandMaxs(history):
+    #stock = get_history(sym)[['Low','High']]
+    stock = history.loc[:,['Low','High']]
 
     #days_list = []
     #price_list = []
@@ -120,29 +125,18 @@ def findLocalMinsandMaxs(sym):
             max_list.append({"date":today_day,"price":today_price_high})
     return [min_list,max_list]
 
+def trailingMinsAndMaxs(stock_df,this_day,trail_days):
+    
+    short_stock_df = stock_df.iloc[this_day-trail_days+1:this_day+1]
+    current_min = short_stock_df['Low'].min()
+    current_max = short_stock_df['High'].max()
+
+    return [current_min,current_max]
 
 
-def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
-
-    #days = [days] if isinstance(days,int) else days
-
-    #first_days = days[0]
-    #last_days = days[len(days)-1]
+def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history):
     
     w = 0.01
-    #avg_list = [[] for day in days]
-    #days_list = [[] for day in days]
-    #stock_data = [[] for day in days]
-    #deriv_list = [[] for day in days]
-    #raw_deriv_list = [[] for day in days]
-    #deriv2_list = [[] for day in days]
-    #fakeIndex = [0 for day in days]
-    #min_price = [stock[sample_type].iloc[first_days] for day in days]
-    #max_price = [0 for day in days]
-    #min_deriv = [0 for day in days]
-    #max_deriv = [0 for day in days]
-    #min_deriv2 = [0 for day in days]
-    #max_deriv2 = [0 for day in days]
 
     avg_list = []
     days_list = []
@@ -164,15 +158,13 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
     print("end is ",end_date)
 
     for day in range(days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
-    #for day in range(last_days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
         day_avg = computeAvg(stock[sample_type],day,days,avg_type)
         deriv_avg = computeAvg(stock['derivative'],day,days,avg_type)    
-        
-        #for i in range(len(days)):
         
         avg_list.append(day_avg) #add average to list
         days_list.append(date_index[day]) #add coresponding day to list
         raw_deriv_list.append(deriv_avg)
+        #[day_min,day_max] = trailingMinsAndMaxs(stock[sample_type],day,days)
     
         #makes it a percentage instead of absolute derivative
         #might wanna do both though?
@@ -200,7 +192,9 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
             #"derivFirst":deriv_list[fakeIndex],
             "derivFirst":raw_deriv_list[fakeIndex],
             "derivSecond":deriv2_list[fakeIndex],
-            "type":type_index[day]
+            "type":type_index[day],
+            #"trailing_min":day_min,
+            #"trailing_max":day_max
         })
 
         if (day_avg < min_price):
@@ -234,13 +228,6 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
         "min_deriv2",
         "max_deriv2"
         ]
-    #results_list = []
-    print('max_price is: ',max_price)
-    #for i in range(len(days)):
-    #    results = apihelp.make_dict(names,locals(),sub_index=i)
-    #    print('results', results.keys())
-    #    print("results[max_price] is: ",results["max_price"])
-    #    results_list.append(results)
 
     results = apihelp.make_dict(names,locals())
     return (results)

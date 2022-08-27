@@ -1,10 +1,18 @@
+import yfinance as yf
 import stock_data as sd
 
-def get_average_data(data,trailing_days=None):
+def get_history(sym):
+    stock = yf.Ticker(sym)
+    return(stock.history(period = 'max'))
+
+print(get_history('voo'))
+
+def get_average_data(stock_history,data,trailing_days=None):
     days = trailing_days or int(data['trailingDays'])
 
     stockData = sd.trailing_avg(
-        data['stockSymbol'],
+        #data['stockSymbol'],
+        stock_history,
         days,
         data['avgType'],
         data['sampleType'],
@@ -13,14 +21,14 @@ def get_average_data(data,trailing_days=None):
 
     return stockData
 
-def get_plot_data(data,trailing_days=None):
+def get_plot_data(stock_history,data,trailing_days=None):
     plotData = {}
-    stockData = get_average_data(data,trailing_days)
+    stockData = get_average_data(stock_history,data,trailing_days)
     #for i in range(len(stockData)):
     
     stockArray = stockData["stock_data"]
 
-    localMinsandMaxs = sd.findLocalMinsandMaxs(data['stockSymbol'])
+    localMinsandMaxs = sd.findLocalMinsandMaxs(stock_history)
 
     column_list = [
         "min_price",
@@ -68,3 +76,12 @@ def make_dict(names,local_dict,sub_index=None):
             acc[name] = local_dict[name]
 
     return acc
+
+def plot_rubric(data):
+    stock_history = get_history(data['stockSymbol'])
+    plotData = get_plot_data(stock_history,data)
+    return ({**plotData})
+
+def model_rubric(data):
+    stock_history = get_history(data['stockSymbol'])
+    plotData = get_plot_data(stock_history,data,1)
