@@ -16,36 +16,38 @@ def get_average_data(data,trailing_days=None):
 def get_plot_data(data,trailing_days=None):
     plotData = {}
     stockData = get_average_data(data,trailing_days)
-    for i in range(len(stockData)):
-        stockArray = stockData[i]["stock_data"]
+    #for i in range(len(stockData)):
+    
+    stockArray = stockData["stock_data"]
 
-        localMinsandMaxs = sd.findLocalMinsandMaxs(data['stockSymbol'])
+    localMinsandMaxs = sd.findLocalMinsandMaxs(data['stockSymbol'])
 
-        column_list = [
-            "min_price",
-            "max_price",
-            "start_date",
-            "end_date",
-            "min_deriv",
-            "max_deriv",
-            "min_deriv2",
-            "max_deriv2",
-            "days_list"
-            ]
+    column_list = [
+        "min_price",
+        "max_price",
+        "start_date",
+        "end_date",
+        "min_deriv",
+        "max_deriv",
+        "min_deriv2",
+        "max_deriv2",
+        "days_list"
+        ]
 
-        names = [
-            'stockArray',
-            'stockFeatures',
-            'localMinsandMaxs'
-            ]
+    names = [
+        'stockArray',
+        'stockFeatures',
+        'localMinsandMaxs'
+        ]
 
-        stockFeatures = make_dict(column_list,stockData[i])
-        print('stockFeatures[max_price] is: ',stockFeatures['max_price'])    
-        #plotData.append(make_dict(names,locals()))
-        plotData[i] = make_dict(names,locals())
+    stockFeatures = make_dict(column_list,stockData)
+    print('stockFeatures[max_price] is: ',stockFeatures['max_price'])    
+    #plotData.append(make_dict(names,locals()))
+    #plotData[i] = make_dict(names,locals())
+    plotData = make_dict(names,locals())
 
-    #return ({**plotData})
-    return plotData
+    return ({**plotData})
+    #return plotData
 
 
 

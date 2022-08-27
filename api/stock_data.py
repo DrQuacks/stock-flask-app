@@ -68,38 +68,34 @@ def prep_data(sym, days, avg_type, sample_name):
     return({**results})    
 
 
-def computeAvg(stock,this_day,trail_days_list,type):
-    avg_list=[]
-    first_days = trail_days_list[0]
-    last_days = trail_days_list[len(trail_days_list)-1]
+def computeAvg(stock,this_day,trail_days,type):
     weighted_sum = 0
-    #last_days_list = range(1,last_days+1)
-    last_days_list = range(last_days,0,-1)
+    day_list = range(1,trail_days+1)
 
     if (type == 'Constant'):
-        coef_list = [d**0 for d in last_days_list]
+        coef_list = [d**0 for d in day_list]
     elif (type == 'Linear'):
-        coef_list = [d for d in last_days_list]
+        coef_list = [d for d in day_list]
     elif (type == 'Quadratic'):
-        coef_list = [d**2 for d in last_days_list]
+        coef_list = [d**2 for d in day_list]
     elif (type == 'Exponential'):
-        coef_list = [2**d for d in last_days_list]
+        coef_list = [2**d for d in day_list]
     else:
-        coef_list = [d**0 for d in last_days_list]
+        coef_list = [d**0 for d in day_list]
         #print(type)
 
     #if(this_day == 100):
         #print('coef list and type is: ',[coef_list,type])
-    #for s,c in zip(stock.iloc[this_day-last_days+1:this_day+1],coef_list):
-    #for s,c in zip(stock.iloc[this_day:this_day-last_days],coef_list):
-        #weighted_sum += s*c
-    for day in trail_days_list:
-        stock_slice = stock.iloc[this_day-day+1:this_day+1].sort_index(ascending=False)
-        weighted_sum = sum(stock_slice.multiply(coef_list))
-        avg = weighted_sum/sum(coef_list[:day])
-        avg_list.append(avg)
+    #for s,c in zip(stock.iloc[this_day-trail_days+1:this_day+1],coef_list):
+    #    weighted_sum += s*c
 
-    return avg_list
+    #return weighted_sum/sum(coef_list)
+
+    weighted_sum = sum(stock.iloc[this_day-trail_days+1:this_day+1].multiply(coef_list))
+    avg = weighted_sum/sum(coef_list)
+
+
+    return avg
 
 
 def findLocalMinsandMaxs(sym):
@@ -128,89 +124,104 @@ def findLocalMinsandMaxs(sym):
 
 def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
 
-    days = [days] if isinstance(days,int) else days
+    #days = [days] if isinstance(days,int) else days
 
-    first_days = days[0]
-    last_days = days[len(days)-1]
+    #first_days = days[0]
+    #last_days = days[len(days)-1]
     
     w = 0.01
-    avg_list = [[] for day in days]
-    days_list = [[] for day in days]
-    stock_data = [[] for day in days]
-    deriv_list = [[] for day in days]
-    raw_deriv_list = [[] for day in days]
-    deriv2_list = [[] for day in days]
-    fakeIndex = [0 for day in days]
-    min_price = [stock[sample_type].iloc[first_days] for day in days]
-    max_price = [0 for day in days]
-    min_deriv = [0 for day in days]
-    max_deriv = [0 for day in days]
-    min_deriv2 = [0 for day in days]
-    max_deriv2 = [0 for day in days]
+    #avg_list = [[] for day in days]
+    #days_list = [[] for day in days]
+    #stock_data = [[] for day in days]
+    #deriv_list = [[] for day in days]
+    #raw_deriv_list = [[] for day in days]
+    #deriv2_list = [[] for day in days]
+    #fakeIndex = [0 for day in days]
+    #min_price = [stock[sample_type].iloc[first_days] for day in days]
+    #max_price = [0 for day in days]
+    #min_deriv = [0 for day in days]
+    #max_deriv = [0 for day in days]
+    #min_deriv2 = [0 for day in days]
+    #max_deriv2 = [0 for day in days]
 
-    start_date = date_index[first_days]
+    avg_list = []
+    days_list = []
+    stock_data = []
+    deriv_list = []
+    raw_deriv_list = []
+    deriv2_list = []
+    fakeIndex = 0
+    min_price = stock[sample_type].iloc[days]
+    max_price = 0
+    min_deriv = 0
+    max_deriv = 0
+    min_deriv2 = 0
+    max_deriv2 = 0
+
+    start_date = date_index[days]
     print("start is ",start_date)
     end_date = date_index[(len(date_index) - 1)]
     print("end is ",end_date)
 
-    #for day in range(days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
-    for day in range(last_days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
+    for day in range(days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
+    #for day in range(last_days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
         day_avg = computeAvg(stock[sample_type],day,days,avg_type)
         deriv_avg = computeAvg(stock['derivative'],day,days,avg_type)    
         
-        for i in range(len(days)):
-            avg_list[i].append(day_avg[i]) #add average to list
-            days_list[i].append(date_index[day]) #add coresponding day to list
-            raw_deriv_list[i].append(deriv_avg[i])
+        #for i in range(len(days)):
         
-            #makes it a percentage instead of absolute derivative
-            #might wanna do both though?
-            if (fakeIndex[i] >= 1):
-                #deriv_list.append(((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex]))
-                #new_deriv = ((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex])
-                new_deriv = (w * raw_deriv_list[i][fakeIndex[i]]) + ((1-w) * raw_deriv_list[i][fakeIndex[i]-1])
-            else:
-                #deriv_list.append(0)
-                new_deriv = 0
+        avg_list.append(day_avg) #add average to list
+        days_list.append(date_index[day]) #add coresponding day to list
+        raw_deriv_list.append(deriv_avg)
+    
+        #makes it a percentage instead of absolute derivative
+        #might wanna do both though?
+        if (fakeIndex >= 1):
+            #deriv_list.append(((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex]))
+            #new_deriv = ((avg_list[fakeIndex] - avg_list[fakeIndex - 1])/avg_list[fakeIndex])
+            new_deriv = (w * raw_deriv_list[fakeIndex]) + ((1-w) * raw_deriv_list[fakeIndex-1])
+        else:
+            #deriv_list.append(0)
+            new_deriv = 0
 
-            deriv_list[i].append(new_deriv)
-            
-            
-            if (fakeIndex[i] >= 1):
-                deriv2_list[i].append(deriv_list[i][fakeIndex[i]] - deriv_list[i][fakeIndex[i] - 1])
-            else:
-                deriv2_list[i].append(0)
+        deriv_list.append(new_deriv)
+        
+        
+        if (fakeIndex >= 1):
+            deriv2_list.append(deriv_list[fakeIndex] - deriv_list[fakeIndex - 1])
+        else:
+            deriv2_list.append(0)
 
-            stock_data[i].append({
-                "numIndex": fakeIndex[i],
-                "price": day_avg[i],
-                "rawPrice":stock[sample_type].iloc[day],
-                "date":date_index[day],
-                #"derivFirst":deriv_list[fakeIndex],
-                "derivFirst":raw_deriv_list[i][fakeIndex[i]],
-                "derivSecond":deriv2_list[i][fakeIndex[i]],
-                "type":type_index[day]
-            })
+        stock_data.append({
+            "numIndex": fakeIndex,
+            "price": day_avg,
+            "rawPrice":stock[sample_type].iloc[day],
+            "date":date_index[day],
+            #"derivFirst":deriv_list[fakeIndex],
+            "derivFirst":raw_deriv_list[fakeIndex],
+            "derivSecond":deriv2_list[fakeIndex],
+            "type":type_index[day]
+        })
 
-            if (day_avg[i] < min_price[i]):
-                min_price[i] = day_avg[i]
-            if (day_avg[i] > max_price[i]):
-                max_price[i] = day_avg[i]
+        if (day_avg < min_price):
+            min_price = day_avg
+        if (day_avg > max_price):
+            max_price = day_avg
 
-            if (deriv_list[i][fakeIndex[i]] < min_deriv[i]):
-                min_deriv[i] = deriv_list[i][fakeIndex[i]]
-            if (deriv_list[i][fakeIndex[i]] > max_deriv[i]):
-                max_deriv[i] = deriv_list[i][fakeIndex[i]]
+        if (deriv_list[fakeIndex] < min_deriv):
+            min_deriv = deriv_list[fakeIndex]
+        if (deriv_list[fakeIndex] > max_deriv):
+            max_deriv = deriv_list[fakeIndex]
 
-            if (deriv2_list[i][fakeIndex[i]] < min_deriv2[i]):
-                min_deriv2[i] = deriv2_list[i][fakeIndex[i]]
-            if (deriv2_list[i][fakeIndex[i]] > max_deriv2[i]):
-                max_deriv2[i] = deriv2_list[i][fakeIndex[i]]
+        if (deriv2_list[fakeIndex] < min_deriv2):
+            min_deriv2 = deriv2_list[fakeIndex]
+        if (deriv2_list[fakeIndex] > max_deriv2):
+            max_deriv2 = deriv2_list[fakeIndex]
 
-            fakeIndex[i] += 1
+        fakeIndex += 1
 
     
-    print('Stock Data at row 10 is: ',stock_data[0][10])
+    print('Stock Data at row 10 is: ',stock_data[10])
     names = [
         "stock_data",
         "days_list",
@@ -223,12 +234,13 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type):
         "min_deriv2",
         "max_deriv2"
         ]
-    results_list = []
+    #results_list = []
     print('max_price is: ',max_price)
-    for i in range(len(days)):
-        results = apihelp.make_dict(names,locals(),sub_index=i)
-        print('results', results.keys())
-        print("results[max_price] is: ",results["max_price"])
-        results_list.append(results)
+    #for i in range(len(days)):
+    #    results = apihelp.make_dict(names,locals(),sub_index=i)
+    #    print('results', results.keys())
+    #    print("results[max_price] is: ",results["max_price"])
+    #    results_list.append(results)
 
-    return (results_list)
+    results = apihelp.make_dict(names,locals())
+    return (results)
