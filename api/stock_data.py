@@ -114,6 +114,8 @@ def trailingMinsAndMaxs(history,this_day,trail_days):
 
 def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history):
     
+    print('type_index length is: ',len(type_index))
+    print('date_index length is: ',len(date_index))
     w = 0.01
 
     avg_list = []
@@ -135,7 +137,12 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
     end_date = date_index[(len(date_index) - 1)]
     print("end is ",end_date)
 
-    for day in range(days,stock.shape[0] - 1): #has to start far enough along to calc a trailing average
+    print('length of date_index is: ',len(date_index))
+    print('length of stockDF is: ',stock.shape[0])
+    print('date_index is: ',date_index[:10])
+    print('stockDF is: ',stock.head(10))
+
+    for day in range(days,stock.shape[0]): #has to start far enough along to calc a trailing average
         day_avg = computeAvg(stock[sample_type],day,days,avg_type)
         deriv_avg = computeAvg(stock['derivative'],day,days,avg_type)    
         
@@ -193,6 +200,16 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
         fakeIndex += 1
 
     
+    col_name = "Avg_"+str(days/2)
+    print('avg_list: ',avg_list[:5])
+    print(len(avg_list))
+    print('type_list: ',type_index[days:days+5])
+    print(len(type_index[days:]))
+    print('days_list: ',days_list[:5])
+    dict = {col_name:avg_list,'Type':type_index[days:]}
+    avg_df = pd.DataFrame(dict,index=days_list)
+    avg_df = avg_df.rename_axis("Date")
+    print('avg_df is: ',avg_df.head())
     print('Stock Data at row 10 is: ',stock_data[10])
     names = [
         "stock_data",
@@ -204,7 +221,8 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
         "min_deriv",
         "max_deriv",
         "min_deriv2",
-        "max_deriv2"
+        "max_deriv2",
+        "avg_df"
         ]
 
     results = apihelp.make_dict(names,locals())

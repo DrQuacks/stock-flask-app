@@ -82,21 +82,15 @@ def setup_model_data(history,step,max_days):
     feature_cols_semi_normalized = ['High','Low','Volume']
 
     prepared_data = sd.prep_data(history, 1, 'Linear', 'Open/Close')
+    print('prepared_data is: ',prepared_data.keys())
     stock_output = prepared_data['stock']
-
-    #I need a last price column
 
     stock_history = pd.merge(stock_output,history,on='Date',how='inner')
     stock_history['Type'] = prepared_data['type_index']
-    print('stock_history is: ',stock_history.head())
-    print('columns are: ',stock_history.columns)
     stock_history['last_price'] = stock_history['price'].shift(1)
-    print('stock_history is: ',stock_history.head())
-    print('columns are: ',stock_history.columns)
     stock_history[history_columns] = stock_history[history_columns].shift(2)
     print('stock_history is: ',stock_history.head())
     print('columns are: ',stock_history.columns)
-    #stock_history['target_close_price'] = stock_history['Close'].shift(-1)
 
 
     stock_history['target_binary'] = (stock_history['price'] > stock_history['last_price']).astype(int)
@@ -104,47 +98,63 @@ def setup_model_data(history,step,max_days):
     feature_cols.append('price_change')
     feature_cols_semi_normalized.append('price_change')
     for days_to_trail in range(step,max_days,step):
-        col_name_avg = 'Avg_Close_'+str(days_to_trail)
-        col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
-        feature_cols.append(col_name_avg)
-        feature_cols_semi_normalized.append(col_name_avg_sn)
-        stock_history[col_name_avg] = 0
-        stock_history[col_name_avg_sn] = 0
-        col_name_min = 'Min_'+str(days_to_trail)
-        col_name_min_sn = 'Min_sn_'+str(days_to_trail)
-        feature_cols.append(col_name_min)
-        feature_cols_semi_normalized.append(col_name_min_sn)
-        stock_history[col_name_min] = 0
-        stock_history[col_name_min_sn] = 0
-        col_name_max = 'Max_'+str(days_to_trail)
-        col_name_max_sn = 'Max_'+str(days_to_trail)
-        feature_cols.append(col_name_max)
-        feature_cols_semi_normalized.append(col_name_max)
-        stock_history[col_name_max] = 0
-        stock_history[col_name_max_sn] = 0
+        stockData = sd.build_stock_list(
+            stock_history,
+            prepared_data['date_index'],
+            prepared_data['type_index'],
+            (days_to_trail * 2),
+            'price',
+            prepared_data['avg_type'],
+            stock_history)
 
-        avg_list = []
-        for day in range(days_to_trail,stock_history.shape[0] - 1): #has to start far enough along to calc a trailing average
-            day_avg = sd.computeAvg(stock_history['price'],day,days_to_trail,'Constant')
-            avg_list.append(day_avg) #add average to list
-            today_day = stock_history.index[day]
-            stock_history.loc[today_day,col_name_avg] = day_avg
+        stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
+        print('stock_history is: ',stock_history.head())
+        print('columns are: ',stock_history.columns)
+        
+        if (False):
+            col_name_avg = 'Avg_Close_'+str(days_to_trail)
+            col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
+            feature_cols.append(col_name_avg)
+            feature_cols_semi_normalized.append(col_name_avg_sn)
+            stock_history[col_name_avg] = 0
+            stock_history[col_name_avg_sn] = 0
 
-            [day_min,day_max] = trailingMinsAndMaxs(stock_history,day,days_to_trail)
-            stock_history.loc[today_day,col_name_min] = day_min
-            stock_history.loc[today_day,col_name_max] = day_max
+            col_name_min = 'Min_'+str(days_to_trail)
+            col_name_min_sn = 'Min_sn_'+str(days_to_trail)
+            feature_cols.append(col_name_min)
+            feature_cols_semi_normalized.append(col_name_min_sn)
+            stock_history[col_name_min] = 0
+            stock_history[col_name_min_sn] = 0
 
-            raw_price = stock_history.loc[today_day,"price"]
+            col_name_max = 'Max_'+str(days_to_trail)
+            col_name_max_sn = 'Max_'+str(days_to_trail)
+            feature_cols.append(col_name_max)
+            feature_cols_semi_normalized.append(col_name_max)
+            stock_history[col_name_max] = 0
+            stock_history[col_name_max_sn] = 0
 
-            day_avg_sn = (day_avg - raw_price)/raw_price
-            day_min_sn = (raw_price - day_min)/raw_price
-            day_max_sn = (day_max - raw_price)/raw_price
-            stock_history.loc[today_day,col_name_avg_sn] = day_avg_sn
-            stock_history.loc[today_day,col_name_min_sn] = day_min_sn
-            stock_history.loc[today_day,col_name_max_sn] = day_max_sn
+            avg_list = []
+            for day in range(days_to_trail,stock_history.shape[0] - 1): #has to start far enough along to calc a trailing average
+                day_avg = sd.computeAvg(stock_history['price'],day,days_to_trail,'Constant')
+                avg_list.append(day_avg) #add average to list
+                today_day = stock_history.index[day]
+                #stock_history.loc[today_day,col_name_avg] = day_avg
+
+                [day_min,day_max] = trailingMinsAndMaxs(stock_history,day,days_to_trail)
+                #stock_history.loc[today_day,col_name_min] = day_min
+                #stock_history.loc[today_day,col_name_max] = day_max
+
+                raw_price = stock_history.loc[today_day,"price"]
+
+                day_avg_sn = (day_avg - raw_price)/raw_price
+                day_min_sn = (raw_price - day_min)/raw_price
+                day_max_sn = (day_max - raw_price)/raw_price
+                #stock_history.loc[today_day,col_name_avg_sn] = day_avg_sn
+                #stock_history.loc[today_day,col_name_min_sn] = day_min_sn
+                #stock_history.loc[today_day,col_name_max_sn] = day_max_sn
     
 
-    return {"data":stock_history,"features":feature_cols_semi_normalized}
+    return {"data":stock_history,"features":feature_cols}
 
 def trailingMinsAndMaxs(stock_df,this_day,trail_days):
     
@@ -153,30 +163,3 @@ def trailingMinsAndMaxs(stock_df,this_day,trail_days):
     current_max = short_stock_df['High'].max()
 
     return [current_min,current_max]
-
-
-def computeAvgMaybe(stock,this_day,trail_days,type):
-    weighted_sum = 0
-    day_list = range(1,trail_days+1)
-
-
-    if (type == 'Constant'):
-        coef_list = [d**0 for d in day_list]
-    elif (type == 'Linear'):
-        coef_list = [d for d in day_list]
-    elif (type == 'Quadratic'):
-        coef_list = [d**2 for d in day_list]
-    elif (type == 'Exponential'):
-        coef_list = [2**d for d in day_list]
-    else:
-        coef_list = [d**0 for d in day_list]
-
-    for s,c in zip(stock.iloc[this_day-trail_days+1:this_day+1],coef_list):
-        weighted_sum += s*c
-        if (s > current_max):
-            current_max = s
-        if (s < current_min):
-            current_min = s
-
-    
-    return {'avg':weighted_sum/sum(coef_list),'high':current_max,'low':current_min}

@@ -85,6 +85,6 @@ def plot_rubric(data):
 
 def model_rubric(data):
     stock_history = get_history(data['stockSymbol'])
-    plotData = get_plot_data(stock_history,data,1)
+    #plotData = get_plot_data(stock_history,data,1)
     modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
-    return ({**plotData,'modelAnalysis':modelAnalysis})
+    #return ({**plotData,'modelAnalysis':modelAnalysis})
