@@ -30,21 +30,21 @@ def analyze_predictions(preds,data):
     print(combined.head())
     print(combined.columns)
     comparison = pd.DataFrame()
-    comparison['targetUp_predictionUp'] = (combined['target_close_binary'] == 1) & (combined['prediction_close_binary'] == 1)
-    comparison['targetDown_predictionDown'] = (combined['target_close_binary'] == 0) & (combined['prediction_close_binary'] == 0)
-    comparison['targetUp_predictionDown'] = (combined['target_close_binary'] == 1) & (combined['prediction_close_binary'] == 0)
-    comparison['targetDown_predictionUp'] = (combined['target_close_binary'] == 0) & (combined['prediction_close_binary'] == 1)
+    comparison['targetUp_predictionUp'] = (combined['target_binary'] == 1) & (combined['prediction_binary'] == 1)
+    comparison['targetDown_predictionDown'] = (combined['target_binary'] == 0) & (combined['prediction_binary'] == 0)
+    comparison['targetUp_predictionDown'] = (combined['target_binary'] == 1) & (combined['prediction_binary'] == 0)
+    comparison['targetDown_predictionUp'] = (combined['target_binary'] == 0) & (combined['prediction_binary'] == 1)
 
     trials = len(combined.index)
-    comparison['targetUp'] = (combined['target_close_binary'] == 1)
-    comparison['targetDown'] = (combined['target_close_binary'] == 0)
+    comparison['targetUp'] = (combined['target_binary'] == 1)
+    comparison['targetDown'] = (combined['target_binary'] == 0)
 
-    comparison['predictionUp'] = (combined['prediction_close_binary'] == 1)
-    comparison['predictionDown'] = (combined['prediction_close_binary'] == 0)
+    comparison['predictionUp'] = (combined['prediction_binary'] == 1)
+    comparison['predictionDown'] = (combined['prediction_binary'] == 0)
 
-    comparison['correct'] = combined['target_close_binary'] == combined['prediction_close_binary']
+    comparison['correct'] = combined['target_binary'] == combined['prediction_binary']
     comparison.index = combined.index
-    print(comparison.head())
+    print('comparison: ',comparison.head())
 
     splits = {
         'against targets':{'targetUp_predictionUp':(comparison['targetUp_predictionUp'].sum()/comparison['targetUp'].sum())*100,
@@ -76,7 +76,7 @@ def first_model(data,features):
 
 #def setup_data(history,step,max_days,features):
 def setup_model_data(history,step,max_days):
-
+    stockData_list =[]
     history_columns = history.columns
     feature_cols = ['High','Low','Volume']
     feature_cols_semi_normalized = ['High','Low','Volume']
@@ -102,7 +102,6 @@ def setup_model_data(history,step,max_days):
             stock_history,
             prepared_data['date_index'],
             prepared_data['type_index'],
-            #(days_to_trail * 2),
             days_to_trail,
             'price',
             prepared_data['avg_type'],
@@ -110,10 +109,11 @@ def setup_model_data(history,step,max_days):
             2
             )
 
+        stockData_list.append(stockData)
         stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
         print('stock_history is: ',stock_history.head())
         print('columns are: ',stock_history.columns)
-        
+
         if (False):
             col_name_avg = 'Avg_Close_'+str(days_to_trail)
             col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
@@ -157,12 +157,9 @@ def setup_model_data(history,step,max_days):
                 #stock_history.loc[today_day,col_name_max_sn] = day_max_sn
     
 
-    return {"data":stock_history,"features":feature_cols}
+    stock_history = stock_history.set_index([stock_history.index,stock_history['Type']])
+    print('stock_history is: ',stock_history.head())
+    print('columns are: ',stock_history.columns)
 
-def trailingMinsAndMaxs(stock_df,this_day,trail_days):
-    
-    short_stock_df = stock_df.iloc[this_day-trail_days+1:this_day+1]
-    current_min = short_stock_df['Low'].min()
-    current_max = short_stock_df['High'].max()
+    return {"data":stock_history,"features":feature_cols,"stockDataList":stockData_list}
 
-    return [current_min,current_max]

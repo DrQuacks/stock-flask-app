@@ -21,7 +21,8 @@ def set_model():
     data = request.get_json(force=True)
     #plotData = apihelp.get_plot_data(data,1)
     #modelAnalysis = list(lm.tryModel(data).to_dict('index').items())
-    plotData = apihelp.model_rubric(data)
+    plotDataDict = apihelp.model_rubric(data)
+    print('Almost home!!!!!!! ',plotDataDict.keys())
 
     #return ({**plotData,'modelAnalysis':modelAnalysis})
-    return plotData
+    return plotDataDict

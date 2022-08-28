@@ -23,9 +23,10 @@ def get_average_data(stock_history,data,trailing_days=None):
 
     return stockData
 
-def get_plot_data(stock_history,data,trailing_days=None):
+#def get_plot_data(stock_history,data,trailing_days=None):
+def get_plot_data(stock_history,stockData):
     plotData = {}
-    stockData = get_average_data(stock_history,data,trailing_days)
+    #stockData = get_average_data(stock_history,data,trailing_days)
     #for i in range(len(stockData)):
     
     stockArray = stockData["stock_data"]
@@ -83,14 +84,25 @@ def make_dict(names,local_dict,sub_index=None):
 
 def plot_rubric(data):
     stock_history = get_history(data['stockSymbol'])
-    plotData = get_plot_data(stock_history,data)
+    stockData = get_average_data(stock_history,data)
+    plotData = get_plot_data(stock_history,stockData)
     return ({**plotData})
 
 def model_rubric(data):
     stock_history = get_history(data['stockSymbol'])
-    #plotData = get_plot_data(stock_history,data,1)
-    modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
-    #return ({**plotData,'modelAnalysis':modelAnalysis})
+    modelData = lm.setModelData(stock_history,data)
+    #modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
+    modelAnalysis = list(lm.tryModel(modelData).to_dict('index').items())
+    #print('modelAnalysis: ', modelAnalysis[:19])
+
+    stockDataList = modelData['stockDataList']
+    plotDataDict = {}
+    for index,stock_data in enumerate(stockDataList):
+        print("index is: ",index)
+        plotData = get_plot_data(stock_history,stock_data)
+        plotDataDict[str(index)]= plotData
+    return ({**plotDataDict,'modelAnalysis':modelAnalysis})
+    #return ({'modelAnalysis':modelAnalysis})
 
 def nan_checker(check_list):
     for item in check_list:

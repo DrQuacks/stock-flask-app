@@ -17,7 +17,7 @@ def access_data():
         return(loaded_result)
 
 
-def tryModel(history,data):
+def setModelData(history,data):
     sym = data['stockSymbol']
     step = int(data['stepSize'])
     max = int(data['max'])
@@ -25,6 +25,10 @@ def tryModel(history,data):
     #create_data(sym,step,max)
     create_data(history,step,max)
     result = access_data()
+    return result
+
+#def tryModel(history,data):
+def tryModel(result):
     model = sl.first_model(result['data'],result['features'])
     predictions = sl.make_predictions(model,result['data'],result['features'])
 
