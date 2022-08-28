@@ -16,7 +16,7 @@ def trailing_avg(history, days, avg_type, sample_type,data_prep_callback):
 
 def prep_data(history, days, avg_type, sample_name):
     if (sample_name == "Open/Close"):
-        days = days*2 #accounts for 2 rows with same date
+        #days = days*2 #accounts for 2 rows with same date
         stock = history.loc[:,["Open","Close"]]
         stock = stock.stack()
         print("Stacked:")
@@ -30,11 +30,13 @@ def prep_data(history, days, avg_type, sample_name):
         date_index = [item[0] for item in stock.index]
         type_index = [item[1] for item in stock.index]
         sample_type = 'price'
+        samples_per_day = 2
     else:
         stock = history.loc[:,[sample_name]]
         date_index = stock.index
         type_index = [sample_name for item in stock.index]
         sample_type = sample_name
+        samples_per_day = 1
 
     print("stock index is ",stock.index)
     print("stock type is: ",type(stock))
@@ -46,7 +48,7 @@ def prep_data(history, days, avg_type, sample_name):
     print('derivative is: ',stock['derivative'])
     print('stock shape[0] is: ',stock.shape[0])
     #print("stock is: ",stock)
-    names = ['stock','date_index','type_index','days','sample_type','avg_type','history']
+    names = ['stock','date_index','type_index','days','sample_type','avg_type','history','samples_per_day']
     results = apihelp.make_dict(names,locals())
     return({**results})    
 
@@ -111,9 +113,17 @@ def trailingMinsAndMaxs(history,this_day,trail_days):
 
     return [current_min,current_max]
 
+def checkExtremes(val,min,max):
+    if (val < min):
+        min = val
+    if (val > max):
+        max = val
+    return [min,max]
 
-def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history):
+
+def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history,samples_per_day=1):
     
+    index_days = days*samples_per_day
     print('type_index length is: ',len(type_index))
     print('date_index length is: ',len(date_index))
     w = 0.01
@@ -125,14 +135,14 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
     raw_deriv_list = []
     deriv2_list = []
     fakeIndex = 0
-    min_price = stock[sample_type].iloc[days]
+    min_price = stock[sample_type].iloc[index_days]
     max_price = 0
     min_deriv = 0
     max_deriv = 0
     min_deriv2 = 0
     max_deriv2 = 0
 
-    start_date = date_index[days]
+    start_date = date_index[index_days]
     print("start is ",start_date)
     end_date = date_index[(len(date_index) - 1)]
     print("end is ",end_date)
@@ -142,14 +152,14 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
     print('date_index is: ',date_index[:10])
     print('stockDF is: ',stock.head(10))
 
-    for day in range(days,stock.shape[0]): #has to start far enough along to calc a trailing average
-        day_avg = computeAvg(stock[sample_type],day,days,avg_type)
-        deriv_avg = computeAvg(stock['derivative'],day,days,avg_type)    
+    for day in range(index_days,stock.shape[0]): #has to start far enough along to calc a trailing average
+        day_avg = computeAvg(stock[sample_type],day,index_days,avg_type)
+        deriv_avg = computeAvg(stock['derivative'],day,index_days,avg_type)    
         
         avg_list.append(day_avg) #add average to list
         days_list.append(date_index[day]) #add coresponding day to list
         raw_deriv_list.append(deriv_avg)
-        [day_min,day_max] = trailingMinsAndMaxs(history,day,days)
+        [day_min,day_max] = trailingMinsAndMaxs(history,int(day/samples_per_day),days)
     
         #makes it a percentage instead of absolute derivative
         #might wanna do both though?
@@ -182,33 +192,25 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
             "trailing_max":day_max
         })
 
-        if (day_avg < min_price):
-            min_price = day_avg
-        if (day_avg > max_price):
-            max_price = day_avg
-
-        if (deriv_list[fakeIndex] < min_deriv):
-            min_deriv = deriv_list[fakeIndex]
-        if (deriv_list[fakeIndex] > max_deriv):
-            max_deriv = deriv_list[fakeIndex]
-
-        if (deriv2_list[fakeIndex] < min_deriv2):
-            min_deriv2 = deriv2_list[fakeIndex]
-        if (deriv2_list[fakeIndex] > max_deriv2):
-            max_deriv2 = deriv2_list[fakeIndex]
+        [min_price,max_price] = checkExtremes(stock[sample_type].iloc[day],min_price,max_price)
+        [min_deriv,max_deriv] = checkExtremes(deriv_list[fakeIndex],min_deriv,max_deriv)
+        [min_deriv2,max_deriv2] = checkExtremes(deriv2_list[fakeIndex],min_deriv2,max_deriv2)
 
         fakeIndex += 1
 
     
-    col_name = "Avg_"+str(days/2)
+    #I need to do this with the trailing min and max as well
+    
+    col_name = "Avg_"+str(days)
     print('avg_list: ',avg_list[:5])
     print(len(avg_list))
-    print('type_list: ',type_index[days:days+5])
-    print(len(type_index[days:]))
+    print('type_list: ',type_index[index_days:index_days+5])
+    print(len(type_index[index_days:]))
     print('days_list: ',days_list[:5])
-    dict = {col_name:avg_list,'Type':type_index[days:]}
+    dict = {col_name:avg_list,'Type':type_index[index_days:]}
     avg_df = pd.DataFrame(dict,index=days_list)
     avg_df = avg_df.rename_axis("Date")
+    print('NaN rows in avg_df are: ',avg_df[avg_df.isna().any(axis=1)])
     print('avg_df is: ',avg_df.head())
     print('Stock Data at row 10 is: ',stock_data[10])
     names = [

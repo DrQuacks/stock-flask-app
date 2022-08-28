@@ -1,4 +1,5 @@
 import yfinance as yf
+import math
 import stock_data as sd
 import learning_manager as lm
 
@@ -28,6 +29,8 @@ def get_plot_data(stock_history,data,trailing_days=None):
     #for i in range(len(stockData)):
     
     stockArray = stockData["stock_data"]
+
+    print ('stockArray is: ',stockArray[:10])
 
     localMinsandMaxs = sd.findLocalMinsandMaxs(stock_history)
 
@@ -88,3 +91,8 @@ def model_rubric(data):
     #plotData = get_plot_data(stock_history,data,1)
     modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
     #return ({**plotData,'modelAnalysis':modelAnalysis})
+
+def nan_checker(check_list):
+    for item in check_list:
+        if math.isnan(item):
+            print ('Found NaN in: ',check_list)

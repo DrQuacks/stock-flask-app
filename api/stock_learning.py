@@ -102,10 +102,13 @@ def setup_model_data(history,step,max_days):
             stock_history,
             prepared_data['date_index'],
             prepared_data['type_index'],
-            (days_to_trail * 2),
+            #(days_to_trail * 2),
+            days_to_trail,
             'price',
             prepared_data['avg_type'],
-            stock_history)
+            stock_history,
+            2
+            )
 
         stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
         print('stock_history is: ',stock_history.head())
