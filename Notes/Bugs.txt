@@ -1,0 +1,4 @@
+-Adding a longer stock with Persist Date selected makes reset not give desired behavior 
+    -should override the Persist Date thingy
+
+-Day calculation works on finding longest stock day list, but that's no longer reliable with open/close

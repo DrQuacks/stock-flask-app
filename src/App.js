@@ -64,57 +64,40 @@ function App() {
     customDate:false
   })
 
-  /*const plotPrefs = useRef({
-    semiLog:false,
-    overlayNew:false,
-    customDate:false,
-    xDomain:[(new Date()),(new Date())],
-    dayValues:[(new Date())],
-    selectedDayValues:[(new Date())],
-    priceRange:[0,0],
-    selectedPriceRange:[0,0]
-  })*/
-
 
   const handleInput = (inputData) => {
     console.log("handleInput was called, and plotData was: ",plotData)
     if (inputData){
       console.log("inputData is: ",inputData)
       console.log('plotPrefs.current in handleInput is: ',plotPrefs.current)
-
       //this is where a new plot is added to plotData
       if (plotPrefs.current.overlayNew){
         const newPlotData = [...plotData,...inputData]
         console.log('newPlotData is: ',newPlotData)
-        plotPrefs.current.priceRange = calcMinMax(newPlotData)
-        plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
-
-        if (!plotPrefs.current.customDate){
-          console.log('customDate is: ',plotPrefs.current.customDate)
-          plotPrefs.current.xDomain = calcStartEnd(newPlotData)
-          plotPrefs.current.dayValues = calcDayValues(newPlotData)
-          plotPrefs.current.selectedDayValues = calcSelectedDayValues()
-        }
-
-        //console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
-        setPlotData(newPlotData)
-        //setPlotData((prevData) => [...prevData,inputData])
-
+        updateData(newPlotData)
       } else {
-        plotPrefs.current.priceRange = calcMinMax(inputData)
-        plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
-
-        if (!plotPrefs.current.customDate){
-          console.log('customDate is: ',plotPrefs.current.customDate)
-          plotPrefs.current.xDomain = calcStartEnd(inputData)
-          plotPrefs.current.dayValues = calcDayValues(inputData)
-          plotPrefs.current.selectedDayValues = calcSelectedDayValues()
-        }
-
-        console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
-        setPlotData(inputData)
+        updateData(inputData)
       }
     }
+  }
+  
+  const updateData = (data) => {
+    updatePricePrefs(data)
+    if (!plotPrefs.current.customDate){
+      updateDatePrefs(data)
+    }
+    setPlotData(data)
+  }
+  
+  const updatePricePrefs = (data) => {
+    plotPrefs.current.priceRange = calcMinMax(data)
+    plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
+  }
+
+  const updateDatePrefs = (data) => {
+    plotPrefs.current.xDomain = calcStartEnd(data)
+    plotPrefs.current.dayValues = calcDayValues(data)
+    plotPrefs.current.selectedDayValues = calcSelectedDayValues()
   }
 
   const setPrefs = (prefs) => {
