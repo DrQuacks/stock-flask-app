@@ -1,0 +1,5 @@
+-I need a threshhold for how many ticks to show
+    -this tells me when to swap from years to months to days
+        -could I have quarters?
+
+-I'll need some of d3's axis cleanup stuff like clamp and nice

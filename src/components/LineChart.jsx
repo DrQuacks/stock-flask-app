@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 import dateToString from "../helpers/dateToString";
+import dateLocaleToString from "../helpers/dateLocaleToString";
 
 const LineChart = ({
     plotData,
@@ -49,6 +50,7 @@ const LineChart = ({
                 .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
             console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
+            console.log('xDomain and scale xDomain are: ',[xDomain,d3.scaleTime().domain(xDomain)])
 
             const xScaleRange = [ margin.left, width - (margin.right + margin.left)]
 
@@ -298,7 +300,7 @@ const LineChart = ({
                     
                     const mappedX = pointerX
                     //eventually I need to make this more dynamic
-                    //console.log('mappedX is: ',mappedX)
+                    console.log('mappedX is: ',mappedX)
                     //console.log('mappedX type is: ',(typeof mappedX))
                     const [mappedY,mappedYRaw] = plotData[0].datePriceScale(mappedX)
                     
@@ -324,6 +326,11 @@ const LineChart = ({
                     function mouseMove(eDrag) {
                         eDrag.preventDefault()
                         const {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(eDrag)
+                        console.log('outputted mappedX is: ',mappedX)
+                        const mappedXStr = dateLocaleToString(mappedX.toLocaleString("en-US", {
+                            timeZone: "America/Los_Angeles"
+                          }))
+
 
                         /*console.log('numericMappedX is: ',mappedX.getTime())
                         console.log('numericDay0 is: ',plotData[0].daysList[0].getTime())
@@ -352,9 +359,15 @@ const LineChart = ({
                             tooltip
                                 .style("top", eDrag.pageY - 10 + "px")
                                 .style("left", eDrag.pageX + 10 + "px")
-                                .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                                //.html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                                .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${mappedXStr}`)
+
                         }
                     }
+
+                    const mappedXStr = dateLocaleToString(mappedX.toLocaleString("en-US", {
+                        timeZone: "America/Los_Angeles"
+                      }))
 
                     if (
                         mappedX.getTime() >= plotData[0].daysList[0].getTime() 
@@ -405,7 +418,7 @@ const LineChart = ({
                             .style("top", e.pageY - 10 + "px")
                             .style("left", e.pageX + 10 + "px")
                             .style("opacity", 1)
-                            .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
+                            .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${mappedXStr}`)
                         }
                 })
 

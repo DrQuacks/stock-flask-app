@@ -1,6 +1,7 @@
 const dateToString = (str) => {
   if (str) { 
     //console.log("In dateToStr, str is: ",[str]) 
+    console.log("In dateToStr, mappedX is: ",[str]) 
     const mnths = {
           Jan: "01",
           Feb: "02",
