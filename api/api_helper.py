@@ -86,7 +86,8 @@ def plot_rubric(data):
     stock_history = get_history(data['stockSymbol'])
     stockData = get_average_data(stock_history,data)
     plotData = get_plot_data(stock_history,stockData)
-    return ({**plotData})
+    plotDataDict = {'0':plotData}
+    return ({'plotData':plotDataDict})
 
 def model_rubric(data):
     stock_history = get_history(data['stockSymbol'])
@@ -101,7 +102,7 @@ def model_rubric(data):
         print("index is: ",index)
         plotData = get_plot_data(stock_history,stock_data)
         plotDataDict[str(index)]= plotData
-    return ({**plotDataDict,'modelAnalysis':modelAnalysis})
+    return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
     #return ({'modelAnalysis':modelAnalysis})
 
 def nan_checker(check_list):

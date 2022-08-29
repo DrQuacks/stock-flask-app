@@ -19,8 +19,10 @@ function App() {
     trailingDays:"",
     avgType:"",
     sampleType:"",
-    start:(new Date()).toISOString().split('T')[0],
-    end:(new Date()).toISOString().split('T')[0],
+    //start:(new Date()).toISOString().split('T')[0],
+    //end:(new Date()).toISOString().split('T')[0],
+    start:new Date(),
+    end: new Date(),
     min:0,
     max:0,
     minDeriv:0,
@@ -75,14 +77,14 @@ function App() {
 
 
   const handleInput = (inputData) => {
-    console.log("handleInput was called")
+    console.log("handleInput was called, and plotData was: ",plotData)
     if (inputData){
       console.log("inputData is: ",inputData)
       console.log('plotPrefs.current in handleInput is: ',plotPrefs.current)
 
       //this is where a new plot is added to plotData
       if (plotPrefs.current.overlayNew){
-        const newPlotData = [...plotData,inputData]
+        const newPlotData = [...plotData,...inputData]
         console.log('newPlotData is: ',newPlotData)
         plotPrefs.current.priceRange = calcMinMax(newPlotData)
         plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
@@ -99,18 +101,18 @@ function App() {
         //setPlotData((prevData) => [...prevData,inputData])
 
       } else {
-        plotPrefs.current.priceRange = calcMinMax([inputData])
+        plotPrefs.current.priceRange = calcMinMax(inputData)
         plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
 
         if (!plotPrefs.current.customDate){
           console.log('customDate is: ',plotPrefs.current.customDate)
-          plotPrefs.current.xDomain = calcStartEnd([inputData])
-          plotPrefs.current.dayValues = inputData.daysList
+          plotPrefs.current.xDomain = calcStartEnd(inputData)
+          plotPrefs.current.dayValues = calcDayValues(inputData)
           plotPrefs.current.selectedDayValues = calcSelectedDayValues()
         }
 
         console.log('xDomain in handleInput is: ',plotPrefs.current.xDomain)
-        setPlotData([inputData])
+        setPlotData(inputData)
       }
     }
   }
