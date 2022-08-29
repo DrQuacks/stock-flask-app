@@ -46,63 +46,52 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
 
     async function handleSubmit(event) {
         event.preventDefault()
-        //console.log('In handleSUbmit, button was is: ',event.nativeEvent.submitter.className)
-        const buttonType = event.nativeEvent.submitter.className
+
         const prefs = {
             overlayNew: formData.overlayNew,
             customDate: formData.customDate,
         }
         setPrefs(prefs)
         
-        if (buttonType === "PlotButton"){
-            const stockNames = plotData.map((stock) => {
-                return stock.stockSymbol
-            })
-            //don't add a stock that's already been added
-            if (!stockNames.includes(formData.stockSymbol)){
-                //I need to handle blank inputs
-                //what's in here is working from the outside, but it's logging errors in python
-                const data = sendToPython(formData,route)
-                const resolvedDataDict = await data
-                //console.log('almostResolvedData is: ',almostResolvedData)
-                //const resolvedData = almostResolvedData['jsonResponse']
-                console.log('resolvedDataDict is: ',resolvedDataDict)
-                const plotKeys = Object.keys(resolvedDataDict.plotData)
-                let newPlotDataList = []
-                plotKeys.forEach((resolvedDataKey,index) => {
-                    //const keepPlots = (index > 0)
-                    const days = formData.trailingDays || (parseInt(formData.stepSize)*(index+1))
-                    console.log("days is: ",days)
-                    const resolvedData = resolvedDataDict.plotData[resolvedDataKey]
-                    console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
-                    const formattedDays = (resolvedData.stockFeatures.days_list)
-                        .map(day => dateToDate(day))
-                    //console.log('[formattedDays] is: ',[formattedDays])
-                    const newPlotData = {
-                        name:formData.stockSymbol,
-                        data:resolvedData.stockArray,
-                        trailingDays:days,
-                        avgType:formData.avgType,
-                        sampleType:formData.sampleType,
-                        start:dateToDate(resolvedData.stockFeatures.start_date),
-                        end:dateToDate(resolvedData.stockFeatures.end_date),
-                        min:resolvedData.stockFeatures.min_price,
-                        max:resolvedData.stockFeatures.max_price,
-                        minDeriv:resolvedData.stockFeatures.min_deriv,
-                        maxDeriv:resolvedData.stockFeatures.max_deriv,
-                        minDeriv2:resolvedData.stockFeatures.min_deriv2,
-                        maxDeriv2:resolvedData.stockFeatures.max_deriv2,
-                        datePriceScale:generateScale(resolvedData.stockArray),
-                        daysList:formattedDays,
-                        localMins:resolvedData.localMinsandMaxs[0],
-                        localMaxs:resolvedData.localMinsandMaxs[1],
-                        modelAnalysis:resolvedData.modelAnalysis
-                    }
-                    newPlotDataList = [...newPlotDataList,newPlotData]
-                })
-                handleInput(newPlotDataList)
+        //I need to handle blank inputs
+        //what's in here is working from the outside, but it's logging errors in python
+        const data = sendToPython(formData,route)
+        const resolvedDataDict = await data
+        console.log('resolvedDataDict is: ',resolvedDataDict)
+        const plotKeys = Object.keys(resolvedDataDict.plotData)
+        let newPlotDataList = []
+        plotKeys.forEach((resolvedDataKey,index) => {
+            const days = formData.trailingDays || (parseInt(formData.stepSize)*(index+1))
+            console.log("days is: ",days)
+            const resolvedData = resolvedDataDict.plotData[resolvedDataKey]
+            console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
+            const formattedDays = (resolvedData.stockFeatures.days_list)
+                .map(day => dateToDate(day))
+            //console.log('[formattedDays] is: ',[formattedDays])
+            const newPlotData = {
+                name:formData.stockSymbol,
+                data:resolvedData.stockArray,
+                trailingDays:days,
+                avgType:formData.avgType,
+                sampleType:formData.sampleType,
+                start:dateToDate(resolvedData.stockFeatures.start_date),
+                end:dateToDate(resolvedData.stockFeatures.end_date),
+                min:resolvedData.stockFeatures.min_price,
+                max:resolvedData.stockFeatures.max_price,
+                minDeriv:resolvedData.stockFeatures.min_deriv,
+                maxDeriv:resolvedData.stockFeatures.max_deriv,
+                minDeriv2:resolvedData.stockFeatures.min_deriv2,
+                maxDeriv2:resolvedData.stockFeatures.max_deriv2,
+                datePriceScale:generateScale(resolvedData.stockArray),
+                daysList:formattedDays,
+                localMins:resolvedData.localMinsandMaxs[0],
+                localMaxs:resolvedData.localMinsandMaxs[1],
+                modelAnalysis:resolvedDataDict.modelAnalysis
             }
-        }
+            newPlotDataList = [...newPlotDataList,newPlotData]
+        })
+        handleInput(newPlotDataList)
+ 
         console.log("event is: ",event)
         setFormData((priorForm) => {
             const clearedForm = {...priorForm,

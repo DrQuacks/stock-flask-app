@@ -92,11 +92,11 @@ def setup_model_data(history,step,max_days):
     print('stock_history is: ',stock_history.head())
     print('columns are: ',stock_history.columns)
 
-
     stock_history['target_binary'] = (stock_history['price'] > stock_history['last_price']).astype(int)
     stock_history['price_change'] = stock_history['price'].pct_change()
     feature_cols.append('price_change')
     feature_cols_semi_normalized.append('price_change')
+    
     for days_to_trail in range(step,max_days,step):
         stockData = sd.build_stock_list(
             stock_history,
@@ -113,49 +113,6 @@ def setup_model_data(history,step,max_days):
         stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
         print('stock_history is: ',stock_history.head())
         print('columns are: ',stock_history.columns)
-
-        if (False):
-            col_name_avg = 'Avg_Close_'+str(days_to_trail)
-            col_name_avg_sn = 'Avg_Close_sn_'+str(days_to_trail)
-            feature_cols.append(col_name_avg)
-            feature_cols_semi_normalized.append(col_name_avg_sn)
-            stock_history[col_name_avg] = 0
-            stock_history[col_name_avg_sn] = 0
-
-            col_name_min = 'Min_'+str(days_to_trail)
-            col_name_min_sn = 'Min_sn_'+str(days_to_trail)
-            feature_cols.append(col_name_min)
-            feature_cols_semi_normalized.append(col_name_min_sn)
-            stock_history[col_name_min] = 0
-            stock_history[col_name_min_sn] = 0
-
-            col_name_max = 'Max_'+str(days_to_trail)
-            col_name_max_sn = 'Max_'+str(days_to_trail)
-            feature_cols.append(col_name_max)
-            feature_cols_semi_normalized.append(col_name_max)
-            stock_history[col_name_max] = 0
-            stock_history[col_name_max_sn] = 0
-
-            avg_list = []
-            for day in range(days_to_trail,stock_history.shape[0] - 1): #has to start far enough along to calc a trailing average
-                day_avg = sd.computeAvg(stock_history['price'],day,days_to_trail,'Constant')
-                avg_list.append(day_avg) #add average to list
-                today_day = stock_history.index[day]
-                #stock_history.loc[today_day,col_name_avg] = day_avg
-
-                [day_min,day_max] = trailingMinsAndMaxs(stock_history,day,days_to_trail)
-                #stock_history.loc[today_day,col_name_min] = day_min
-                #stock_history.loc[today_day,col_name_max] = day_max
-
-                raw_price = stock_history.loc[today_day,"price"]
-
-                day_avg_sn = (day_avg - raw_price)/raw_price
-                day_min_sn = (raw_price - day_min)/raw_price
-                day_max_sn = (day_max - raw_price)/raw_price
-                #stock_history.loc[today_day,col_name_avg_sn] = day_avg_sn
-                #stock_history.loc[today_day,col_name_min_sn] = day_min_sn
-                #stock_history.loc[today_day,col_name_max_sn] = day_max_sn
-    
 
     stock_history = stock_history.set_index([stock_history.index,stock_history['Type']])
     print('stock_history is: ',stock_history.head())

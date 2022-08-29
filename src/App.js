@@ -175,6 +175,7 @@ function App() {
     return yRange
   }
 
+  //this function now has a bug due to double length of Open/Close
   const calcDayValues = (plots) => {
     console.log("In calc day values, plots is: ",plots)
     const indexLongest = plots.reduce((acc,stock,index)=>{

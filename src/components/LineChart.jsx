@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import * as d3 from "d3";
-import { Tooltip } from "@mui/material";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 import dateToString from "../helpers/dateToString";
@@ -171,7 +170,7 @@ const LineChart = ({
                             return modelPerformanceScale(d[1]['correct'])
                         })
                         .attr("x",(d) => {
-                            return xScaleBand(dateToDate(d[0]))
+                            return xScaleBand(dateToDate(d[0][0]))
                         })
                         .attr("y",margin.top)
                         .attr('width',xScaleBand.bandwidth)

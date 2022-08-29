@@ -7,7 +7,7 @@ const LegendContainer = ({plotData, removeStock}) => {
     const legendInsides = plotData.map((element,index) => {
         return (
             <LegendEntry
-                key = {element.name}
+                key = {`${element.name}${element.trailingDays}`}
                 name = {element.name}
                 trailingDays = {element.trailingDays}
                 avgType = {element.avgType}
