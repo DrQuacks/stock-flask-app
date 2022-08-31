@@ -10,6 +10,7 @@ import LegendContainer from './components/LegendContainer';
 import DateRangeContainer from './components/DateRangeContainer';
 import PriceRangeContainer from './components/PriceRangeContainer';
 import GraphOptions from './components/GraphOptions';
+import dateToTickString from './helpers/dateToTickString';
 
 function App() {
 
@@ -53,6 +54,7 @@ function App() {
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
+    dateTickValues: [(new Date())],
     priceRange:[0,0],
     selectedPriceRange:[0,0]
   }
@@ -98,6 +100,7 @@ function App() {
     plotPrefs.current.xDomain = calcStartEnd(data)
     plotPrefs.current.dayValues = calcDayValues(data)
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
+    plotPrefs.current.dateTickValues = calcTickValues()
   }
 
   const setPrefs = (prefs) => {
@@ -191,17 +194,27 @@ function App() {
     return newSelectedDays
   }
 
+  const calcTickValues = () => {
+    const maxTicks = 10
+    const days = plotPrefs.current.selectedDayValues
+    const newTickValues = [days[0],days[parseInt((days.length-1)/2)],days[days.length-1]]
+    const newerTickValues = newTickValues.map(tick => dateToTickString(tick))
+    return newerTickValues
+  }
+
 
   const updateStartDate = (newDate) => {
     console.log('update start date is being called, for prefs: ',plotPrefs.current)
     plotPrefs.current.xDomain[0] = newDate
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
+    plotPrefs.current.dateTickValues = calcTickValues()
     console.log('update start date was called, for prefs: ',plotPrefs.current)
   }
 
   const updateEndDate = (newDate) => {
     plotPrefs.current.xDomain[1] = newDate
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
+    plotPrefs.current.dateTickValues = calcTickValues()
   }
 
   const updateMinPrice = (price) => {

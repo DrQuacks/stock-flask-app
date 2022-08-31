@@ -11,7 +11,7 @@ const LineChart = ({
 }) => {
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs} = plotPrefs.current
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues} = plotPrefs.current
     const showPlot = {
         price:true,
         raw:true,
@@ -115,13 +115,17 @@ const LineChart = ({
             const xAxis = svg.append("g")
                 .attr("id","xAxis")
                 .attr("transform", `translate(0,${height - margin.bottom})`)
-                .call(d3.axisBottom(xScaleShow));
+                .call(d3.axisBottom(xScale)
+                    .tickValues(dateTickValues)
+                    //.tickFormat("blah")
+                    );
 
             const xAxisGridLines = svg.append("g")
                 .attr("id","xAxisGridLines")
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .attr("opacity",".05")
-                .call(d3.axisBottom(xScaleShow)
+                .call(d3.axisBottom(xScale)
+                    .tickValues(dateTickValues)
                     .tickFormat("")
                     .tickSize(-1*(height - (margin.bottom + margin.top)))
                 )
