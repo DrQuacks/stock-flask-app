@@ -231,21 +231,23 @@ function App() {
     let newTickValues = []
     if (displayType === "day"){
       newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
-    } else if (displayType === "month"){
+    } else {
       newTickValues = days.reduce((acc,day,index) => {
+        const timeGetter = (displayType === "month") ? ((testDate) => testDate.getMonth()) : ((testDate) => testDate.getYear())
         //if ((startOffset+index)%stepSize === 0){
         if ((index-startOffset)%stepSize === 0){  
           console.log('day is: ',day)
-          const thisMonth = day.getMonth()
+          //const thisMonth = day.getMonth()
+          const thisMonth = timeGetter(day)
           let testDay = day
           let testIndex = index
-          console.log('testDay.getMonth() is: ',testDay.getMonth())
-          let testMonth = testDay.getMonth()
+          console.log('timeGetter(testDay) is: ',timeGetter(testDay))
+          let testMonth = timeGetter(testDay)
           while (testMonth === thisMonth && testIndex > 0){
             testIndex = testIndex - 1
             testDay = days[testIndex]
             console.log('testDay is: ',testDay)
-            testMonth = testDay.getMonth()
+            testMonth = timeGetter(testDay)
           }
           const firstDay = days[testIndex+1]
           startOffset = testIndex+1
@@ -255,11 +257,7 @@ function App() {
         }
         return acc
       },[])
-    } else {
-      newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
     }
-    
-    //const newTickValues = [days[0],days[parseInt((days.length-1)/2)],days[days.length-1]]
     const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
     console.log('[displayType,newTickValues,newerTickValues]',[displayType,newTickValues,newerTickValues])
     const tickScale = d3.scaleOrdinal()

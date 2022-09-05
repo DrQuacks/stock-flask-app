@@ -297,7 +297,7 @@ const LineChart = ({
                     //console.log('[rangePoints] is: ',[rangePoints]) 
                     const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
                     const roundedRawX = rangePoints[roundedRawXIndex-1] //this feels like a fudge factor, need to fix
-                    console.log('roundedRawX and rawX is: ',[roundedRawX,rawX])
+                    //console.log('roundedRawX and rawX is: ',[roundedRawX,rawX])
                     pointerX = xScaleInverse(roundedRawX)
 
                     pointerY = yScale.invert(rawY - margin.top)
@@ -305,7 +305,7 @@ const LineChart = ({
                     
                     const mappedX = pointerX
                     //eventually I need to make this more dynamic
-                    console.log('mappedX is: ',mappedX)
+                    //console.log('mappedX is: ',mappedX)
                     //console.log('mappedX type is: ',(typeof mappedX))
                     const [mappedY,mappedYRaw] = plotData[0].datePriceScale(mappedX)
                     
