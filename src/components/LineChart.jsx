@@ -3,6 +3,7 @@ import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 import dateToString from "../helpers/dateToString";
+import dateToTickString from "../helpers/dateToTickString";
 import dateLocaleToString from "../helpers/dateLocaleToString";
 
 const LineChart = ({
@@ -20,7 +21,6 @@ const LineChart = ({
         localMins:localMins,
         localMaxs:localMaxs
     }
-    console.log('semilog is: ',semiLog)
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
 
@@ -49,7 +49,7 @@ const LineChart = ({
                 .domain([0,(plotData[0].data.length - 1)])
                 .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
-            console.log('[xDomain,dayValues,selectedDayValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues])
+            console.log('[xDomain,dayValues,selectedDayValues,dateTickValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues,dateTickValues])
             console.log('xDomain and scale xDomain are: ',[xDomain,d3.scaleTime().domain(xDomain)])
 
             const xScaleRange = [ margin.left, width - (margin.right + margin.left)]
@@ -116,16 +116,17 @@ const LineChart = ({
                 .attr("id","xAxis")
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale)
-                    .tickValues(dateTickValues)
-                    //.tickFormat("blah")
+                    .tickValues(dateTickValues['date'])
+                    .tickFormat((tick) => dateTickValues['scale'](tick))
                     );
+                //.call(d3.axisBottom(xScaleShow))
 
             const xAxisGridLines = svg.append("g")
                 .attr("id","xAxisGridLines")
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .attr("opacity",".05")
                 .call(d3.axisBottom(xScale)
-                    .tickValues(dateTickValues)
+                    .tickValues(dateTickValues['date'])
                     .tickFormat("")
                     .tickSize(-1*(height - (margin.bottom + margin.top)))
                 )
@@ -295,8 +296,8 @@ const LineChart = ({
                     const rangePoints = xScaleInverse.domain()
                     //console.log('[rangePoints] is: ',[rangePoints]) 
                     const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
-                    const roundedRawX = rangePoints[roundedRawXIndex]
-                    //console.log('roundedRawX is: ',roundedRawX)
+                    const roundedRawX = rangePoints[roundedRawXIndex-1] //this feels like a fudge factor, need to fix
+                    console.log('roundedRawX and rawX is: ',[roundedRawX,rawX])
                     pointerX = xScaleInverse(roundedRawX)
 
                     pointerY = yScale.invert(rawY - margin.top)

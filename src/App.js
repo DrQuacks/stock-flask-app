@@ -54,7 +54,7 @@ function App() {
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
-    dateTickValues: [(new Date())],
+    dateTickValues: {"date":[(new Date())],"scale":d3.scaleOrdinal()},
     priceRange:[0,0],
     selectedPriceRange:[0,0]
   }
@@ -194,12 +194,49 @@ function App() {
     return newSelectedDays
   }
 
+  //change at 6 months
+  
   const calcTickValues = () => {
-    const maxTicks = 10
+    const maxTicks = 15
     const days = plotPrefs.current.selectedDayValues
-    const newTickValues = [days[0],days[parseInt((days.length-1)/2)],days[days.length-1]]
-    const newerTickValues = newTickValues.map(tick => dateToTickString(tick))
-    return newerTickValues
+    const totalTime = days[days.length-1].getTime() - days[0].getTime()
+    const totalDays = Math.floor(totalTime/86400000)
+    const totalMonths = Math.floor(totalDays/30.5)
+    const totalYears = Math.floor(totalDays/365.25)
+
+    const displayType = totalMonths < 6 ? "day" : totalYears < 6 ? "month" : "year"
+    const totalType = totalMonths < 6 ? totalDays : totalYears < 6 ? totalMonths : totalYears
+    console.log("totalDays,totalMonths,totalYears,displayType is: ",[totalDays,totalMonths,totalYears,displayType])
+
+    let numberTicks = maxTicks
+    let remainder = 0
+    let startOffset = 0
+    let endOffset = 0
+    const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
+    let stepSize = multiplier
+    if (totalType > maxTicks){
+      stepSize = Math.floor(totalDays / maxTicks)
+      remainder = totalDays % maxTicks
+      startOffset = Math.floor(remainder/2)
+      endOffset = remainder - startOffset
+    } else {
+      numberTicks = (displayType === "day") ? days.length : totalType
+    }
+
+    console.log("[displayType,numberTicks,maxTicks,stepSize,multiplier] is: ",[displayType,numberTicks,maxTicks,stepSize,multiplier])
+    console.log("[displayType,totalType,remainder,startOffset,endOffset] is: ",[displayType,totalType,remainder,startOffset,endOffset])
+    
+    const newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
+    
+    //const newTickValues = [days[0],days[parseInt((days.length-1)/2)],days[days.length-1]]
+    const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
+    console.log('[displayType,newTickValues,newerTickValues]',[displayType,newTickValues,newerTickValues])
+    const tickScale = d3.scaleOrdinal()
+      .domain(newTickValues)
+      .range(newerTickValues) 
+
+    const tickObject = {"date":newTickValues,"scale":tickScale}
+    return tickObject
   }
 
 
