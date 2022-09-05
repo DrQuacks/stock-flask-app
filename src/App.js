@@ -212,7 +212,8 @@ function App() {
     let remainder = 0
     let startOffset = 0
     let endOffset = 0
-    const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
+    //const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
+    const multiplier = (displayType === "year") ? 261 : (displayType === "month") ? 23 : 1
     let stepSize = multiplier
     if (totalType > maxTicks){
       stepSize = Math.floor(totalDays / maxTicks)
@@ -226,7 +227,37 @@ function App() {
     console.log("[displayType,numberTicks,maxTicks,stepSize,multiplier] is: ",[displayType,numberTicks,maxTicks,stepSize,multiplier])
     console.log("[displayType,totalType,remainder,startOffset,endOffset] is: ",[displayType,totalType,remainder,startOffset,endOffset])
     
-    const newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
+    //need to calc 1st of the month once, and then step into new months from there
+    let newTickValues = []
+    if (displayType === "day"){
+      newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
+    } else if (displayType === "month"){
+      newTickValues = days.reduce((acc,day,index) => {
+        //if ((startOffset+index)%stepSize === 0){
+        if ((index-startOffset)%stepSize === 0){  
+          console.log('day is: ',day)
+          const thisMonth = day.getMonth()
+          let testDay = day
+          let testIndex = index
+          console.log('testDay.getMonth() is: ',testDay.getMonth())
+          let testMonth = testDay.getMonth()
+          while (testMonth === thisMonth && testIndex > 0){
+            testIndex = testIndex - 1
+            testDay = days[testIndex]
+            console.log('testDay is: ',testDay)
+            testMonth = testDay.getMonth()
+          }
+          const firstDay = days[testIndex+1]
+          startOffset = testIndex+1
+          if (testIndex > 0) {
+            return [...acc,firstDay]
+          }
+        }
+        return acc
+      },[])
+    } else {
+      newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
+    }
     
     //const newTickValues = [days[0],days[parseInt((days.length-1)/2)],days[days.length-1]]
     const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
