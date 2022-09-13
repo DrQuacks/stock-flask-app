@@ -193,8 +193,6 @@ function App() {
     console.log("In calcSelectedDayValues, [xDomain,dayValues,newSelectedDays] is: ",[plotPrefs.current.xDomain,dayValues,newSelectedDays])
     return newSelectedDays
   }
-
-  //change at 6 months
   
   const calcTickValues = () => {
     const maxTicks = 15
