@@ -331,7 +331,7 @@ const LineChart = ({
                     function mouseMove(eDrag) {
                         eDrag.preventDefault()
                         const {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(eDrag)
-                        console.log('outputted mappedX is: ',mappedX)
+                        //console.log('outputted mappedX is: ',mappedX)
                         const mappedXStr = dateLocaleToString(mappedX.toLocaleString("en-US", {
                             timeZone: "America/Los_Angeles"
                           }))

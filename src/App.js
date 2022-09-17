@@ -212,7 +212,7 @@ function App() {
     let endOffset = 0
     //const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
     const multiplier = (displayType === "year") ? 261 : (displayType === "month") ? 23 : 1
-    let stepSize = multiplier
+    let stepSize = plotData[0]["sampleType"] === "Open/Close" ? multiplier*2 : multiplier
     if (totalType > maxTicks){
       stepSize = Math.floor(totalDays / maxTicks)
       remainder = totalDays % maxTicks
