@@ -4,6 +4,7 @@ import pandas as pd
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score
+from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
 
 
@@ -106,8 +107,7 @@ def setup_model_data(history,step,max_days):
             'price',
             prepared_data['avg_type'],
             stock_history,
-            2
-            )
+            2)
 
         stockData_list.append(stockData)
         stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
