@@ -26,3 +26,12 @@ def set_model():
 
     #return ({**plotData,'modelAnalysis':modelAnalysis})
     return plotDataDict
+
+
+@app.route('/api/setTrainTest',methods=['GET','POST'])
+def set_train_test():
+    data = request.get_json(force=True)
+    plotDataDict = apihelp.train_test_rubric(data)
+    print('Almost home!!!!!!! ',plotDataDict.keys())
+
+    return plotDataDict

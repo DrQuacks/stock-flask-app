@@ -6,6 +6,7 @@ import LineChart from './components/LineChart';
 import './App.css';
 import PlotInputForm from './components/PlotInputForm';
 import ModelInputForm from './components/ModelInputForm';
+import ModelSampleForm from './components/ModelSampleForm';
 import LegendContainer from './components/LegendContainer';
 import DateRangeContainer from './components/DateRangeContainer';
 import PriceRangeContainer from './components/PriceRangeContainer';
@@ -331,6 +332,11 @@ function App() {
           <TabPanel>
             <div className='TopBar'>
               <ModelInputForm
+                plotData = {plotData}
+                handleInput = {handleInput}
+                setPrefs = {setPrefs}
+              />
+              <ModelSampleForm
                 plotData = {plotData}
                 handleInput = {handleInput}
                 setPrefs = {setPrefs}

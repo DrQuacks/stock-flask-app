@@ -105,6 +105,28 @@ def model_rubric(data):
     return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
     #return ({'modelAnalysis':modelAnalysis})
 
+def train_test_rubric(data):
+    stock_history = get_history(data['stockSymbol'])
+    modelData = lm.getModelData()
+    print('modelData type: ',type(modelData['data']))
+    print('modelData: ',modelData['data'].head())
+    print('input data is: ',int(data['trainStart']))
+    print('input data is: ',int(data['trainEnd']))
+    print('input data is: ',int(data['testEnd']))
+
+
+
+    modelAnalysis = list(lm.tryModel(modelData,int(data['trainStart']),int(data['trainEnd']),int(data['testEnd'])).to_dict('index').items())
+
+    stockDataList = modelData['stockDataList']
+    plotDataDict = {}
+    for index,stock_data in enumerate(stockDataList):
+        print("index is: ",index)
+        plotData = get_plot_data(stock_history,stock_data)
+        plotDataDict[str(index)]= plotData
+    return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
+
+
 def nan_checker(check_list):
     for item in check_list:
         if math.isnan(item):

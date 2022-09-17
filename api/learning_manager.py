@@ -28,9 +28,13 @@ def setModelData(history,data):
     return result
 
 #def tryModel(history,data):
-def tryModel(result):
-    model = sl.first_model(result['data'],result['features'])
-    predictions = sl.make_predictions(model,result['data'],result['features'])
+def tryModel(result,train_start=100,train_end=-300,test_end=-100):
+    model = sl.first_model(result['data'],result['features'],train_start,train_end)
+    predictions = sl.make_predictions(model,result['data'],result['features'],train_end,test_end)
 
-    comparison_chart = sl.analyze_predictions(predictions,result['data'])
+    comparison_chart = sl.analyze_predictions(predictions,result['data'],train_end,test_end)
     return comparison_chart
+
+def getModelData():
+    result = access_data()
+    return result

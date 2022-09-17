@@ -31,7 +31,7 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
                         value={formData.max}
                     />
 
-                    <button className = "PlotButton">Model</button>
+                    <button className = "PlotButton">Prep <br/> Data</button>
                 </div>
             </div>
         return InputFormElement
