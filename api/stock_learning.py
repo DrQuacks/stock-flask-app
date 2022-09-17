@@ -95,8 +95,9 @@ def setup_model_data(history,step,max_days):
 
     stock_history['target_binary'] = (stock_history['price'] > stock_history['last_price']).astype(int)
     stock_history['price_change'] = stock_history['price'].pct_change()
-    feature_cols.append('price_change')
-    feature_cols_semi_normalized.append('price_change')
+    stock_history['last_price_change'] = stock_history['price_change'].shift(1) #should this be shited by 2?
+    feature_cols.append('last_price_change')
+    feature_cols_semi_normalized.append('last_price_change')
     
     for days_to_trail in range(step,max_days,step):
         stockData = sd.build_stock_list(
