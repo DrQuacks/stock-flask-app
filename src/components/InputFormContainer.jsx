@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 
-function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,route}) {
+function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,route,modelSample}) {
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
@@ -13,7 +13,7 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
             overlayNew: false,
             customDate: false,
             avgType: "Constant",
-            sampleType: "Close"
+            sampleType: modelSample || "Close"
         }
     )
 
@@ -50,6 +50,7 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
         const prefs = {
             overlayNew: formData.overlayNew,
             customDate: formData.customDate,
+            doubleDates: formData.sampleType === "Open/Close" ? true : false
         }
         setPrefs(prefs)
         

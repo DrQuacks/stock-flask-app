@@ -44,6 +44,7 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
             setPrefs={setPrefs}
             inputFormBuilder={inputFormBuilder}
             route={'/api/setModel'}
+            modelSample={'Open/Close'}
         />
     )
 

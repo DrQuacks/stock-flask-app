@@ -63,7 +63,8 @@ function App() {
     ...initialSemiPlotPrefsState,
     semiLog:false,
     overlayNew:false,
-    customDate:false
+    customDate:false,
+    doubleDates:false
   })
 
 
@@ -212,7 +213,9 @@ function App() {
     let endOffset = 0
     //const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
     const multiplier = (displayType === "year") ? 261 : (displayType === "month") ? 23 : 1
-    let stepSize = plotData[0]["sampleType"] === "Open/Close" ? multiplier*2 : multiplier
+    //let stepSize = plotData[0]["sampleType"] === "Open/Close" ? multiplier*2 : multiplier
+    let stepSize = plotPrefs.current.doubleDates ? multiplier*2 : multiplier
+    console.log("plotData,plotPrefs.current.doubleDates,stepSize,multplier is : ",[plotData,plotPrefs.current.doubleDates,stepSize,multiplier])
     if (totalType > maxTicks){
       stepSize = Math.floor(totalDays / maxTicks)
       remainder = totalDays % maxTicks
