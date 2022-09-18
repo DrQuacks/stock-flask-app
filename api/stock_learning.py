@@ -135,5 +135,5 @@ def setup_model_data(history,step,max_days):
     feature_cols.extend(additional_feature_cols)
     print("features are: ",feature_cols)
 
-    return {"data":stock_history,"features":feature_cols,"stockDataList":stockData_list}
+    return {"data":stock_history,"features":feature_cols,"stockDataList":stockData_list,"max":max_days}
 

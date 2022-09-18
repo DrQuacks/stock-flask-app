@@ -10,9 +10,10 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
             trailingDays: "",
             stepSize:"",
             max:"",
-            trainStart:"",
-            trainEnd:"",
-            testEnd:"",
+            //trainStart:"",
+            //trainEnd:"",
+            //testEnd:"",
+            trainingBounds:['0','80','100'],
             overlayNew: false,
             customDate: false,
             avgType: "Constant",
@@ -22,6 +23,7 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
 
     function handleChange(event) {
         const {name, value, type, checked} = event.target
+        //console.log('[name, value, type, checked]: ',[name, value, type, checked])
         setFormData(prevFormData => {
             return {
                 ...prevFormData,
@@ -109,7 +111,7 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
     }
 
     const InputForm = inputFormBuilder(formData,handleChange)
-    console.log('InputForm is: ',InputForm)
+    //console.log('InputForm is: ',InputForm)
 
     return (
         <form

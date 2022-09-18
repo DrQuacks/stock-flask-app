@@ -110,13 +110,20 @@ def train_test_rubric(data):
     modelData = lm.getModelData()
     print('modelData type: ',type(modelData['data']))
     print('modelData: ',modelData['data'].head())
-    print('input data is: ',int(data['trainStart']))
-    print('input data is: ',int(data['trainEnd']))
-    print('input data is: ',int(data['testEnd']))
+    data_length = len(modelData['data'].index)
+    #train_start = int(int(data['trainStart']) * data_length/100)
+    #train_end = int(int(data['trainEnd']) * data_length/100)
+    #test_end = int(int(data['testEnd']) * data_length/100)
+    train_start = int(int(data['trainingBounds'][0]) * data_length/100)
+    train_end = int(int(data['trainingBounds'][1]) * data_length/100)
+    test_end = int(int(data['trainingBounds'][2]) * data_length/100)
+    print('train_start: ',train_start)
+    print('train_end: ',train_end)
+    if (train_start < modelData['max']):
+        train_start = modelData['max']
 
 
-
-    modelAnalysis = list(lm.tryModel(modelData,int(data['trainStart']),int(data['trainEnd']),int(data['testEnd'])).to_dict('index').items())
+    modelAnalysis = list(lm.tryModel(modelData,train_start,train_end,test_end).to_dict('index').items())
 
     stockDataList = modelData['stockDataList']
     plotDataDict = {}
