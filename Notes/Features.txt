@@ -24,3 +24,5 @@
     -ie. close predicts open, open predicts close. Having close predict close is moronic.
 
 -Make bars to show days range based on high and low
+
+-Make Prediction Bars toggle-able, for eith red or green or both

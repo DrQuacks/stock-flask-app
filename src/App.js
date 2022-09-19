@@ -293,16 +293,9 @@ function App() {
     plotPrefs.current.selectedPriceRange[1] = price
   }
 
-  return (
-    <div className="App">
-      <div className='TopBar'>
-        <Tabs>
-          <TabList className='TabTops'>
-            <Tab>Plot</Tab>
-            <Tab>Model</Tab>
-          </TabList>
-          <TabPanel>
-          <div className='TopBar'>
+  const PlotTab = {
+    name:"Plot",
+    body: <div className='TopBar'>
             <PlotInputForm
               plotData = {plotData}
               handleInput = {handleInput}
@@ -328,20 +321,39 @@ function App() {
               setPrefs = {setPrefs}
             />
           </div>
+  }
+
+  const ModelTab = {
+    name:"Model",
+    body: <div className='TopBar'>
+            <ModelInputForm
+              plotData = {plotData}
+              handleInput = {handleInput}
+              setPrefs = {setPrefs}
+            />
+            <ModelSampleForm
+              plotData = {plotData}
+              handleInput = {handleInput}
+              setPrefs = {setPrefs}
+            />
+          </div>
+  }  
+
+  const TabsArray = [PlotTab,ModelTab]
+
+  return (
+    <div className="App">
+      <div className='TopBar'>
+        <Tabs>
+          <TabList className='TabTops'>
+            <Tab>{TabsArray[0].name}</Tab>
+            <Tab>{TabsArray[1].name}</Tab>
+          </TabList>
+          <TabPanel>
+            {TabsArray[0].body}
           </TabPanel>
           <TabPanel>
-            <div className='TopBar'>
-              <ModelInputForm
-                plotData = {plotData}
-                handleInput = {handleInput}
-                setPrefs = {setPrefs}
-              />
-              <ModelSampleForm
-                plotData = {plotData}
-                handleInput = {handleInput}
-                setPrefs = {setPrefs}
-              />
-            </div>
+            {TabsArray[1].body}
           </TabPanel>
         </Tabs>
       </div>
