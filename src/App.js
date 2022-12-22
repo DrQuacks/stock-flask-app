@@ -12,31 +12,10 @@ import DateRangeContainer from './components/DateRangeContainer';
 import PriceRangeContainer from './components/PriceRangeContainer';
 import GraphOptions from './components/GraphOptions';
 import dateToTickString from './helpers/dateToTickString';
+import initialPlotState from './static/initialPlotState';
+import initialSemiPlotPrefsState from './static/initialSemiPlotPrefsState'
 
 function App() {
-
-  const initialPlotState = [{
-    name:"",
-    data:[],
-    trailingDays:"",
-    avgType:"",
-    sampleType:"",
-    //start:(new Date()).toISOString().split('T')[0],
-    //end:(new Date()).toISOString().split('T')[0],
-    start:new Date(),
-    end: new Date(),
-    min:0,
-    max:0,
-    minDeriv:0,
-    maxDeriv:0,
-    minDeriv2:0,
-    maxDeriv2:0,
-    datePriceScale: new d3.scaleLinear(),
-    daysList:[],
-    localMins:[],
-    localMaxs:[],
-    modelAnalysis:[]
-  }]
 
   const [plotData, setPlotData] = useState(initialPlotState)
 
@@ -50,15 +29,6 @@ function App() {
     priceRange:[0,0],
     selectedPriceRange:[0,0]
   })
-
-  const initialSemiPlotPrefsState = {
-    xDomain:[(new Date()),(new Date())],
-    dayValues:[(new Date())],
-    selectedDayValues:[(new Date())],
-    dateTickValues: {"date":[(new Date())],"scale":d3.scaleOrdinal()},
-    priceRange:[0,0],
-    selectedPriceRange:[0,0]
-  }
 
   const plotPrefs = useRef({
     ...initialSemiPlotPrefsState,
@@ -212,13 +182,17 @@ function App() {
     let remainder = 0
     let startOffset = 0
     let endOffset = 0
+    let dateInterval = 1
     //const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
     const multiplier = (displayType === "year") ? 261 : (displayType === "month") ? 23 : 1
     //let stepSize = plotData[0]["sampleType"] === "Open/Close" ? multiplier*2 : multiplier
     let stepSize = plotPrefs.current.doubleDates ? multiplier*2 : multiplier
     console.log("plotData,plotPrefs.current.doubleDates,stepSize,multplier is : ",[plotData,plotPrefs.current.doubleDates,stepSize,multiplier])
     if (totalType > maxTicks){
-      stepSize = Math.floor(totalDays / maxTicks)
+      dateInterval = Math.ceil(totalType / maxTicks)
+      //stepSize = Math.floor(totalDays / maxTicks)
+      stepSize = Math.floor(totalDays / (totalType+2)) * dateInterval //adding 2 for the beginning and ending months, which don't have ticks but take up space
+      console.log('debugDateInterval',{dateInterval,totalType,maxTicks,stepSize,totalMonths,totalDays})
       remainder = totalDays % maxTicks
       startOffset = Math.floor(remainder/2)
       endOffset = remainder - startOffset
@@ -226,7 +200,7 @@ function App() {
       numberTicks = (displayType === "day") ? days.length : totalType
     }
 
-    console.log("[displayType,numberTicks,maxTicks,stepSize,multiplier] is: ",[displayType,numberTicks,maxTicks,stepSize,multiplier])
+    console.log("[displayType,numberTicks,maxTicks,stepSize,multiplier,dateInterval] is: ",[displayType,numberTicks,maxTicks,stepSize,multiplier,dateInterval])
     console.log("[displayType,totalType,remainder,startOffset,endOffset] is: ",[displayType,totalType,remainder,startOffset,endOffset])
     
     //need to calc 1st of the month once, and then step into new months from there
@@ -245,17 +219,21 @@ function App() {
           let testIndex = index
           console.log('timeGetter(testDay) is: ',timeGetter(testDay))
           let testMonth = timeGetter(testDay)
+          console.log('debug',{displayType,testDay,testIndex,testMonth,thisMonth})
           while (testMonth === thisMonth && testIndex > 0){
             testIndex = testIndex - 1
             testDay = days[testIndex]
             console.log('testDay is: ',testDay)
             testMonth = timeGetter(testDay)
+            console.log('debug ',{testIndex,testDay,testMonth})
           }
           const firstDay = days[testIndex+1]
           startOffset = testIndex+1
+          console.log('debug',{firstDay,startOffset,testIndex})
           if (testIndex > 0) {
             return [...acc,firstDay]
           }
+          console.log('debug',{firstDay,startOffset,testIndex})
         }
         return acc
       },[])
