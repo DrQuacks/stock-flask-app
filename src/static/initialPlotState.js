@@ -20,7 +20,8 @@ const initialPlotState = [{
     daysList:[],
     localMins:[],
     localMaxs:[],
-    modelAnalysis:[]
+    modelAnalysis:[],
+    stateID:0
   }]
 
   export default initialPlotState

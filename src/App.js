@@ -55,7 +55,7 @@ function App() {
     }
   }
   
-  const updateData = (data) => {
+  const updateData = (data) => { //copied
     updatePricePrefs(data)
     if (!plotPrefs.current.customDate){
       updateDatePrefs(data)
@@ -63,19 +63,19 @@ function App() {
     setPlotData(data)
   }
   
-  const updatePricePrefs = (data) => {
+  const updatePricePrefs = (data) => { //copied
     plotPrefs.current.priceRange = calcMinMax(data)
     plotPrefs.current.selectedPriceRange = [...plotPrefs.current.priceRange]
   }
 
-  const updateDatePrefs = (data) => {
+  const updateDatePrefs = (data) => { //copied
     plotPrefs.current.xDomain = calcStartEnd(data)
     plotPrefs.current.dayValues = calcDayValues(data)
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
     plotPrefs.current.dateTickValues = calcTickValues()
   }
 
-  const setPrefs = (prefs) => {
+  const setPrefs = (prefs) => { //copied
     console.log("setPrefs was called")
     if (prefs){
       console.log("inputPrefs is: ",prefs)
@@ -117,7 +117,7 @@ function App() {
     }
   }
 
-  const calcStartEnd = (stockArray) => {
+  const calcStartEnd = (stockArray) => { //copied
     const xDomain = d3.extent(stockArray.reduce((acc,element) => {
       const thisExtent = [element.start,element.end]
       return [...acc,...thisExtent]
@@ -125,7 +125,7 @@ function App() {
     return xDomain
   }
 
-  const calcMinMax = (stockArray) => {
+  const calcMinMax = (stockArray) => { //copied
     const yRange = d3.extent(stockArray.reduce((acc,element) => {
       const thisExtent = [element.min,element.max]
       return [...acc,...thisExtent]
@@ -134,7 +134,7 @@ function App() {
   }
 
   //this function now has a bug due to double length of Open/Close
-  const calcDayValues = (plots) => {
+  const calcDayValues = (plots) => { //copied
     console.log("In calc day values, plots is: ",plots)
     const indexLongest = plots.reduce((acc,stock,index)=>{
       const thisLength = stock.daysList.length
@@ -149,7 +149,7 @@ function App() {
     return longestDayList
   }
 
-  const calcSelectedDayValues = () => {
+  const calcSelectedDayValues = () => { //copied
     const {xDomain,dayValues} = plotPrefs.current
     const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
 
@@ -166,7 +166,7 @@ function App() {
     return newSelectedDays
   }
   
-  const calcTickValues = () => {
+  const calcTickValues = () => { //copied
     const maxTicks = 15
     const days = plotPrefs.current.selectedDayValues
     const totalTime = days[days.length-1].getTime() - days[0].getTime()
@@ -249,7 +249,7 @@ function App() {
   }
 
 
-  const updateStartDate = (newDate) => {
+  const updateStartDate = (newDate) => { //copied
     console.log('update start date is being called, for prefs: ',plotPrefs.current)
     plotPrefs.current.xDomain[0] = newDate
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
@@ -257,17 +257,17 @@ function App() {
     console.log('update start date was called, for prefs: ',plotPrefs.current)
   }
 
-  const updateEndDate = (newDate) => {
+  const updateEndDate = (newDate) => { //copied
     plotPrefs.current.xDomain[1] = newDate
     plotPrefs.current.selectedDayValues = calcSelectedDayValues()
     plotPrefs.current.dateTickValues = calcTickValues()
   }
 
-  const updateMinPrice = (price) => {
+  const updateMinPrice = (price) => { //copied
     plotPrefs.current.selectedPriceRange[0] = price
   }
 
-  const updateMaxPrice = (price) => {
+  const updateMaxPrice = (price) => { //copied
     plotPrefs.current.selectedPriceRange[1] = price
   }
 
