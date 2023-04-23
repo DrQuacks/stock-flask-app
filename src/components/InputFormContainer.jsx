@@ -103,7 +103,11 @@ function InputFormContainer({inputFormBuilder,route,modelSample}) {
             newPlotDataList = [...newPlotDataList,newPlotData]
         })
         //handleInput(newPlotDataList)
-        plotDispatch({type:'update_data',data:newPlotDataList})
+        if(prefs.overlayNew){
+            plotDispatch({type:'update_data',data:newPlotDataList})
+        } else {
+            plotDispatch({type:'replace_data',data:newPlotDataList})
+        }
  
         console.log("event is: ",event)
         setFormData((priorForm) => {

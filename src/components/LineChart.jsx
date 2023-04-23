@@ -197,6 +197,7 @@ const LineChart = () => {
                 console.log('In lineVector, plotPrefs is: ',prefsState)
                 let newData = [...lineVectorData.data]
                 const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
+                console.log('In lineVector, plotPrefs and xDomainTime is: ',{prefsState,xDomainTime})
 
                 const lineNoY = d3.line()
                     .x((d) => xScale(dateToDate(d.date)))
@@ -306,8 +307,8 @@ const LineChart = () => {
                     
                     const mappedX = pointerX
                     //eventually I need to make this more dynamic
-                    //console.log('mappedX is: ',mappedX)
-                    //console.log('mappedX type is: ',(typeof mappedX))
+                    console.log('mappedX is: ',mappedX)
+                    console.log('mappedX type is: ',(typeof mappedX))
                     const [mappedY,mappedYRaw] = plotData[0].datePriceScale(mappedX)
                     
                     //console.log('mappedY is: ',mappedY)

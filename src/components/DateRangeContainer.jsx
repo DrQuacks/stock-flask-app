@@ -22,14 +22,14 @@ const DateRangeContainer = () => {
     },[startDate,endDate])
 
     const updateHandler = () => { //this seems unnecessary. Do I only want dates to update on the update click?
-        prefsDispatch({type:"update_date_range",xDomain})
+        prefsDispatch({type:"update_date_range",xDomain,dayValues})
         //setPrefs({"xDomain":xDomain})
         console.log('DateRange formData update is: ',formData)
     }
 
     const resetHandler = () => {
         const resetDomain = [dayValues[0],dayValues[dayValues.length - 1]]
-        prefsDispatch({type:"update_date_range",xDomain:resetDomain})
+        prefsDispatch({type:"update_date_range",xDomain:resetDomain,dayValues})
         // updateStartDate(dayValues[0])
         // updateEndDate(dayValues[dayValues.length - 1])
         // setPrefs({"xDomain":xDomain})

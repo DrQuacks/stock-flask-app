@@ -20,7 +20,7 @@ const plotReducer = (plotState,action) => {
         switch(type) {
             case "update_data": {
                 const newPlotStateData = [...plotState['plotData'],...data]
-                return {plotData:newPlotStateData,data,lastChange,stateID:newStateID}
+                return {plotData:newPlotStateData,lastChange,stateID:newStateID}
             }
             case "replace_data": {
                 return {plotData:data,lastChange,stateID:newStateID}
@@ -113,18 +113,31 @@ const StockContextProvider = (props) => {
         console.log('Plot State Context',plotState)
         if (plotState.lastChange.type){
             const {type} = plotState.lastChange
-            if (type === "update_data"){
-                const {data}= plotState
-                const priceRange = calcMinMax(data)
-                prefsDispatch({type:"update_price_range",priceRange})
+            if ((type === "update_data") || (type === "replace_data")){
+                const {plotData}= plotState
+                const priceRange = calcMinMax(plotData)
+                prefsDispatch({type:"update_price_range",priceRange}) //I think this is the core of the problem, there's also a call to prefsDispatch before this plotsDIspatch call was made
                 if (!prefsState.customDate){
-                    const dateRange = calcStartEnd(data)
-                    const dayValues = calcDayValues(data)
+                    const dateRange = calcStartEnd(plotData)
+                    const dayValues = calcDayValues(plotData)
                     console.log('debug State',{dateRange})
                     prefsDispatch({type:"update_date_range",xDomain:dateRange,dayValues})
                 }
             }
             if (type === "remove_stock"){
+                if (plotState.plotData.length === 0){
+                    plotDispatch({type:"replace_data",data:initialPlotState.plotData})
+                    prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
+                } else {
+                    if (!prefsState.customDate){
+                        const newXDomain = calcStartEnd(plotState.plotData)
+                        const newDayValues = calcDayValues(plotState.plotData)
+                        prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
+                        console.log('After removal, plotPrefs is: ',prefsState)
+                    }
+                    const newMinMax = calcMinMax(plotState.plotData)
+                    prefsDispatch({type:"update_price_range",priceRange:newMinMax})
+                }
             }
         }
 
