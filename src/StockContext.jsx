@@ -6,6 +6,7 @@ import calcSelectedDays from './helpers/calcSelectedDays'
 import calcTickValues from './helpers/calcTickValues'
 import calcMinMax from "./helpers/calcMinMax";
 import calcStartEnd from "./helpers/calcStartEnd";
+import calcDayValues from "./helpers/calcDayValues";
 
 const plotReducer = (plotState,action) => {
     const {
@@ -78,6 +79,7 @@ const prefsReducer = (prefsState,action) => {
                 return {...prefsState,xDomain:newXDomain,lastChange,stateID:newStateID}
             }
             case "update_date_range":{
+                console.log('debug State',{xDomain,lastChange,action})
                 return {...prefsState,xDomain,dayValues,lastChange,stateID:newStateID}
             }
             case "update_selected_days":{
@@ -108,6 +110,7 @@ const StockContextProvider = (props) => {
     const [prefsState,prefsDispatch] = useReducer(prefsReducer,initialPrefsState)
 
     useEffect(() => {
+        console.log('Plot State Context',plotState)
         if (plotState.lastChange.type){
             const {type} = plotState.lastChange
             if (type === "update_data"){
@@ -116,7 +119,9 @@ const StockContextProvider = (props) => {
                 prefsDispatch({type:"update_price_range",priceRange})
                 if (!prefsState.customDate){
                     const dateRange = calcStartEnd(data)
-                    prefsDispatch({type:"update_date_range",dateRange})
+                    const dayValues = calcDayValues(data)
+                    console.log('debug State',{dateRange})
+                    prefsDispatch({type:"update_date_range",xDomain:dateRange,dayValues})
                 }
             }
             if (type === "remove_stock"){
@@ -126,6 +131,7 @@ const StockContextProvider = (props) => {
     },[plotState.stateID])
 
     useEffect(() => {
+        console.log('Prefs State Context',prefsState)
         if (prefsState.lastChange.type){
             const {type} = prefsState.lastChange
             if ((type === "update_start_date") || (type === "update_end_date") || (type === "update_date_range")){ //I'm not sure these need to be independent

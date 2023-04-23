@@ -5,6 +5,7 @@ const calcStartEnd = (stockArray) => {
       const thisExtent = [element.start,element.end]
       return [...acc,...thisExtent]
     },[]))
+    console.log('debug State',{xDomain,stockArray})
     return xDomain
 }
 

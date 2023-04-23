@@ -6,6 +6,7 @@ const DateRangeContainer = () => {
 
     const { plotState, prefsState, plotDispatch, prefsDispatch} = useContext(StockContext)
     const {xDomain,dayValues} = prefsState
+    console.log('debug State',prefsState)
 
     //console.log('DateRangeContainer dates are: ',xDomain)
     const startDate = xDomain[0]
