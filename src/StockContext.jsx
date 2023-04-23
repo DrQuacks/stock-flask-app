@@ -88,7 +88,7 @@ const prefsReducer = (prefsState,action) => {
                 return {...prefsState,selectedDayValues,lastChange,stateID:newStateID}
             }
             case "update_tick_values":{
-                return {...prefsState,tickValues,lastChange,stateID:newStateID}
+                return {...prefsState,dateTickValues:tickValues,lastChange,stateID:newStateID}
             }
             case "update_price_range":{
                 return{...prefsState,priceRange,lastChange,stateID:newStateID}
@@ -176,6 +176,7 @@ const StockContextProvider = (props) => {
             } 
             if (type === "update_selected_days") {
                 const tickValues = calcTickValues(prefsState,inputState)
+                console.log('debug State Update displayType',{tickValues})
                 prefsDispatch({type:"update_tick_values",tickValues})
             }
             if (type === "update_price_range") {

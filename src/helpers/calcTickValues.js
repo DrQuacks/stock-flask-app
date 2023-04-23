@@ -36,8 +36,8 @@ const calcTickValues = (prefsState,inputState) => {
       numberTicks = (displayType === "day") ? days.length : totalType
     }
 
-    console.log("[displayType,numberTicks,maxTicks,stepSize,multiplier,dateInterval] is: ",[displayType,numberTicks,maxTicks,stepSize,multiplier,dateInterval])
-    console.log("[displayType,totalType,remainder,startOffset,endOffset] is: ",[displayType,totalType,remainder,startOffset,endOffset])
+    console.log("[displayType,numberTicks,maxTicks,stepSize,multiplier,dateInterval] is: ",{displayType,numberTicks,maxTicks,stepSize,multiplier,dateInterval})
+    console.log("[displayType,totalType,remainder,startOffset,endOffset] is: ",{displayType,totalType,remainder,startOffset,endOffset})
     
     //need to calc 1st of the month once, and then step into new months from there
     let newTickValues = []
@@ -75,7 +75,7 @@ const calcTickValues = (prefsState,inputState) => {
       },[])
     }
     const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
-    console.log('[displayType,newTickValues,newerTickValues]',[displayType,newTickValues,newerTickValues])
+    console.log('[displayType,newTickValues,newerTickValues]',{displayType,newTickValues,newerTickValues})
     const tickScale = d3.scaleOrdinal()
       .domain(newTickValues)
       .range(newerTickValues) 
