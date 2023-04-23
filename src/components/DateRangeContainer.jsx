@@ -1,7 +1,11 @@
-import React, { useState , useEffect } from "react";
+import React, { useState , useEffect , useContext } from "react";
 import DateRangeElement from "./DateRangeElement";
+import { StockContext } from "../StockContext";
 
-const DateRangeContainer = ({xDomain,dayValues,updateStartDate,updateEndDate,setPrefs}) => {
+const DateRangeContainer = () => {
+
+    const { plotState, prefsState, plotDispatch, prefsDispatch} = useContext(StockContext)
+    const {xDomain,dayValues} = prefsState
 
     //console.log('DateRangeContainer dates are: ',xDomain)
     const startDate = xDomain[0]
@@ -16,15 +20,18 @@ const DateRangeContainer = ({xDomain,dayValues,updateStartDate,updateEndDate,set
         setFormData({"start":startDate,"end":endDate})
     },[startDate,endDate])
 
-    const updateHandler = () => { 
-        setPrefs({"xDomain":xDomain})
+    const updateHandler = () => { //this seems unnecessary. Do I only want dates to update on the update click?
+        prefsDispatch({type:"update_date_range",xDomain})
+        //setPrefs({"xDomain":xDomain})
         console.log('DateRange formData update is: ',formData)
     }
 
     const resetHandler = () => {
-        updateStartDate(dayValues[0])
-        updateEndDate(dayValues[dayValues.length - 1])
-        setPrefs({"xDomain":xDomain})
+        const resetDomain = [dayValues[0],dayValues[dayValues.length - 1]]
+        prefsDispatch({type:"update_date_range",xDomain:resetDomain})
+        // updateStartDate(dayValues[0])
+        // updateEndDate(dayValues[dayValues.length - 1])
+        // setPrefs({"xDomain":xDomain})
         //console.log('DateRange formData reset is: ',formData)
     }
 
@@ -33,12 +40,10 @@ const DateRangeContainer = ({xDomain,dayValues,updateStartDate,updateEndDate,set
             <DateRangeElement 
                 type = "Start Date"
                 date = {formData.start}
-                updateDate = {updateStartDate}
             />
             <DateRangeElement 
                 type = "End Date"
                 date = {formData.end}
-                updateDate = {updateEndDate}
             />
             <div className="DateButtons">
                 <button onClick = {updateHandler} className = "UpdateDateButton">UPDATE</button>

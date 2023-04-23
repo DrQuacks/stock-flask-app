@@ -1,8 +1,13 @@
-import React from "react";
+import React , { useContext } from "react";
 import LegendEntry from "./LegendEntry";
+import { StockContext } from "../StockContext";
 
 
-const LegendContainer = ({plotData, removeStock}) => {
+
+const LegendContainer = () => {
+
+    const {plotState} = useContext(StockContext)
+    const {plotData} = plotState
 
     const legendInsides = plotData.map((element,index) => {
         return (
@@ -13,7 +18,6 @@ const LegendContainer = ({plotData, removeStock}) => {
                 avgType = {element.avgType}
                 sampleType = {element.sampleType}
                 index = {index}
-                removeStock = {removeStock}
             />
         )
     })

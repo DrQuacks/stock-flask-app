@@ -1,7 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
+import { StockContext } from "../StockContext";
 
-const PriceRangeContainer = ({min,max,minData,maxData,updateMinPrice,updateMaxPrice,setPrefs}) => {
 
+// const PriceRangeContainer = ({min,max,minData,maxData,updateMinPrice,updateMaxPrice,setPrefs}) => {
+const PriceRangeContainer = () => {
+
+
+    const { prefsState, prefsDispatch} = useContext(StockContext)
+    const {selectedPriceRange,priceRange} = prefsState
+    const [min,max] = selectedPriceRange
+    const [minData,maxData] = priceRange
     console.log("[min,max] is: ",[min,max])
     console.log("[minData,maxData] is: ",[minData,maxData])
     const [formData, setFormData] = useState({"min":0,"max":0})
@@ -30,16 +38,20 @@ const PriceRangeContainer = ({min,max,minData,maxData,updateMinPrice,updateMaxPr
 
     const updateHandler = (event) => {
         event.preventDefault()
-        updateMinPrice(formData.min)
-        updateMaxPrice(formData.max)
-        setPrefs({"selectedPriceRange":[formData.min,formData.max]})
+        prefsDispatch({type:"update_min_price",price:formData.min})
+        prefsDispatch({type:"update_max_price",price:formData.max})
+        //updateMinPrice(formData.min)
+        //updateMaxPrice(formData.max)
+        //setPrefs({"selectedPriceRange":[formData.min,formData.max]})
     }
 
     const resetHandler = (event) => {
         event.preventDefault()
-        updateMinPrice(minData)
-        updateMaxPrice(maxData)
-        setPrefs({"selectedPriceRange":[minData,maxData]})
+        prefsDispatch({type:"update_min_price",price:minData})
+        prefsDispatch({type:"update_max_price",price:maxData})
+        //updateMinPrice(minData)
+        //updateMaxPrice(maxData)
+        //setPrefs({"selectedPriceRange":[minData,maxData]})
     }
 
     

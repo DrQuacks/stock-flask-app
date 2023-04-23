@@ -1,7 +1,7 @@
 import React from "react"
 import InputFormContainer from "./InputFormContainer";
 
-function PlotInputForm({plotData,handleInput,setPrefs}) {
+function PlotInputForm() {
 
     const inputFormBuilder = (formData,handleChangeCallBack) => {
         const InputFormElement = 
@@ -87,9 +87,6 @@ function PlotInputForm({plotData,handleInput,setPrefs}) {
 
     return (
         <InputFormContainer
-            plotData={plotData}
-            handleInput={handleInput}
-            setPrefs={setPrefs}
             inputFormBuilder={inputFormBuilder}
             route={'/api/setPlot'}
         />

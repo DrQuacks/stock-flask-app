@@ -18,12 +18,16 @@ const plotReducer = (plotState,action) => {
         const newStateID = plotState.stateID + 1
         switch(type) {
             case "update_data": {
-                return {...plotState,data,lastChange,stateID:newStateID} //plotState isn't an object though...
+                const newPlotStateData = [...plotState['plotData'],...data]
+                return {plotData:newPlotStateData,data,lastChange,stateID:newStateID}
+            }
+            case "replace_data": {
+                return {plotData:data,lastChange,stateID:newStateID}
             }
             case "remove_stock": {
-                let plotStateCopy = [...plotState]
-                plotStateCopy.splice(index,1)
-                return {...plotState,lastChange,stateID:newStateID}
+                let plotStateDataCopy = [...plotState['plotData']]
+                plotStateDataCopy.splice(index,1)
+                return {plotData:plotStateDataCopy,lastChange,stateID:newStateID}
             }
             default: {
                 return {...plotState,lastChange,stateID:newStateID}
@@ -119,15 +123,15 @@ const StockContextProvider = (props) => {
             }
         }
 
-    },plotState.stateID)
+    },[plotState.stateID])
 
     useEffect(() => {
         if (prefsState.lastChange.type){
             const {type} = prefsState.lastChange
-            if ((type === "update_start_date") || (type === "update_end_date") || (type === "update_date_range")){
+            if ((type === "update_start_date") || (type === "update_end_date") || (type === "update_date_range")){ //I'm not sure these need to be independent
                 const selectedDayValues = calcSelectedDays(prefsState)
                 prefsDispatch({type:"update_selected_days",selectedDayValues})
-            }
+            } 
             if (type === "update_selected_days") {
                 const tickValues = calcTickValues(prefsState)
                 prefsDispatch({type:"update_tick_values",tickValues})

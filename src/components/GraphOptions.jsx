@@ -1,6 +1,9 @@
-import React, { useState } from "react";
+import React, { useState , useContext } from "react";
+import { StockContext } from "../StockContext";
 
-const GraphOptions = ({setPrefs}) => {
+const GraphOptions = () => {
+
+    const { prefsDispatch} = useContext(StockContext)
 
     const [plotPrefsState,setPlotPrefsState] = useState({
         "semilog":false,
@@ -15,7 +18,8 @@ const GraphOptions = ({setPrefs}) => {
 
         const newPlotPrefs = {...plotPrefsState,[name]: checked}
         setPlotPrefsState(newPlotPrefs)
-        setPrefs(newPlotPrefs)
+        prefsDispatch({type:'update_prefs',prefs:newPlotPrefs})
+        //setPrefs(newPlotPrefs)
 
     }
     

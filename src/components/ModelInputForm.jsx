@@ -2,7 +2,7 @@ import React from "react"
 import InputFormContainer from "./InputFormContainer";
 
 
-function ModelInputForm({plotData,handleInput,setPrefs}) {
+function ModelInputForm() {
     const inputFormBuilder = (formData,handleChangeCallBack) => {
         const InputFormElement = 
             <div>
@@ -39,9 +39,6 @@ function ModelInputForm({plotData,handleInput,setPrefs}) {
 
     return (
         <InputFormContainer
-            plotData={plotData}
-            handleInput={handleInput}
-            setPrefs={setPrefs}
             inputFormBuilder={inputFormBuilder}
             route={'/api/setModel'}
             modelSample={'Open/Close'}

@@ -1,5 +1,5 @@
-import React, { Fragment } from "react";
-
+import React, { Fragment , useContext } from "react";
+import { StockContext } from "../StockContext";
 
 const LegendEntry = ({
     name,
@@ -7,13 +7,14 @@ const LegendEntry = ({
     avgType,
     sampleType,
     index,
-    removeStock
 }) => {
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
+    const {plotDispatch} = useContext(StockContext)
 
     function handleChange() {
-        removeStock(index)
+        plotDispatch({type:'remove_stock',index})
+        //removeStock(index)
     }
 
     console.log('key is: ',name)

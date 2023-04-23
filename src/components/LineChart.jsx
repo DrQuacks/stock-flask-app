@@ -1,18 +1,19 @@
-import React from "react";
+import React , { useContext } from "react";
 import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 import dateToString from "../helpers/dateToString";
 import dateToTickString from "../helpers/dateToTickString";
 import dateLocaleToString from "../helpers/dateLocaleToString";
+import { StockContext } from "../StockContext";
 
-const LineChart = ({
-    plotData,
-    plotPrefs
-}) => {
+
+const LineChart = () => {
+    const {plotState,prefsState} = useContext(StockContext)
+    const {plotData} = plotState
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues} = plotPrefs.current
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues} = prefsState
     const showPlot = {
         price:true,
         raw:true,
@@ -193,7 +194,7 @@ const LineChart = ({
             const lineVector = (lineVectorData,type) => {
 
                 console.log('In lineVector, lineVectorData is: ',lineVectorData)
-                console.log('In lineVector, plotPrefs is: ',plotPrefs.current)
+                console.log('In lineVector, plotPrefs is: ',prefsState)
                 let newData = [...lineVectorData.data]
                 const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
 

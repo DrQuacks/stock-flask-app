@@ -14,6 +14,9 @@ import GraphOptions from './components/GraphOptions';
 import dateToTickString from './helpers/dateToTickString';
 import initialPlotState from './static/initialPlotState';
 import initialSemiPlotPrefsState from './static/initialSemiPlotPrefsState'
+import PlotTab from './components/PlotTab';
+import ModelTab from './components/ModelTab';
+import { StockContextProvider } from './StockContext';
 
 function App() {
 
@@ -39,7 +42,7 @@ function App() {
   })
 
 
-  const handleInput = (inputData) => {
+  const handleInput = (inputData) => { //I think copied?
     console.log("handleInput was called, and plotData was: ",plotData)
     if (inputData){
       console.log("inputData is: ",inputData)
@@ -271,85 +274,117 @@ function App() {
     plotPrefs.current.selectedPriceRange[1] = price
   }
 
-  const PlotTab = {
-    name:"Plot",
-    body: <div className='TopBar'>
-            <PlotInputForm
-              plotData = {plotData}
-              handleInput = {handleInput}
-              setPrefs = {setPrefs}
-            />
-            <GraphOptions
-              setPrefs = {setPrefs}
-            />
-            <DateRangeContainer
-              xDomain = {plotPrefs.current.xDomain}
-              dayValues = {plotPrefs.current.dayValues}
-              updateStartDate = {updateStartDate}
-              updateEndDate = {updateEndDate}
-              setPrefs = {setPrefs}
-            />
-            <PriceRangeContainer
-              min = {plotPrefs.current.selectedPriceRange[0]}
-              max = {plotPrefs.current.selectedPriceRange[1]}
-              minData = {plotPrefs.current.priceRange[0]}
-              maxData = {plotPrefs.current.priceRange[1]}
-              updateMinPrice = {updateMinPrice}
-              updateMaxPrice = {updateMaxPrice}
-              setPrefs = {setPrefs}
-            />
-          </div>
-  }
+  // const PlotTab = {
+  //   name:"Plot",
+  //   body: <div className='TopBar'>
+  //           <PlotInputForm
+  //             plotData = {plotData}
+  //             handleInput = {handleInput}
+  //             setPrefs = {setPrefs}
+  //           />
+  //           <GraphOptions
+  //             setPrefs = {setPrefs}
+  //           />
+  //           <DateRangeContainer
+  //             xDomain = {plotPrefs.current.xDomain}
+  //             dayValues = {plotPrefs.current.dayValues}
+  //             updateStartDate = {updateStartDate}
+  //             updateEndDate = {updateEndDate}
+  //             setPrefs = {setPrefs}
+  //           />
+  //           <PriceRangeContainer
+  //             min = {plotPrefs.current.selectedPriceRange[0]}
+  //             max = {plotPrefs.current.selectedPriceRange[1]}
+  //             minData = {plotPrefs.current.priceRange[0]}
+  //             maxData = {plotPrefs.current.priceRange[1]}
+  //             updateMinPrice = {updateMinPrice}
+  //             updateMaxPrice = {updateMaxPrice}
+  //             setPrefs = {setPrefs}
+  //           />
+  //         </div>
+  // }
 
-  const ModelTab = {
-    name:"Model",
-    body: <div className='TopBar'>
-            <ModelInputForm
-              plotData = {plotData}
-              handleInput = {handleInput}
-              setPrefs = {setPrefs}
-            />
-            <ModelSampleForm
-              plotData = {plotData}
-              handleInput = {handleInput}
-              setPrefs = {setPrefs}
-            />
-          </div>
-  }  
+  // const ModelTab = {
+  //   name:"Model",
+  //   body: <div className='TopBar'>
+  //           <ModelInputForm
+  //             plotData = {plotData}
+  //             handleInput = {handleInput}
+  //             setPrefs = {setPrefs}
+  //           />
+  //           <ModelSampleForm
+  //             plotData = {plotData}
+  //             handleInput = {handleInput}
+  //             setPrefs = {setPrefs}
+  //           />
+  //         </div>
+  // }  
 
-  const TabsArray = [PlotTab,ModelTab]
+  // const TabsArray = [PlotTab,ModelTab]
+
+  // return (
+  //   <div className="App">
+  //     <div className='TopBar'>
+  //       <Tabs>
+  //         <TabList className='TabTops'>
+  //           <Tab>{TabsArray[0].name}</Tab>
+  //           <Tab>{TabsArray[1].name}</Tab>
+  //         </TabList>
+  //         <TabPanel>
+  //           {TabsArray[0].body}
+  //         </TabPanel>
+  //         <TabPanel>
+  //           {TabsArray[1].body}
+  //         </TabPanel>
+  //       </Tabs>
+  //     </div>
+  //     <div className="MainSection">
+  //       <div className='PlotArea'>
+  //         <LineChart
+  //           plotData = {plotData}
+  //           plotPrefs = {plotPrefs}
+  //         />
+  //       </div>
+  //       <div className='RightMenu'>
+  //         <LegendContainer
+  //           plotData = {plotData}
+  //           removeStock = {removeStock}
+  //         />
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
 
   return (
-    <div className="App">
-      <div className='TopBar'>
-        <Tabs>
-          <TabList className='TabTops'>
-            <Tab>{TabsArray[0].name}</Tab>
-            <Tab>{TabsArray[1].name}</Tab>
-          </TabList>
-          <TabPanel>
-            {TabsArray[0].body}
-          </TabPanel>
-          <TabPanel>
-            {TabsArray[1].body}
-          </TabPanel>
-        </Tabs>
-      </div>
-      <div className="MainSection">
-        <div className='PlotArea'>
-          <LineChart
-            plotData = {plotData}
-            plotPrefs = {plotPrefs}
-          />
+    <StockContextProvider>
+      <div className="App">
+        <div className='TopBar'>
+          <Tabs>
+            <TabList className='TabTops'>
+              <Tab>PLOT</Tab>
+              <Tab>MODEL</Tab>
+            </TabList>
+            <TabPanel>
+              <PlotTab/>
+            </TabPanel>
+            <TabPanel>
+              <ModelTab/>
+            </TabPanel>
+          </Tabs>
         </div>
-        <div className='RightMenu'>
-          <LegendContainer
-            plotData = {plotData}
-            removeStock = {removeStock}
-          />
+        <div className="MainSection">
+          <div className='PlotArea'>
+            <LineChart
+              plotData = {plotData}
+              plotPrefs = {plotPrefs}
+            />
+          </div>
+          <div className='RightMenu'>
+            <LegendContainer/>
+          </div>
         </div>
       </div>
-    </div>
+    </StockContextProvider>
   );
 }
 

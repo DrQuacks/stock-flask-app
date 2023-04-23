@@ -1,9 +1,14 @@
-import React, { useState } from "react"
+import React, { useState , useContext } from "react"
 import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
+import { StockContext } from "../StockContext";
 
-function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,route,modelSample}) {
+
+function InputFormContainer({inputFormBuilder,route,modelSample}) {
+
+    const { plotState, prefsState, plotDispatch, prefsDispatch} = useContext(StockContext)
+
     const [formData, setFormData] = useState(
         {
             stockSymbol: "", 
@@ -57,7 +62,8 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
             customDate: formData.customDate,
             doubleDates: formData.sampleType === "Open/Close" ? true : false
         }
-        setPrefs(prefs)
+        //setPrefs(prefs)
+        prefsDispatch({type:'update_prefs',prefs})
         
         //I need to handle blank inputs
         //what's in here is working from the outside, but it's logging errors in python
@@ -96,7 +102,8 @@ function InputFormContainer({plotData,handleInput,setPrefs,inputFormBuilder,rout
             }
             newPlotDataList = [...newPlotDataList,newPlotData]
         })
-        handleInput(newPlotDataList)
+        //handleInput(newPlotDataList)
+        plotDispatch({type:'update_data',data:newPlotDataList})
  
         console.log("event is: ",event)
         setFormData((priorForm) => {

@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import DatePicker from 'react-date-picker';
+import { StockContext } from "../StockContext";
 
-const DateRangeElement = ({type,date,updateDate}) => {
 
+const DateRangeElement = ({type,date}) => {
+
+    const { prefsDispatch } = useContext(StockContext)
     //console.log('DateRangeElement date is: ',date)
     const [value, setValue] = useState(date);
 
@@ -12,7 +15,9 @@ const DateRangeElement = ({type,date,updateDate}) => {
 
     function handleChange() {
         //console.log('new date value is: ',value)
-        updateDate(value)
+        const dispatchType = type === "Start Date" ? "update_start_date" : "update_end_date"
+        prefsDispatch({type:dispatchType,date:value})
+        //updateDate(value)
     }
 
     const rowValue = type === "Start Date" ? 1:2
