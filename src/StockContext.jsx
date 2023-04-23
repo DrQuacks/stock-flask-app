@@ -1,4 +1,4 @@
-import React, { useReducer, useState, useEffect, useRef } from "react";
+import React, { useReducer, useEffect } from "react";
 
 import initialPlotState from './static/initialPlotState';
 import {initialPrefsState,initialSemiPrefsState} from './static/initialPrefsState'
