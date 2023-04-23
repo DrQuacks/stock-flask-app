@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import dateToTickString from './dateToTickString';
 
 
-const calcTickValues = (prefsState) => {
+const calcTickValues = (prefsState,inputState) => {
     const maxTicks = 15
     const days = prefsState.selectedDayValues
     const totalTime = days[days.length-1].getTime() - days[0].getTime()
@@ -22,8 +22,8 @@ const calcTickValues = (prefsState) => {
     //const multiplier = (displayType === "year") ? 252 : (displayType === "month") ? 21 : 1
     const multiplier = (displayType === "year") ? 261 : (displayType === "month") ? 23 : 1
     //let stepSize = plotData[0]["sampleType"] === "Open/Close" ? multiplier*2 : multiplier
-    let stepSize = prefsState.doubleDates ? multiplier*2 : multiplier
-    console.log("plotPrefs.current.doubleDates,stepSize,multplier is : ",[prefsState.doubleDates,stepSize,multiplier])
+    let stepSize = inputState.doubleDates ? multiplier*2 : multiplier
+    console.log("inputState.doubleDates,stepSize,multplier is : ",[inputState.doubleDates,stepSize,multiplier])
     if (totalType > maxTicks){
       dateInterval = Math.ceil(totalType / maxTicks)
       //stepSize = Math.floor(totalDays / maxTicks)

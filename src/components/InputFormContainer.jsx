@@ -7,7 +7,7 @@ import { StockContext } from "../StockContext";
 
 function InputFormContainer({inputFormBuilder,route,modelSample}) {
 
-    const { plotState, prefsState, plotDispatch, prefsDispatch} = useContext(StockContext)
+    const { plotState, prefsState, plotDispatch, prefsDispatch, inputDispatch} = useContext(StockContext)
 
     const [formData, setFormData] = useState(
         {
@@ -63,7 +63,7 @@ function InputFormContainer({inputFormBuilder,route,modelSample}) {
             doubleDates: formData.sampleType === "Open/Close" ? true : false
         }
         //setPrefs(prefs)
-        prefsDispatch({type:'update_prefs',prefs})
+        inputDispatch({type:'update_input_prefs',prefs})
         
         //I need to handle blank inputs
         //what's in here is working from the outside, but it's logging errors in python

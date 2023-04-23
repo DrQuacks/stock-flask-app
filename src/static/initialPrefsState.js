@@ -13,10 +13,7 @@ const initialSemiPrefsState = {
 
 const initialPrefsState = {
     ...initialSemiPrefsState,
-    semiLog:false,
-    overlayNew:false,
-    customDate:false,
-    doubleDates:false
+    semiLog:false
 }
 
 export {initialPrefsState,initialSemiPrefsState}

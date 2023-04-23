@@ -2,6 +2,7 @@ import React, { useReducer, useEffect } from "react";
 
 import initialPlotState from './static/initialPlotState';
 import {initialPrefsState,initialSemiPrefsState} from './static/initialPrefsState'
+import initialInputState from "./static/initialInputState";
 import calcSelectedDays from './helpers/calcSelectedDays'
 import calcTickValues from './helpers/calcTickValues'
 import calcMinMax from "./helpers/calcMinMax";
@@ -102,12 +103,33 @@ const prefsReducer = (prefsState,action) => {
     return prefsState
 }
 
+const inputReducer = (inputState,action) => {
+    const {
+        type,
+        prefs
+    } = action
+    if (type) {
+        let lastChange = {type}
+        const newStateID = inputState.stateID + 1
+        switch(type) {
+            case "update_input_prefs": {
+                return {...inputState,...prefs,lastChange,stateID:newStateID}
+            }
+            default: {
+                return {...inputState,lastChange,stateID:newStateID}
+            }
+        }
+    }
+    return inputState
+}
+
 const StockContext = React.createContext(null)
 
 const StockContextProvider = (props) => {
 
     const [plotState,plotDispatch] = useReducer(plotReducer,initialPlotState)
     const [prefsState,prefsDispatch] = useReducer(prefsReducer,initialPrefsState)
+    const [inputState,inputDispatch] = useReducer(inputReducer,initialInputState)
 
     useEffect(() => {
         console.log('Plot State Context',plotState)
@@ -117,7 +139,7 @@ const StockContextProvider = (props) => {
                 const {plotData}= plotState
                 const priceRange = calcMinMax(plotData)
                 prefsDispatch({type:"update_price_range",priceRange}) //I think this is the core of the problem, there's also a call to prefsDispatch before this plotsDIspatch call was made
-                if (!prefsState.customDate){
+                if (!inputState.customDate){
                     const dateRange = calcStartEnd(plotData)
                     const dayValues = calcDayValues(plotData)
                     console.log('debug State',{dateRange})
@@ -129,7 +151,7 @@ const StockContextProvider = (props) => {
                     plotDispatch({type:"replace_data",data:initialPlotState.plotData})
                     prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
                 } else {
-                    if (!prefsState.customDate){
+                    if (!inputState.customDate){
                         const newXDomain = calcStartEnd(plotState.plotData)
                         const newDayValues = calcDayValues(plotState.plotData)
                         prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
@@ -152,7 +174,7 @@ const StockContextProvider = (props) => {
                 prefsDispatch({type:"update_selected_days",selectedDayValues})
             } 
             if (type === "update_selected_days") {
-                const tickValues = calcTickValues(prefsState)
+                const tickValues = calcTickValues(prefsState,inputState)
                 prefsDispatch({type:"update_tick_values",tickValues})
             }
             if (type === "update_price_range") {
@@ -166,8 +188,10 @@ const StockContextProvider = (props) => {
           value={{
             plotState,
             prefsState,
+            inputState,
             plotDispatch,
-            prefsDispatch
+            prefsDispatch,
+            inputDispatch
           }} 
         >
           {props.children}
