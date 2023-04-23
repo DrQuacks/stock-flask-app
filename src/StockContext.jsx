@@ -50,7 +50,8 @@ const prefsReducer = (prefsState,action) => {
         selectedDayValues,
         tickValues,
         priceRange,
-        selectedPriceRange
+        selectedPriceRange,
+        nextChange
     } = action
     if (type) {
         let lastChange = {type}
@@ -81,7 +82,7 @@ const prefsReducer = (prefsState,action) => {
             }
             case "update_date_range":{
                 console.log('debug State',{xDomain,lastChange,action})
-                return {...prefsState,xDomain,dayValues,lastChange,stateID:newStateID}
+                return {...prefsState,xDomain,dayValues,lastChange,nextChange:"none",stateID:newStateID}
             }
             case "update_selected_days":{
                 return {...prefsState,selectedDayValues,lastChange,stateID:newStateID}
@@ -93,7 +94,7 @@ const prefsReducer = (prefsState,action) => {
                 return{...prefsState,priceRange,lastChange,stateID:newStateID}
             }
             case "update_selected_price_range":{
-                return{...prefsState,selectedPriceRange,lastChange,stateID:newStateID}
+                return{...prefsState,selectedPriceRange,lastChange,nextChange,stateID:newStateID}
             }
             default: {
                 return {...prefsState,lastChange}
@@ -132,31 +133,31 @@ const StockContextProvider = (props) => {
     const [inputState,inputDispatch] = useReducer(inputReducer,initialInputState)
 
     useEffect(() => {
-        console.log('Plot State Context',plotState)
+        console.log('Plot State Update',{plotState,prefsState,inputState})
         if (plotState.lastChange.type){
             const {type} = plotState.lastChange
             if ((type === "update_data") || (type === "replace_data")){
                 const {plotData}= plotState
                 const priceRange = calcMinMax(plotData)
                 prefsDispatch({type:"update_price_range",priceRange}) //I think this is the core of the problem, there's also a call to prefsDispatch before this plotsDIspatch call was made
-                if (!inputState.customDate){
-                    const dateRange = calcStartEnd(plotData)
-                    const dayValues = calcDayValues(plotData)
-                    console.log('debug State',{dateRange})
-                    prefsDispatch({type:"update_date_range",xDomain:dateRange,dayValues})
-                }
+                // if (!inputState.customDate){
+                //     const dateRange = calcStartEnd(plotData)
+                //     const dayValues = calcDayValues(plotData)
+                //     console.log('debug State',{dateRange})
+                //     prefsDispatch({type:"update_date_range",xDomain:dateRange,dayValues})
+                // }
             }
             if (type === "remove_stock"){
                 if (plotState.plotData.length === 0){
                     plotDispatch({type:"replace_data",data:initialPlotState.plotData})
                     prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
                 } else {
-                    if (!inputState.customDate){
-                        const newXDomain = calcStartEnd(plotState.plotData)
-                        const newDayValues = calcDayValues(plotState.plotData)
-                        prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
-                        console.log('After removal, plotPrefs is: ',prefsState)
-                    }
+                    // if (!inputState.customDate){
+                    //     const newXDomain = calcStartEnd(plotState.plotData)
+                    //     const newDayValues = calcDayValues(plotState.plotData)
+                    //     prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
+                    //     console.log('After removal, plotPrefs is: ',prefsState)
+                    // }
                     const newMinMax = calcMinMax(plotState.plotData)
                     prefsDispatch({type:"update_price_range",priceRange:newMinMax})
                 }
@@ -166,7 +167,7 @@ const StockContextProvider = (props) => {
     },[plotState.stateID])
 
     useEffect(() => {
-        console.log('Prefs State Context',prefsState)
+        console.log('Prefs State Update',{plotState,prefsState,inputState})
         if (prefsState.lastChange.type){
             const {type} = prefsState.lastChange
             if ((type === "update_start_date") || (type === "update_end_date") || (type === "update_date_range")){ //I'm not sure these need to be independent
@@ -178,7 +179,18 @@ const StockContextProvider = (props) => {
                 prefsDispatch({type:"update_tick_values",tickValues})
             }
             if (type === "update_price_range") {
-                prefsDispatch({type:"update_selected_price_range",selectedPriceRange:prefsState.priceRange})
+                prefsDispatch({type:"update_selected_price_range",selectedPriceRange:prefsState.priceRange,nextChange:"update_date_range"})
+            }
+            if ((type === "update_min_price") || (type === "update_max_price")) {
+                prefsDispatch({type:"update_selected_price_range",selectedPriceRange:prefsState.priceRange,nextChange:"none"})
+            }
+            if ((type === "update_selected_price_range") && (prefsState.nextChange === "update_date_range")){ //this is incredibly hacky and I hate it
+                if (!inputState.customDate){
+                    const newXDomain = calcStartEnd(plotState.plotData)
+                    const newDayValues = calcDayValues(plotState.plotData)
+                    console.log('debug Prefs State Context',{prefsState,newXDomain,newDayValues,plotState,type})
+                    prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
+                }
             }
         }
     },[prefsState.stateID])

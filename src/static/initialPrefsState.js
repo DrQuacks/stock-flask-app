@@ -8,7 +8,8 @@ const initialSemiPrefsState = {
     priceRange:[0,0],
     selectedPriceRange:[0,0],
     stateID:0,
-    lastChange:'init'
+    lastChange:'init',
+    nextChange:'none'
 }
 
 const initialPrefsState = {
