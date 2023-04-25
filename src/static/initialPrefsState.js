@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 
-const initialSemiPrefsState = {
+const initialPrefsState = {
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
@@ -9,12 +9,8 @@ const initialSemiPrefsState = {
     selectedPriceRange:[0,0],
     stateID:0,
     lastChange:'init',
-    nextChange:'none'
-}
-
-const initialPrefsState = {
-    ...initialSemiPrefsState,
+    nextChange:'none',
     semiLog:false
 }
 
-export {initialPrefsState,initialSemiPrefsState}
+export default initialPrefsState

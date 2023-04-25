@@ -1,7 +1,6 @@
 import React, { useReducer, useEffect } from "react";
-
 import initialPlotState from './static/initialPlotState';
-import {initialPrefsState,initialSemiPrefsState} from './static/initialPrefsState'
+import initialPrefsState from './static/initialPrefsState'
 import initialInputState from "./static/initialInputState";
 import calcSelectedDays from './helpers/calcSelectedDays'
 import calcTickValues from './helpers/calcTickValues'
@@ -91,7 +90,7 @@ const prefsReducer = (prefsState,action) => {
                 return {...prefsState,dateTickValues:tickValues,lastChange,stateID:newStateID}
             }
             case "update_price_range":{
-                return{...prefsState,priceRange,lastChange,stateID:newStateID}
+                return{...prefsState,priceRange,lastChange,nextChange,stateID:newStateID}
             }
             case "update_selected_price_range":{
                 return{...prefsState,selectedPriceRange,lastChange,nextChange,stateID:newStateID}
@@ -139,25 +138,13 @@ const StockContextProvider = (props) => {
             if ((type === "update_data") || (type === "replace_data")){
                 const {plotData}= plotState
                 const priceRange = calcMinMax(plotData)
-                prefsDispatch({type:"update_price_range",priceRange}) //I think this is the core of the problem, there's also a call to prefsDispatch before this plotsDIspatch call was made
-                // if (!inputState.customDate){
-                //     const dateRange = calcStartEnd(plotData)
-                //     const dayValues = calcDayValues(plotData)
-                //     console.log('debug State',{dateRange})
-                //     prefsDispatch({type:"update_date_range",xDomain:dateRange,dayValues})
-                // }
+                prefsDispatch({type:"update_price_range",priceRange,nextChange:"update_date_range"}) //I think this is the core of the problem, there's also a call to prefsDispatch before this plotsDIspatch call was made
             }
             if (type === "remove_stock"){
                 if (plotState.plotData.length === 0){
                     plotDispatch({type:"replace_data",data:initialPlotState.plotData})
                     prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
                 } else {
-                    // if (!inputState.customDate){
-                    //     const newXDomain = calcStartEnd(plotState.plotData)
-                    //     const newDayValues = calcDayValues(plotState.plotData)
-                    //     prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
-                    //     console.log('After removal, plotPrefs is: ',prefsState)
-                    // }
                     const newMinMax = calcMinMax(plotState.plotData)
                     prefsDispatch({type:"update_price_range",priceRange:newMinMax})
                 }
@@ -180,7 +167,7 @@ const StockContextProvider = (props) => {
                 prefsDispatch({type:"update_tick_values",tickValues})
             }
             if (type === "update_price_range") {
-                prefsDispatch({type:"update_selected_price_range",selectedPriceRange:prefsState.priceRange,nextChange:"update_date_range"})
+                prefsDispatch({type:"update_selected_price_range",selectedPriceRange:prefsState.priceRange})
             }
             if ((type === "update_min_price") || (type === "update_max_price")) {
                 prefsDispatch({type:"update_selected_price_range",selectedPriceRange:prefsState.priceRange,nextChange:"none"})
