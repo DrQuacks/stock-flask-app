@@ -3,3 +3,6 @@ which is causing issues with the order of things updating.
 Right now this is especially true with fetching data from python.
 
 What I'd like to do is trigger updates when things happen.
+
+I think I'm doing this all better now (5/23), but I have this janky nextChange thing that I'd like to get away from.
+Should I be tying updating a date range to updating a price range? That might be what I want all along.

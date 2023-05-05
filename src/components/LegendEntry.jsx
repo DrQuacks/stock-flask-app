@@ -10,11 +10,14 @@ const LegendEntry = ({
 }) => {
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
-    const {plotDispatch} = useContext(StockContext)
+    const {plotState,plotDispatch} = useContext(StockContext)
 
     function handleChange() {
-        plotDispatch({type:'remove_stock',index})
-        //removeStock(index)
+        if (plotState.plotData.length > 1) {
+            plotDispatch({type:'remove_stock',index})
+        } else {
+            plotDispatch({type:'reset'})
+        }
     }
 
     console.log('key is: ',name)

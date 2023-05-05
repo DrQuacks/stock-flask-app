@@ -30,6 +30,9 @@ const plotReducer = (plotState,action) => {
                 plotStateDataCopy.splice(index,1)
                 return {plotData:plotStateDataCopy,lastChange,stateID:newStateID}
             }
+            case "reset": {
+                return {...initialPlotState,lastChange}
+            }
             default: {
                 return {...plotState,lastChange,stateID:newStateID}
             }
@@ -141,14 +144,21 @@ const StockContextProvider = (props) => {
                 prefsDispatch({type:"update_price_range",priceRange,nextChange:"update_date_range"}) //I think this is the core of the problem, there's also a call to prefsDispatch before this plotsDIspatch call was made
             }
             if (type === "remove_stock"){
-                if (plotState.plotData.length === 0){
-                    plotDispatch({type:"replace_data",data:initialPlotState.plotData})
-                    prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
-                } else {
-                    const newMinMax = calcMinMax(plotState.plotData)
-                    prefsDispatch({type:"update_price_range",priceRange:newMinMax})
-                }
+                const newMinMax = calcMinMax(plotState.plotData)
+                prefsDispatch({type:"update_price_range",priceRange:newMinMax,nextChange:"update_date_range"})
             }
+            if (type === "reset"){
+                prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
+            }
+            // if (type === "remove_stock"){
+            //     if (plotState.plotData.length === 0){
+            //         plotDispatch({type:"replace_data",data:initialPlotState.plotData})
+            //         prefsDispatch({type:"update_prefs",prefs:initialPrefsState})
+            //     } else {
+            //         const newMinMax = calcMinMax(plotState.plotData)
+            //         prefsDispatch({type:"update_price_range",priceRange:newMinMax})
+            //     }
+            // }
         }
 
     },[plotState.stateID])
