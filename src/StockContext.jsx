@@ -93,7 +93,7 @@ const prefsReducer = (prefsState,action) => {
                 return{...prefsState,priceRange,lastChange,nextChange,stateID:newStateID}
             }
             case "update_selected_price_range":{
-                return{...prefsState,selectedPriceRange,lastChange,nextChange,stateID:newStateID}
+                return{...prefsState,selectedPriceRange,lastChange,stateID:newStateID}
             }
             default: {
                 return {...prefsState,lastChange}
