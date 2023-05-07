@@ -1,0 +1,6 @@
+Open 2 Terminal tabs
+
+In the first, type yarn start
+
+In the second, type source api/venv/bin/activate
+Then, once the virtual environment has opened, type yarn start-api
