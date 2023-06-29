@@ -38,12 +38,12 @@ const PriceRangeContainer = () => {
 
     const updateHandler = (event) => { //I don't think I should be altering priceRange, right? Just selectedPriceRange.
         event.preventDefault()
-        prefsDispatch({type:"update_price_range",priceRange:[formData.min,formData.max]})
+        prefsDispatch({type:"update_selected_price_range",selectedPriceRange:[formData.min,formData.max]})
     }
 
     const resetHandler = (event) => {
         event.preventDefault()
-        prefsDispatch({type:"update_price_range",priceRange:[minData,maxData]})
+        prefsDispatch({type:"update_selected_price_range",selectedPriceRange:[minData,maxData]})
     }
 
     
