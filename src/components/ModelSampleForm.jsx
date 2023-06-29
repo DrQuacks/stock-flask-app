@@ -1,19 +1,15 @@
 import React from "react"
 import InputFormContainer from "./InputFormContainer";
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import Slider from '@mui/material/Slider';
 
 
-function ModelSampleForm({plotData,handleInput,setPrefs}) {
+function ModelSampleForm() {
 
     function valuetext(value) {
         return `${value}%`;
-      }
-      
-    const [value, setValue] = React.useState([0, 80, 100]);
-    
+    }
+          
     const inputFormBuilder = (formData,handleChangeCallBack,setFormData) => {
 
         const InputFormElement = 
@@ -60,12 +56,10 @@ function ModelSampleForm({plotData,handleInput,setPrefs}) {
 
     return (
         <InputFormContainer
-            plotData={plotData}
-            handleInput={handleInput}
-            setPrefs={setPrefs}
             inputFormBuilder={inputFormBuilder}
             route={'/api/setTrainTest'}
             modelSample={'Open/Close'}
+            isModelInput={true}
         />
     )
 

@@ -5,11 +5,11 @@ import dateToDate from "../helpers/dateToDate";
 import { StockContext } from "../StockContext";
 
 
-function InputFormContainer({inputFormBuilder,route,modelSample}) {
+function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=false}) {
 
     const { plotState, prefsState, plotDispatch, prefsDispatch, inputDispatch} = useContext(StockContext)
 
-    const [formData, setFormData] = useState(
+    const [formData, setFormData] = useState( //this is a terrible way to initialize this
         {
             stockSymbol: "", 
             trailingDays: "",
@@ -70,38 +70,51 @@ function InputFormContainer({inputFormBuilder,route,modelSample}) {
         const data = sendToPython(formData,route)
         const resolvedDataDict = await data
         console.log('resolvedDataDict is: ',resolvedDataDict)
-        const plotKeys = Object.keys(resolvedDataDict.plotData)
-        let newPlotDataList = []
-        plotKeys.forEach((resolvedDataKey,index) => {
-            const days = formData.trailingDays || (parseInt(formData.stepSize)*(index+1))
-            console.log("days is: ",days)
-            const resolvedData = resolvedDataDict.plotData[resolvedDataKey]
-            console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
-            const formattedDays = (resolvedData.stockFeatures.days_list)
-                .map(day => dateToDate(day))
-            //console.log('[formattedDays] is: ',[formattedDays])
-            const newPlotData = {
-                name:formData.stockSymbol,
-                data:resolvedData.stockArray,
-                trailingDays:days,
-                avgType:formData.avgType,
-                sampleType:formData.sampleType,
-                start:dateToDate(resolvedData.stockFeatures.start_date),
-                end:dateToDate(resolvedData.stockFeatures.end_date),
-                min:resolvedData.stockFeatures.min_price,
-                max:resolvedData.stockFeatures.max_price,
-                minDeriv:resolvedData.stockFeatures.min_deriv,
-                maxDeriv:resolvedData.stockFeatures.max_deriv,
-                minDeriv2:resolvedData.stockFeatures.min_deriv2,
-                maxDeriv2:resolvedData.stockFeatures.max_deriv2,
-                datePriceScale:generateScale(resolvedData.stockArray),
-                daysList:formattedDays,
-                localMins:resolvedData.localMinsandMaxs[0],
-                localMaxs:resolvedData.localMinsandMaxs[1],
-                modelAnalysis:resolvedDataDict.modelAnalysis
-            }
-            newPlotDataList = [...newPlotDataList,newPlotData]
-        })
+        let newPlotDataList = [] //yeah, uhh, this should be done with reduce...
+
+        if (isModelInput){
+            const {plotData} = plotState
+            plotData.forEach((plot) =>{
+                newPlotDataList = [
+                    ...newPlotDataList,
+                    {...plot,modelAnalysis:resolvedDataDict.modelAnalysis}
+                ]
+            })
+        } else {
+            const plotKeys = Object.keys(resolvedDataDict.plotData)
+            plotKeys.forEach((resolvedDataKey,index) => {
+                const days = formData.trailingDays || (parseInt(formData.stepSize)*(index+1))
+                console.log("days is: ",days)
+                const resolvedData = resolvedDataDict.plotData[resolvedDataKey]
+                console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
+                const formattedDays = (resolvedData.stockFeatures.days_list)
+                    .map(day => dateToDate(day))
+                //console.log('[formattedDays] is: ',[formattedDays])
+                const newPlotData = {
+                    name:formData.stockSymbol,
+                    data:resolvedData.stockArray,
+                    trailingDays:days,
+                    avgType:formData.avgType,
+                    sampleType:formData.sampleType,
+                    start:dateToDate(resolvedData.stockFeatures.start_date),
+                    end:dateToDate(resolvedData.stockFeatures.end_date),
+                    min:resolvedData.stockFeatures.min_price,
+                    max:resolvedData.stockFeatures.max_price,
+                    minDeriv:resolvedData.stockFeatures.min_deriv,
+                    maxDeriv:resolvedData.stockFeatures.max_deriv,
+                    minDeriv2:resolvedData.stockFeatures.min_deriv2,
+                    maxDeriv2:resolvedData.stockFeatures.max_deriv2,
+                    datePriceScale:generateScale(resolvedData.stockArray),
+                    daysList:formattedDays,
+                    localMins:resolvedData.localMinsandMaxs[0],
+                    localMaxs:resolvedData.localMinsandMaxs[1],
+                    modelAnalysis:resolvedDataDict.modelAnalysis
+                }
+                newPlotDataList = [...newPlotDataList,newPlotData]
+            })
+        }
+        console.log('debugFormData',{formData,newPlotDataList})
+
         //handleInput(newPlotDataList)
         if(prefs.overlayNew){
             plotDispatch({type:'update_data',data:newPlotDataList})
