@@ -93,7 +93,7 @@ def model_rubric(data):
     stock_history = get_history(data['stockSymbol'])
     modelData = lm.setModelData(stock_history,data)
     #modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
-    modelAnalysis = list(lm.tryModel(modelData).to_dict('index').items())
+    #modelAnalysis = list(lm.tryModel(modelData).to_dict('index').items())
     #print('modelAnalysis: ', modelAnalysis[:19])
 
     stockDataList = modelData['stockDataList']
@@ -102,7 +102,10 @@ def model_rubric(data):
         print("index is: ",index)
         plotData = get_plot_data(stock_history,stock_data)
         plotDataDict[str(index)]= plotData
-    return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
+    
+    return ({'plotData':plotDataDict})
+
+    # return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
     #return ({'modelAnalysis':modelAnalysis})
 
 def train_test_rubric(data):
