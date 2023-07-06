@@ -10,7 +10,9 @@ const initialPrefsState = {
     stateID:0,
     lastChange:'init',
     nextChange:'none',
-    semiLog:false
+    semiLog:false,
+    showModelLines:false,
+    modelLineDays:[(new Date()),(new Date()),(new Date())]
 }
 
 export default initialPrefsState

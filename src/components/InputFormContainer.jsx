@@ -28,7 +28,16 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
 
     function handleChange(event) {
         const {name, value, type, checked} = event.target
-        //console.log('[name, value, type, checked]: ',[name, value, type, checked])
+        console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})
+        // if ((name === "trainingBounds") && !prefsState.showModelLines){
+        if ((name === "trainingBounds")){
+            const {dayValues} = prefsState
+            const dayArray = formData.trainingBounds.map((bound) => {
+                const index = Math.floor(((bound/100) * dayValues.length) - 1)
+                return dayValues[index]
+            })
+            prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray})
+        }
         setFormData(prevFormData => {
             return {
                 ...prevFormData,

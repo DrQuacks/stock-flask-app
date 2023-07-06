@@ -13,7 +13,7 @@ const LineChart = () => {
     const {plotData} = plotState
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues} = prefsState
+    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays} = prefsState
     const showPlot = {
         price:true,
         raw:true,
@@ -44,6 +44,7 @@ const LineChart = () => {
             svg.select("#yAxis").remove()
             svg.select("#yAxisGridLines").remove()
             svg.select("#y2Axis").remove()
+            svg.select("#modelLines").remove()
             d3.selectAll(".tooltip").remove()
 
             const indexScale = d3.scaleLinear()
@@ -147,11 +148,23 @@ const LineChart = () => {
                 )
 
             if (firstDeriv || secondDeriv){
-                console.log("A derivative box was checked")
                 const y2Axis = svg.append("g")
                     .attr("id","y2Axis")
                     .attr("transform", `translate(${width - margin.right - margin.left},${margin.top})`)
                     .call(d3.axisRight(rightYScale).tickFormat(d3.format('.2%')));
+            }
+
+            if (showModelLines){
+                const modelLines = svg.append("g")
+                    .attr("id","modelLines")
+                    .attr("transform", `translate(0,${height - margin.bottom})`)
+                    .attr("opacity",".3")
+                    .call(d3.axisBottom(xScale)
+                        .tickValues(modelLineDays)
+                        .tickFormat("")
+                        .tickSize(-1*(height - (margin.bottom + margin.top)))
+                        .tickSizeOuter(0)
+                    )
             }
 
             const modelPerformanceScale = d3.scaleOrdinal()

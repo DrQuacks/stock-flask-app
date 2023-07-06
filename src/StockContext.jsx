@@ -53,7 +53,9 @@ const prefsReducer = (prefsState,action) => {
         tickValues,
         priceRange,
         selectedPriceRange,
-        nextChange
+        nextChange,
+        showModelLines,
+        modelLineDays
     } = action
     if (type) {
         let lastChange = {type}
@@ -96,6 +98,9 @@ const prefsReducer = (prefsState,action) => {
             }
             case "update_selected_price_range":{
                 return{...prefsState,selectedPriceRange,lastChange,stateID:newStateID}
+            }
+            case "update_model_lines":{
+                return{...prefsState,showModelLines,modelLineDays,lastChange,stateID:newStateID}
             }
             default: {
                 return {...prefsState,lastChange}
