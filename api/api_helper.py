@@ -23,17 +23,12 @@ def get_average_data(stock_history,data,trailing_days=None):
 
     return stockData
 
-#def get_plot_data(stock_history,data,trailing_days=None):
 def get_plot_data(stock_history,stockData):
     plotData = {}
-    #stockData = get_average_data(stock_history,data,trailing_days)
-    #for i in range(len(stockData)):
-    
     stockArray = stockData["stock_data"]
-
     print ('stockArray is: ',stockArray[:10])
 
-    localMinsandMaxs = sd.findLocalMinsandMaxs(stock_history)
+    localMinsandMaxs = sd.findLocalMinsandMaxs(stock_history) #shows up in locals()
 
     column_list = [
         "min_price",
@@ -53,14 +48,10 @@ def get_plot_data(stock_history,stockData):
         'localMinsandMaxs'
         ]
 
-    stockFeatures = make_dict(column_list,stockData)
-    print('stockFeatures[max_price] is: ',stockFeatures['max_price'])    
-    #plotData.append(make_dict(names,locals()))
-    #plotData[i] = make_dict(names,locals())
+    stockFeatures = make_dict(column_list,stockData) #shows up in locals()
     plotData = make_dict(names,locals())
 
     return ({**plotData})
-    #return plotData
 
 
 
@@ -92,21 +83,14 @@ def plot_rubric(data):
 def model_rubric(data):
     stock_history = get_history(data['stockSymbol'])
     modelData = lm.setModelData(stock_history,data)
-    #modelAnalysis = list(lm.tryModel(stock_history,data).to_dict('index').items())
-    #modelAnalysis = list(lm.tryModel(modelData).to_dict('index').items())
-    #print('modelAnalysis: ', modelAnalysis[:19])
 
     stockDataList = modelData['stockDataList']
     plotDataDict = {}
     for index,stock_data in enumerate(stockDataList):
-        print("index is: ",index)
         plotData = get_plot_data(stock_history,stock_data)
         plotDataDict[str(index)]= plotData
     
     return ({'plotData':plotDataDict})
-
-    # return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
-    #return ({'modelAnalysis':modelAnalysis})
 
 def train_test_rubric(data):
     stock_history = get_history(data['stockSymbol'])
@@ -129,7 +113,6 @@ def train_test_rubric(data):
     stockDataList = modelData['stockDataList']
     plotDataDict = {}
     for index,stock_data in enumerate(stockDataList):
-        print("index is: ",index)
         plotData = get_plot_data(stock_history,stock_data)
         plotDataDict[str(index)]= plotData
     return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})

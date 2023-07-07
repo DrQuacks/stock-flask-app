@@ -2,7 +2,6 @@ import stock_learning as sl
 import pickle
 
 
-#def create_data(sym,step,max):
 def create_data(history,step,max):
     created_result = sl.setup_model_data(history,step,max)
 
@@ -18,16 +17,13 @@ def access_data():
 
 
 def setModelData(history,data):
-    sym = data['stockSymbol']
     step = int(data['stepSize'])
     max = int(data['max'])
 
-    #create_data(sym,step,max)
     create_data(history,step,max)
     result = access_data()
     return result
 
-#def tryModel(history,data):
 def tryModel(result,train_start=100,train_end=-300,test_end=-100):
     model = sl.first_model(result['data'],result['features'],train_start,train_end)
     predictions = sl.make_predictions(model,result['data'],result['features'],train_end,test_end)

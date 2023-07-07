@@ -25,8 +25,6 @@ def analyze_predictions(preds,data,train_end,test_end):
     print("prediction score: "+str(score))
 
     combined = pd.concat([target,preds],axis=1)
-    #cols = combined.columns
-    #combined.rename(columns={cols[1]:"prediction_close_binary"})
     combined.columns = ['target_binary','prediction_binary']
     print(combined.head())
     print(combined.columns)
@@ -63,8 +61,6 @@ def analyze_predictions(preds,data,train_end,test_end):
 
     return comparison
 
-    #combined.plot()
-    #plt.show()
 
 
 def first_model(data,features,train_start,train_end):
@@ -77,7 +73,6 @@ def first_model(data,features,train_start,train_end):
     model.fit(train[features],train['target_binary'])
     return model
 
-#def setup_data(history,step,max_days,features):
 def setup_model_data(history,step,max_days):
     normalize = True #should be removed at some point
     stockData_list =[]
