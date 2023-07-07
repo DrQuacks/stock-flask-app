@@ -97,6 +97,10 @@ def train_test_rubric(data):
     modelData = lm.getModelData()
     print('modelData type: ',type(modelData['data']))
     print('modelData: ',modelData['data'].head())
+    print('modelData entire: ',modelData.keys())
+    print('modelData features: ',modelData['features'])
+    print('modelData columns: ',modelData['data'].columns)
+
     data_length = len(modelData['data'].index)
 
     train_start = int(int(data['trainingBounds'][0]) * data_length/100)

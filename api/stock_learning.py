@@ -77,6 +77,7 @@ def setup_model_data(history,step,max_days):
     normalize = True #should be removed at some point
     stockData_list =[]
     history_columns = history.columns
+    print('history_columns is ',history_columns)
     price_feature_cols = ['Open','Close','High','Low']
     additional_feature_cols = []
     feature_cols = []
@@ -110,6 +111,10 @@ def setup_model_data(history,step,max_days):
 
         stockData_list.append(stockData)
         stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
+        price_feature_cols.append(stockData['avg_df'].columns[0])
+        print('stockData keys are', stockData.keys())
+        print('stockData avg_df is ', stockData['avg_df'].columns)
+
         print('stock_history is: ',stock_history.head())
         print('columns are: ',stock_history.columns)
 
