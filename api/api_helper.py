@@ -114,9 +114,7 @@ def train_test_rubric(data):
     print('modelData type: ',type(modelData['data']))
     print('modelData: ',modelData['data'].head())
     data_length = len(modelData['data'].index)
-    #train_start = int(int(data['trainStart']) * data_length/100)
-    #train_end = int(int(data['trainEnd']) * data_length/100)
-    #test_end = int(int(data['testEnd']) * data_length/100)
+
     train_start = int(int(data['trainingBounds'][0]) * data_length/100)
     train_end = int(int(data['trainingBounds'][1]) * data_length/100)
     test_end = int(int(data['trainingBounds'][2]) * data_length/100)

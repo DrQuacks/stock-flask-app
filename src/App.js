@@ -36,6 +36,9 @@ function App() {
             <LegendContainer/>
           </div>
         </div>
+        <div className="StatsSection">
+        </div>
+
       </div>
     </StockContextProvider>
   );
