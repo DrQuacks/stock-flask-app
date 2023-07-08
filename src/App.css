@@ -115,7 +115,7 @@
   border-style: none;
 }
 
-.StatsSection {
+.StatsContainer {
   order: 3;
   min-width: 1500px;
   display: flex;

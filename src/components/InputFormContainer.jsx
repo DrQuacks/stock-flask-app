@@ -86,7 +86,7 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
             plotData.forEach((plot) =>{
                 newPlotDataList = [
                     ...newPlotDataList,
-                    {...plot,modelAnalysis:resolvedDataDict.modelAnalysis}
+                    {...plot,modelAnalysis:resolvedDataDict.modelAnalysis,splits:resolvedDataDict.splits}
                 ]
             })
         } else {
@@ -117,7 +117,8 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
                     daysList:formattedDays,
                     localMins:resolvedData.localMinsandMaxs[0],
                     localMaxs:resolvedData.localMinsandMaxs[1],
-                    modelAnalysis:resolvedDataDict.modelAnalysis
+                    //modelAnalysis:resolvedDataDict.modelAnalysis,
+                    //splits:resolvedDataDict.splits
                 }
                 newPlotDataList = [...newPlotDataList,newPlotData]
             })

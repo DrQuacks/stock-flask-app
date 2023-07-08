@@ -55,11 +55,12 @@ def analyze_predictions(preds,data,train_end,test_end):
         'targetDown_predictionDown':(comparison['targetDown_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
         'targetUp_predictionDown':(comparison['targetUp_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
         'targetDown_predictionUp':(comparison['targetDown_predictionUp'].sum()/comparison['predictionUp'].sum())*100},
-        'correct':{comparison['correct'].sum()/trials}
+        'correct':comparison['correct'].sum()/trials
+        # 'correct':{comparison['correct'].sum()/trials}
     }
     print(splits)
 
-    return comparison
+    return comparison,splits
 
 
 

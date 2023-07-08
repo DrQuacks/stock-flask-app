@@ -22,6 +22,7 @@ import * as d3 from "d3";
       localMins:[],
       localMaxs:[],
       modelAnalysis:[],
+      splits:{}
     }],
     stateID:0,
     lastChange:"init"

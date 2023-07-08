@@ -112,14 +112,23 @@ def train_test_rubric(data):
         train_start = modelData['max']
 
 
-    modelAnalysis = list(lm.tryModel(modelData,train_start,train_end,test_end).to_dict('index').items())
+    comparison,splits = lm.tryModel(modelData,train_start,train_end,test_end)
+    modelAnalysis = list(comparison.to_dict('index').items())
+
+    #modelAnalysis = list(lm.tryModel(modelData,train_start,train_end,test_end).to_dict('index').items())
 
     stockDataList = modelData['stockDataList']
     plotDataDict = {}
     for index,stock_data in enumerate(stockDataList):
         plotData = get_plot_data(stock_history,stock_data)
         plotDataDict[str(index)]= plotData
-    return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
+    print('splits is ',splits)
+    print('type of splits is',type(splits))
+    print('type of plotDataDict is',type(plotDataDict))
+
+    return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis,'splits':splits})
+    #return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})
+
 
 
 def nan_checker(check_list):
