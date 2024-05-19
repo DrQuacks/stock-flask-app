@@ -9,6 +9,10 @@
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.3.2",
+    "@types/react-dom": "^18.3.0",
     "d3": "^7.8.0",
     "material-ui-form": "^1.0.0-alpha.26",
     "react": "^18.2.0",
@@ -44,5 +48,12 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://127.0.0.1:5000"
+  "proxy": "http://127.0.0.1:5000",
+  "devDependencies": {
+    "@eslint/js": "^9.3.0",
+    "@types/d3": "^7.4.3",
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.5",
+    "typescript-eslint": "^7.9.0"
+  }
 }

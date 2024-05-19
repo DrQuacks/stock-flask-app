@@ -4,7 +4,8 @@ import LineChart from './components/LineChart';
 import LegendContainer from './components/LegendContainer';
 import PlotTab from './components/PlotTab';
 import ModelTab from './components/ModelTab';
-import StatsContainer from './components/StatsContainer';
+import StatsContainer
+ from './components/StatsContainer';
 import { StockContextProvider } from './StockContext';
 import 'react-tabs/style/react-tabs.css';
 import './App.css';
