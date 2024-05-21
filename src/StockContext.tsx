@@ -1,14 +1,22 @@
 import React, { useReducer, useEffect } from "react";
-import initialPlotState from './static/initialPlotState';
-import initialPrefsState from './static/initialPrefsState'
-import initialInputState from "./static/initialInputState";
+import {initialPlotState,PlotState} from './static/initialPlotState';
+import {initialPrefsState,PrefsState} from './static/initialPrefsState'
+import {initialInputState,InputState} from "./static/initialInputState";
 import calcSelectedDays from './helpers/calcSelectedDays'
 import calcTickValues from './helpers/calcTickValues'
 import calcMinMax from "./helpers/calcMinMax";
 import calcStartEnd from "./helpers/calcStartEnd";
 import calcDayValues from "./helpers/calcDayValues";
 
-const plotReducer = (plotState,action) => {
+type ContextValues = {
+    plotState:PlotState,
+    prefsState:PrefsState,
+    inputState:InputState,
+    plotDispatch:(action:any) => void,
+    prefsDispatch:(action:any) => void,
+    inputDispatch:(action:any) => void
+  }
+const plotReducer = (plotState:PlotState,action:any):PlotState => {
     const {
         type,
         data,
@@ -41,7 +49,7 @@ const plotReducer = (plotState,action) => {
     return plotState
 }
 
-const prefsReducer = (prefsState,action) => {
+const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
     const {
         type,
         prefs,
@@ -56,6 +64,23 @@ const prefsReducer = (prefsState,action) => {
         nextChange,
         showModelLines,
         modelLineDays
+    }:{
+        type:string,
+        prefs:any,
+        xDomain:[Date,Date],
+        dayValues:Date[],
+        price:number,
+        date:Date,
+        selectedDayValues:Date[],
+        tickValues: {
+            date: Date[],
+            scale: d3.ScaleOrdinal<string, unknown, never>
+        },
+        priceRange:[number,number],
+        selectedPriceRange:[number,number],
+        nextChange:string,
+        showModelLines:boolean,
+        modelLineDays:Date[]
     } = action
     if (type) {
         let lastChange = {type}
@@ -66,22 +91,22 @@ const prefsReducer = (prefsState,action) => {
             }
             case "update_min_price": {
                 const {selectedPriceRange} = prefsState
-                const newSelectedPriceRange = [price,selectedPriceRange[1]]
+                const newSelectedPriceRange:[number,number] = [price,selectedPriceRange[1]]
                 return {...prefsState,selectedPriceRange:newSelectedPriceRange,lastChange,stateID:newStateID}
             }
             case "update_max_price": {
                 const {selectedPriceRange} = prefsState
-                const newSelectedPriceRange = [selectedPriceRange[0],price]
+                const newSelectedPriceRange:[number,number] = [selectedPriceRange[0],price]
                 return {...prefsState,selectedPriceRange:newSelectedPriceRange,lastChange,stateID:newStateID}
             }
             case "update_start_date": {
                 const {xDomain} = prefsState
-                const newXDomain = [date,xDomain[1]]
+                const newXDomain:[Date,Date] = [date,xDomain[1]]
                 return {...prefsState,xDomain:newXDomain,lastChange,stateID:newStateID}
             }
             case "update_end_date": {
                 const {xDomain} = prefsState
-                const newXDomain = [xDomain[0],date]
+                const newXDomain:[Date,Date] = [xDomain[0],date]
                 return {...prefsState,xDomain:newXDomain,lastChange,stateID:newStateID}
             }
             case "update_date_range":{
@@ -110,7 +135,7 @@ const prefsReducer = (prefsState,action) => {
     return prefsState
 }
 
-const inputReducer = (inputState,action) => {
+const inputReducer = (inputState:InputState,action:any):InputState => {
     const {
         type,
         prefs
@@ -130,7 +155,7 @@ const inputReducer = (inputState,action) => {
     return inputState
 }
 
-const StockContext = React.createContext(null)
+const StockContext = React.createContext<ContextValues | null>(null)
 
 const StockContextProvider = (props) => {
 
