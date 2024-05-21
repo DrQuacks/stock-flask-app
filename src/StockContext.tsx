@@ -15,7 +15,7 @@ type ContextValues = {
     plotDispatch:(action:any) => void,
     prefsDispatch:(action:any) => void,
     inputDispatch:(action:any) => void
-  }
+}
 const plotReducer = (plotState:PlotState,action:any):PlotState => {
     const {
         type,

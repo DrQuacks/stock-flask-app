@@ -5,7 +5,7 @@ import { StockContext } from "../StockContext";
 
 const DateRangeElement = ({type,date}) => {
 
-    const { prefsDispatch } = useContext(StockContext)
+    const { prefsDispatch } = useContext(StockContext)!
     //console.log('DateRangeElement date is: ',date)
     const [value, setValue] = useState(date);
 
@@ -45,14 +45,23 @@ const DateRangeElement = ({type,date}) => {
             >
                 {type}
             </label>
-            <DatePicker 
+            <div className="DatePickerWrapper" style={stylePicker}>
+                <DatePicker 
+                    key = "DatePicker"
+                    onChange={setValue}
+                    onCalendarClose = {handleChange}
+                    value={value} 
+                    clearIcon={null}
+                />
+            </div>
+            {/* <DatePicker 
                 id = "DatePicker"
                 onChange={setValue}
                 onBlur = {handleChange}
                 value={value} 
                 style={stylePicker}
                 clearIcon={null}
-            />
+            /> */}
         </div>
     );
 }

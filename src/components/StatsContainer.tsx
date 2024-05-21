@@ -6,7 +6,7 @@ import StatsTable from "./StatsTable";
 
 const StatsContainer = () => {
 
-    const {plotState} = useContext(StockContext)
+    const {plotState} = useContext(StockContext)!
     const {plotData} = plotState
 
     const Stats = plotData[0].modelAnalysis.length === 0 ? <Fragment></Fragment> : 
