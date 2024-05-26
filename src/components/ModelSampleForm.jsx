@@ -1,5 +1,5 @@
 import React , { useContext } from "react"
-import InputFormContainer from "./InputFormContainer";
+import {InputFormContainer} from "./InputFormContainer";
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { StockContext } from "../StockContext";

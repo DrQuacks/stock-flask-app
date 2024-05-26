@@ -14,12 +14,12 @@ type PlotDatum = {
   maxDeriv: number,
   minDeriv2: number,
   maxDeriv2:number,
-  datePriceScale: d3.ScaleLinear<number, number, never>,
+  datePriceScale: d3.ScaleOrdinal<string, unknown, never>,
   daysList:any[],
   localMins:any[],
   localMaxs:any[],
-  modelAnalysis:any[],
-  splits: {};
+  modelAnalysis?:any[],
+  splits?: {};
 }
 
 type PlotData = PlotDatum[]
@@ -49,12 +49,13 @@ const initialPlotState:PlotState = {
     minDeriv2:0,
     maxDeriv2:0,
     // datePriceScale: new d3.scaleLinear(),
-    datePriceScale: d3.scaleLinear(),
+    // datePriceScale: d3.scaleLinear(),
+    datePriceScale: d3.scaleOrdinal(),
     daysList:[],
     localMins:[],
     localMaxs:[],
-    modelAnalysis:[],
-    splits:{}
+    //modelAnalysis:[], //should these be getting set if they're optional anyways? inputFormContainer make PlotDatum without these
+    //splits:{}
   }],
   stateID:0,
   lastChange:{type:"init"}

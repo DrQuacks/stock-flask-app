@@ -4,7 +4,7 @@ import GraphOptions from "./GraphOptions";
 import DateRangeContainer from "./DateRangeContainer";
 import PriceRangeContainer from "./PriceRangeContainer";
 
-const PlotTab = () => {
+const PlotTab = ():React.JSX.Element => {
 
     const PlotTabComponent
         = <div className='TopBar'>

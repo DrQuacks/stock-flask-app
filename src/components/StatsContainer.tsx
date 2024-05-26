@@ -9,7 +9,7 @@ const StatsContainer = () => {
     const {plotState} = useContext(StockContext)!
     const {plotData} = plotState
 
-    const Stats = plotData[0].modelAnalysis.length === 0 ? <Fragment></Fragment> : 
+    const Stats = (plotData[0].modelAnalysis && plotData[0].modelAnalysis.length === 0) ? <Fragment></Fragment> : 
     <div className='StatsSection'>
         <StatsTable
             key = {"targets"}

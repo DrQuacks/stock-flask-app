@@ -1,9 +1,9 @@
 import React from "react"
-import InputFormContainer from "./InputFormContainer";
+import {InputFormContainer,InputFormData} from "./InputFormContainer";
 
-function PlotInputForm() {
+function PlotInputForm(): React.JSX.Element {
 
-    const inputFormBuilder = (formData,handleChangeCallBack) => {
+    const inputFormBuilder = (formData:InputFormData,handleChangeCallBack:(event) => void) => {
         const InputFormElement = 
             <div>
                 <div className="SymbolDays">

@@ -3,13 +3,37 @@ import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 import { StockContext } from "../StockContext";
+import { PlotData , PlotDatum } from "../static/initialPlotState";
 
+type InputFormData = {
+    stockSymbol: string;
+    trailingDays: string;
+    stepSize: string;
+    max: string;
+    trainingBounds: string[];
+    overlayNew: boolean;
+    customDate: boolean;
+    avgType: string;
+    sampleType: any;
+}
 
-function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=false}) {
+function InputFormContainer(
+    {
+        inputFormBuilder,
+        route,
+        modelSample,
+        isModelInput=false
+    }:{
+        inputFormBuilder:(formData: InputFormData, handleChangeCallBack: (event: any) => void) => React.JSX.Element,
+        route:string,
+        modelSample?:any,
+        isModelInput?:boolean
+    }
+) {
 
-    const { plotState, prefsState, plotDispatch, prefsDispatch, inputDispatch} = useContext(StockContext)
+    const { plotState, prefsState, plotDispatch, prefsDispatch, inputDispatch} = useContext(StockContext)!
 
-    const [formData, setFormData] = useState( //this is a terrible way to initialize this
+    const [formData, setFormData] = useState<InputFormData>( //this is a terrible way to initialize this
         {
             stockSymbol: "", 
             trailingDays: "",
@@ -33,7 +57,7 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
         if ((name === "trainingBounds")){
             const {dayValues} = prefsState
             const dayArray = formData.trainingBounds.map((bound) => {
-                const index = Math.floor(((bound/100) * dayValues.length) - 1)
+                const index = Math.floor(((parseInt(bound)/100) * dayValues.length) - 1)
                 return dayValues[index]
             })
             prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray})
@@ -46,7 +70,7 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
         })
     }
 
-    function generateScale(dataArray) {
+    function generateScale(dataArray):d3.ScaleOrdinal<string, unknown, never> {
         const domain = dataArray.map((row) => {
             if (row.type){
                 return dateToDate(row.date,row.type)
@@ -79,7 +103,7 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
         const data = sendToPython(formData,route)
         const resolvedDataDict = await data
         console.log('resolvedDataDict is: ',resolvedDataDict)
-        let newPlotDataList = [] //yeah, uhh, this should be done with reduce...
+        let newPlotDataList:PlotData = [] //yeah, uhh, this should be done with reduce...
 
         if (isModelInput){
             const {plotData} = plotState
@@ -92,14 +116,14 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
         } else {
             const plotKeys = Object.keys(resolvedDataDict.plotData)
             plotKeys.forEach((resolvedDataKey,index) => {
-                const days = formData.trailingDays || (parseInt(formData.stepSize)*(index+1))
+                const days = formData.trailingDays || (parseInt(formData.stepSize)*(index+1)).toString()
                 console.log("days is: ",days)
                 const resolvedData = resolvedDataDict.plotData[resolvedDataKey]
                 console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
                 const formattedDays = (resolvedData.stockFeatures.days_list)
                     .map(day => dateToDate(day))
                 //console.log('[formattedDays] is: ',[formattedDays])
-                const newPlotData = {
+                const newPlotData:PlotDatum = {
                     name:formData.stockSymbol,
                     data:resolvedData.stockArray,
                     trailingDays:days,
@@ -158,4 +182,4 @@ function InputFormContainer({inputFormBuilder,route,modelSample,isModelInput=fal
 
 }
 
-export default InputFormContainer
+export {InputFormContainer,InputFormData}

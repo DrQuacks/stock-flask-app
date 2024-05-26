@@ -1,5 +1,5 @@
 import React from "react"
-import InputFormContainer from "./InputFormContainer";
+import {InputFormContainer} from "./InputFormContainer";
 
 
 function ModelInputForm() {
