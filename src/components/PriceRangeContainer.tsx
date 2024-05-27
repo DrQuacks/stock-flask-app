@@ -6,19 +6,20 @@ import { StockContext } from "../StockContext";
 const PriceRangeContainer = () => {
 
 
-    const { prefsState, prefsDispatch} = useContext(StockContext)
+    const { prefsState, prefsDispatch} = useContext(StockContext)!
     const {selectedPriceRange,priceRange} = prefsState
     const [min,max] = selectedPriceRange
     const [minData,maxData] = priceRange
     console.log("[min,max] is: ",[min,max])
     console.log("[minData,maxData] is: ",[minData,maxData])
-    const [formData, setFormData] = useState({"min":0,"max":0})
+    const [formData, setFormData] = useState({min:0,max:0})
 
     useEffect(() => {
         console.log('min and max changed to: ',[min,max])
         const newMin = +min
         const newMax = +max
-        setFormData({"min":newMin.toFixed(2),"max":newMax.toFixed(2)})
+        const newFormData = {min:+newMin.toFixed(2),max:+newMax.toFixed(2)}
+        setFormData(newFormData)
     },[min,max])
 
     console.log("stateful [min,max] is: ",[formData.min,formData.max])

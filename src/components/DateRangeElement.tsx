@@ -3,7 +3,14 @@ import DatePicker from 'react-date-picker';
 import { StockContext } from "../StockContext";
 
 
-const DateRangeElement = ({type,date}) => {
+const DateRangeElement = (
+    {
+        type,
+        date
+    }:{
+        type:("Start Date" | "End Date"),
+        date:Date
+    }) => {
 
     const { prefsDispatch } = useContext(StockContext)!
     //console.log('DateRangeElement date is: ',date)
@@ -33,7 +40,6 @@ const DateRangeElement = ({type,date}) => {
 
     const stylePicker = {
         "gridColumn":"2",
-
     }
     
     return (
