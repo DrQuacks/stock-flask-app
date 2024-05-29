@@ -5,6 +5,8 @@ import dateToDate from "../helpers/dateToDate";
 import { StockContext } from "../StockContext";
 import { PlotData , PlotDatum } from "../static/initialPlotState";
 
+type SampleType = "Open" | "Close" | "High" | "Low" | "Open/Close"
+
 type InputFormData = {
     stockSymbol: string;
     trailingDays: string;
@@ -14,7 +16,7 @@ type InputFormData = {
     overlayNew: boolean;
     customDate: boolean;
     avgType: string;
-    sampleType: any;
+    sampleType: SampleType;
 }
 
 function InputFormContainer(
@@ -72,9 +74,9 @@ function InputFormContainer(
 
     function generateScale(dataArray):d3.ScaleOrdinal<string, unknown, never> {
         const domain = dataArray.map((row) => {
-            if (row.type){
-                return dateToDate(row.date,row.type)
-            }
+            // if (row.type){
+            //     return dateToDate(row.date,row.type)
+            // }
             return dateToDate(row.date)
         })
         const range = dataArray.map((row) => [row.price,row.rawPrice])
@@ -182,4 +184,4 @@ function InputFormContainer(
 
 }
 
-export {InputFormContainer,InputFormData}
+export {InputFormContainer,InputFormData,SampleType}
