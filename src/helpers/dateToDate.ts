@@ -46,7 +46,7 @@ import {SampleType} from '../components/InputFormContainer'
 //   //console.log('date is: ',d)
 //   return d
 // }
-
+type Month = "Jan"|"Feb"|"Mar"|"Apr"|"May"|"Jun"|"Jul"|"Aug"|"Sep"|"Oct"|"Nov"|"Dec"
 const dateToDate = (str:string) => {
   const mnths = {
     Jan: 0,
@@ -64,7 +64,7 @@ const dateToDate = (str:string) => {
   }
   const date = str.split(" ");
   const d = new Date("July 21, 1983 09:00:00");
-  d.setFullYear(+date[3], mnths[date[2]], +date[1]);
+  d.setFullYear(+date[3], mnths[(date[2] as Month)], +date[1]);
   return d
 }
   

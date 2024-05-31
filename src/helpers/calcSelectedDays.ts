@@ -1,10 +1,12 @@
-const calcSelectedDays = (prefsState) => {
+import { PrefsState } from "src/static/initialPrefsState"
+
+const calcSelectedDays = (prefsState:PrefsState) => {
     const {xDomain,dayValues} = prefsState
     const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
 
     console.log("In the start of calcSelectedDayValues, [xDomainTime,xDomain,dayValues] is: ",[xDomainTime,prefsState.xDomain,dayValues])
     const startIndex = dayValues.findIndex(day => day.getTime() >= xDomainTime[0])
-    const endIndex = dayValues.findLastIndex(day => day.getTime() <= xDomainTime[1])
+    const endIndex = (dayValues as any[]).findLastIndex(day => day.getTime() <= xDomainTime[1])
     console.log("In calcSelectedDayValues, startIndex and endIndex are: ",[startIndex,endIndex])
     const checkedStartIndex = startIndex === -1 ? 0:startIndex
     const checkedEndIndex = endIndex === -1 ? (dayValues.length - 1):endIndex
