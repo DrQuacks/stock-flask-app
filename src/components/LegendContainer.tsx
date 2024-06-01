@@ -15,8 +15,6 @@ const LegendContainer = () => {
                 key = {`${element.name}${element.trailingDays}`}
                 name = {element.name}
                 trailingDays = {element.trailingDays}
-                avgType = {element.avgType}
-                sampleType = {element.sampleType}
                 index = {index}
             />
         )

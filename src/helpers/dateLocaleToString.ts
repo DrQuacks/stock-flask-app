@@ -1,4 +1,4 @@
-const dateLocaleToString = (str) => {
+const dateLocaleToString = (str:string) => {
     if (str) { 
       //console.log("In dateToStr, str is: ",[str]) 
       //console.log("In dateToStr, mappedX is: ",[str]) 

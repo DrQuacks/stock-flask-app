@@ -4,9 +4,11 @@ import { StockContext } from "../StockContext";
 const LegendEntry = ({
     name,
     trailingDays,
-    avgType,
-    sampleType,
-    index,
+    index
+}:{
+    name:string,
+    trailingDays:string,
+    index:number
 }) => {
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]

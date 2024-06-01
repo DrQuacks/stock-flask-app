@@ -1,8 +1,10 @@
 import * as d3 from "d3";
 import dateToTickString from './dateToTickString';
+import { PrefsState } from "src/static/initialPrefsState";
+import { InputState } from "src/static/initialInputState";
 
 
-const calcTickValues = (prefsState,inputState) => {
+const calcTickValues = (prefsState:PrefsState,inputState:InputState) => {
     const maxTicks = 15
     const days = prefsState.selectedDayValues
     const totalTime = days[days.length-1].getTime() - days[0].getTime()
@@ -40,12 +42,12 @@ const calcTickValues = (prefsState,inputState) => {
     console.log("[displayType,totalType,remainder,startOffset,endOffset] is: ",{displayType,totalType,remainder,startOffset,endOffset})
     
     //need to calc 1st of the month once, and then step into new months from there
-    let newTickValues = []
+    let newTickValues:Date[] = []
     if (displayType === "day"){
       newTickValues = days.filter((days,index) => ((startOffset+index)%stepSize === 0))
     } else {
-      newTickValues = days.reduce((acc,day,index) => {
-        const timeGetter = (displayType === "month") ? ((testDate) => testDate.getMonth()) : ((testDate) => testDate.getYear())
+      newTickValues = days.reduce<Date[]>((acc,day,index) => {
+        const timeGetter = (displayType === "month") ? ((testDate:Date) => testDate.getMonth()) : ((testDate:Date) => testDate.getFullYear())
         //if ((startOffset+index)%stepSize === 0){
         if ((index-startOffset)%stepSize === 0){  
           console.log('day is: ',day)
@@ -77,7 +79,7 @@ const calcTickValues = (prefsState,inputState) => {
     const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
     console.log('[displayType,newTickValues,newerTickValues]',{displayType,newTickValues,newerTickValues})
     const tickScale = d3.scaleOrdinal()
-      .domain(newTickValues)
+      .domain((newTickValues as any[])) //bad typying
       .range(newerTickValues) 
 
     const tickObject = {"date":newTickValues,"scale":tickScale}

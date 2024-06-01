@@ -1,5 +1,8 @@
-const dateToString = (str) => {
-  if (str) { 
+type Month = "Jan"|"Feb"|"Mar"|"Apr"|"May"|"Jun"|"Jul"|"Aug"|"Sep"|"Oct"|"Nov"|"Dec"
+
+
+const dateToString = (str:string) => {
+  //if (str) { 
     //console.log("In dateToStr, str is: ",[str]) 
     console.log("In dateToStr, mappedX is: ",[str]) 
     const mnths = {
@@ -18,11 +21,11 @@ const dateToString = (str) => {
         },
         date = str.split(" ");
     
-      return [date[3], mnths[date[2]], date[1]].join("-");
-  }
-  else {
-    return ""
-  }
+      return [date[3], mnths[(date[2] as Month)], date[1]].join("-");
+  // }
+  // else {
+  //   return ""
+  // }
   }
 
 export default dateToString

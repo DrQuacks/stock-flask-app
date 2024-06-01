@@ -1,4 +1,6 @@
-const dateToTickString = (str,displayType) => {
+type DisplayType = "year" | "month" | "day"
+
+const dateToTickString = (str:Date,displayType:DisplayType) => {
     if (str) { 
         console.log('tick is: ',[str,typeof(str)])
         const date = str.toDateString().split(" ");
