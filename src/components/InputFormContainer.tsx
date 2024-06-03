@@ -1,4 +1,4 @@
-import React, { useState , useContext } from "react"
+import React, { useState , useContext , ChangeEvent } from "react"
 import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
@@ -26,7 +26,11 @@ function InputFormContainer(
         modelSample,
         isModelInput=false
     }:{
-        inputFormBuilder:(formData: InputFormData, handleChangeCallBack: (event: any) => void) => React.JSX.Element,
+        inputFormBuilder:({ formData, handleChangeCallBack, handleChangeCheckboxCallBack }: {
+            formData: InputFormData;
+            handleChangeCallBack: (event: (ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>)) => void;
+            handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void;
+        }) => React.JSX.Element,
         route:string,
         modelSample?:any,
         isModelInput?:boolean
@@ -52,8 +56,30 @@ function InputFormContainer(
         }
     )
 
-    function handleChange(event) {
+    function handleChange(event: (ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>)) {
+        // const {name, value, type, checked} = event.target
+        const {name, value, type} = event.target
+
+        console.log('debugHandleChange',{name, value, type, event,formData,prefsState,plotState})
+        // if ((name === "trainingBounds") && !prefsState.showModelLines){
+        if ((name === "trainingBounds")){
+            const {dayValues} = prefsState
+            const dayArray = formData.trainingBounds.map((bound) => {
+                const index = Math.floor(((parseInt(bound)/100) * dayValues.length) - 1)
+                return dayValues[index]
+            })
+            prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray})
+        }
+        setFormData(prevFormData => {
+            return {
+                ...prevFormData,
+                [name]: value
+            }
+        })
+    }
+    function handleChangeCheckbox(event: (ChangeEvent<HTMLInputElement>)) {
         const {name, value, type, checked} = event.target
+
         console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})
         // if ((name === "trainingBounds") && !prefsState.showModelLines){
         if ((name === "trainingBounds")){
@@ -72,7 +98,7 @@ function InputFormContainer(
         })
     }
 
-    function generateScale(dataArray):d3.ScaleOrdinal<string, unknown, never> {
+    function generateScale(dataArray:any[]):d3.ScaleOrdinal<string, unknown, never> {
         const domain = dataArray.map((row) => {
             // if (row.type){
             //     return dateToDate(row.date,row.type)
@@ -84,12 +110,12 @@ function InputFormContainer(
         console.log('[domain,range] is: ',[domain,range])
         return (
             d3.scaleOrdinal()
-                .domain(domain)
+                .domain((domain as any[])) //bad typing
                 .range(range)
         )
     }
 
-    async function handleSubmit(event) {
+    async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()
 
         const prefs = {
@@ -122,8 +148,8 @@ function InputFormContainer(
                 console.log("days is: ",days)
                 const resolvedData = resolvedDataDict.plotData[resolvedDataKey]
                 console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
-                const formattedDays = (resolvedData.stockFeatures.days_list)
-                    .map(day => dateToDate(day))
+                const resolvedDaysList = resolvedData.stockFeatures.days_list as any[] 
+                const formattedDays = resolvedDaysList.map((day) => dateToDate(day))
                 //console.log('[formattedDays] is: ',[formattedDays])
                 const newPlotData:PlotDatum = {
                     name:formData.stockSymbol,
@@ -170,7 +196,11 @@ function InputFormContainer(
         })
     }
 
-    const InputForm = inputFormBuilder(formData,handleChange)
+    const InputForm = inputFormBuilder({
+        formData,
+        handleChangeCallBack:handleChange,
+        handleChangeCheckboxCallBack:handleChangeCheckbox
+    })
     //console.log('InputForm is: ',InputForm)
 
     return (

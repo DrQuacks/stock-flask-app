@@ -1,9 +1,20 @@
-import React from "react"
+import React , {ChangeEvent} from "react"
 import {InputFormContainer,InputFormData} from "./InputFormContainer";
 
 function PlotInputForm(): React.JSX.Element {
 
-    const inputFormBuilder = (formData:InputFormData,handleChangeCallBack:(event) => void) => {
+    const inputFormBuilder = (
+        {
+            formData,
+            handleChangeCallBack,
+            handleChangeCheckboxCallBack
+        }:
+        {
+            formData:InputFormData,
+            handleChangeCallBack:(event: (ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>)) => void,
+            handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void
+        }
+    ) => {
         const InputFormElement = 
             <div>
                 <div className="SymbolDays">
@@ -33,7 +44,7 @@ function PlotInputForm(): React.JSX.Element {
                             type="checkbox" 
                             id="overlayNew" 
                             checked={formData.overlayNew}
-                            onChange={handleChangeCallBack}
+                            onChange={handleChangeCheckboxCallBack}
                             name="overlayNew"
                         />
                         <label htmlFor="overlayNew">Overlay New</label>
@@ -42,7 +53,7 @@ function PlotInputForm(): React.JSX.Element {
                             type="checkbox" 
                             id="customDate" 
                             checked={formData.customDate}
-                            onChange={handleChangeCallBack}
+                            onChange={handleChangeCheckboxCallBack}
                             name="customDate"
                         />
                         <label htmlFor="customDate">Persist Date</label>

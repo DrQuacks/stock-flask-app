@@ -1,6 +1,6 @@
+import { InputFormData } from "src/components/InputFormContainer"
 
-
-async function sendToPython(data,route){
+async function sendToPython(data:InputFormData,route:string){
     console.log("in sendToPython, data is: ",data)
     const dataPackage = JSON.stringify(data)
     const rawResponse = await fetch(route,{

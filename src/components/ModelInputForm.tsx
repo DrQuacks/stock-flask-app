@@ -1,9 +1,20 @@
-import React from "react"
-import {InputFormContainer} from "./InputFormContainer";
+import React , { ChangeEvent } from "react"
+import {InputFormContainer,InputFormData} from "./InputFormContainer";
 
 
 function ModelInputForm() {
-    const inputFormBuilder = (formData,handleChangeCallBack) => {
+    const inputFormBuilder = (
+        {
+            formData,
+            handleChangeCallBack,
+            handleChangeCheckboxCallBack
+        }:
+        {
+            formData:InputFormData,
+            handleChangeCallBack:(event: (ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>)) => void,
+            handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void
+        }
+    ) => {
         const InputFormElement = 
             <div>
                 <div className="SymbolDays">
