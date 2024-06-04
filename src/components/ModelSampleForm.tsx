@@ -1,5 +1,5 @@
-import React , { useContext } from "react"
-import {InputFormContainer} from "./InputFormContainer";
+import React , { useContext , ChangeEvent } from "react"
+import { InputFormContainer , InputFormData } from "./InputFormContainer";
 import Box from '@mui/material/Box';
 import Slider from '@mui/material/Slider';
 import { StockContext } from "../StockContext";
@@ -19,14 +19,27 @@ function ModelSampleForm() {
         return `${value}%`;
     }
           
-    const inputFormBuilder = (formData,handleChangeCallBack) => {
+    const inputFormBuilder = (
+        {
+            formData,
+            handleChangeCallBack,
+            handleChangeCheckboxCallBack,
+            handleChangeSliderCallBack
+        }:
+        {
+            formData:InputFormData,
+            handleChangeCallBack:(event: (ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>)) => void,
+            handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void,
+            handleChangeSliderCallBack: (event: Event, value: [number, number, number]) => void
+        }
+    ) => {
 
         const InputFormElement = 
             <div>
                 <div className="SymbolDays">
                     <input
                         type="text"
-                        placeholder={formData.trainingBounds[0]}
+                        placeholder={formData.trainingBounds[0].toString()}
                         onChange={handleChangeCallBack}
                         name="trainStart"
                         value={formData.trainingBounds[0]}
@@ -34,7 +47,7 @@ function ModelSampleForm() {
 
                     <input
                         type="text"
-                        placeholder={formData.trainingBounds[1]}
+                        placeholder={formData.trainingBounds[1].toString()}
                         onChange={handleChangeCallBack}
                         name="trainEnd"
                         value={formData.trainingBounds[1]}
@@ -42,7 +55,7 @@ function ModelSampleForm() {
 
                     <input
                         type="text"
-                        placeholder={formData.trainingBounds[2]}
+                        placeholder={formData.trainingBounds[2].toString()}
                         onChange={handleChangeCallBack}
                         name="testEnd"
                         value={formData.trainingBounds[2]}
@@ -54,7 +67,7 @@ function ModelSampleForm() {
                     <Slider
                         value={formData.trainingBounds}
                         name="trainingBounds"
-                        onChange={handleChangeCallBack}
+                        onChange={handleChangeSliderCallBack}
                         onChangeCommitted={handleMouseUp}
                         valueLabelDisplay="off"
                         getAriaValueText={valuetext}

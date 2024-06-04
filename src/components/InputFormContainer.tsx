@@ -12,7 +12,8 @@ type InputFormData = {
     trailingDays: string;
     stepSize: string;
     max: string;
-    trainingBounds: string[];
+    // trainingBounds: string[];
+    trainingBounds: [number,number,number];
     overlayNew: boolean;
     customDate: boolean;
     avgType: string;
@@ -26,10 +27,11 @@ function InputFormContainer(
         modelSample,
         isModelInput=false
     }:{
-        inputFormBuilder:({ formData, handleChangeCallBack, handleChangeCheckboxCallBack }: {
+        inputFormBuilder:({ formData, handleChangeCallBack, handleChangeCheckboxCallBack, handleChangeSliderCallBack }: {
             formData: InputFormData;
             handleChangeCallBack: (event: (ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>)) => void;
             handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void;
+            handleChangeSliderCallBack: (event: Event, value: [number, number, number]) => void
         }) => React.JSX.Element,
         route:string,
         modelSample?:any,
@@ -48,7 +50,8 @@ function InputFormContainer(
             //trainStart:"",
             //trainEnd:"",
             //testEnd:"",
-            trainingBounds:['0','80','100'],
+            // trainingBounds:['0','80','100'],
+            trainingBounds:[0,80,100],
             overlayNew: false,
             customDate: false,
             avgType: "Constant",
@@ -65,7 +68,8 @@ function InputFormContainer(
         if ((name === "trainingBounds")){
             const {dayValues} = prefsState
             const dayArray = formData.trainingBounds.map((bound) => {
-                const index = Math.floor(((parseInt(bound)/100) * dayValues.length) - 1)
+                // const index = Math.floor(((parseInt(bound)/100) * dayValues.length) - 1)
+                const index = Math.floor(((bound/100) * dayValues.length) - 1)
                 return dayValues[index]
             })
             prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray})
@@ -73,27 +77,28 @@ function InputFormContainer(
         setFormData(prevFormData => {
             return {
                 ...prevFormData,
-                [name]: value
+                [name]: name === "trainingBounds" ? parseInt(value) : value
             }
         })
     }
     function handleChangeCheckbox(event: (ChangeEvent<HTMLInputElement>)) {
-        const {name, value, type, checked} = event.target
+        const {name,checked} = event.target
 
-        console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})
-        // if ((name === "trainingBounds") && !prefsState.showModelLines){
-        if ((name === "trainingBounds")){
-            const {dayValues} = prefsState
-            const dayArray = formData.trainingBounds.map((bound) => {
-                const index = Math.floor(((parseInt(bound)/100) * dayValues.length) - 1)
-                return dayValues[index]
-            })
-            prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray})
-        }
+        // console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})
         setFormData(prevFormData => {
             return {
                 ...prevFormData,
-                [name]: type === "checkbox" ? checked : value
+                [name]: checked
+            }
+        })
+    }
+    function handleChangeSlider(event: Event, value: [number,number,number]) {
+
+        // console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})
+        setFormData(prevFormData => {
+            return {
+                ...prevFormData,
+                "trainingBounds": value
             }
         })
     }
@@ -199,7 +204,8 @@ function InputFormContainer(
     const InputForm = inputFormBuilder({
         formData,
         handleChangeCallBack:handleChange,
-        handleChangeCheckboxCallBack:handleChangeCheckbox
+        handleChangeCheckboxCallBack:handleChangeCheckbox,
+        handleChangeSliderCallBack:handleChangeSlider
     })
     //console.log('InputForm is: ',InputForm)
 
