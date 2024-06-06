@@ -1,6 +1,6 @@
 import React, { useReducer, useEffect } from "react";
-import {initialPlotState,PlotState} from './static/initialPlotState';
-import {initialPrefsState,PrefsState} from './static/initialPrefsState'
+import {initialPlotState,PlotData,PlotState} from './static/initialPlotState';
+import {initialPrefsState,PrefsState,PlotPrefsState} from './static/initialPrefsState'
 import {initialInputState,InputState} from "./static/initialInputState";
 import calcSelectedDays from './helpers/calcSelectedDays'
 import calcTickValues from './helpers/calcTickValues'
@@ -21,6 +21,10 @@ const plotReducer = (plotState:PlotState,action:any):PlotState => {
         type,
         data,
         index
+    }:{
+        type:string,
+        data:PlotData,
+        index:number
     } = action
     if (type) {
         let lastChange = {type}
@@ -53,6 +57,7 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
     const {
         type,
         prefs,
+        plotPrefs,
         xDomain,
         dayValues,
         price,
@@ -66,7 +71,8 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         modelLineDays
     }:{
         type:string,
-        prefs:any,
+        prefs:PrefsState
+        plotPrefs:PlotPrefsState,
         xDomain:[Date,Date],
         dayValues:Date[],
         price:number,
@@ -88,6 +94,9 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         switch(type) {
             case "update_prefs": {
                 return {...prefsState,...prefs,lastChange,stateID:newStateID}
+            }
+            case "update_plot_prefs": {
+                return {...prefsState,...plotPrefs,lastChange,stateID:newStateID}
             }
             case "update_min_price": {
                 const {selectedPriceRange} = prefsState
@@ -157,7 +166,7 @@ const inputReducer = (inputState:InputState,action:any):InputState => {
 
 const StockContext = React.createContext<ContextValues | null>(null)
 
-const StockContextProvider = (props) => {
+const StockContextProvider = (props:any) => {
 
     const [plotState,plotDispatch] = useReducer(plotReducer,initialPlotState)
     const [prefsState,prefsDispatch] = useReducer(prefsReducer,initialPrefsState)

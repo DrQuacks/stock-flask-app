@@ -81,7 +81,7 @@ function InputFormContainer(
             }
         })
     }
-    function handleChangeCheckbox(event: (ChangeEvent<HTMLInputElement>)) {
+    function handleChangeCheckbox(event: ChangeEvent<HTMLInputElement>) {
         const {name,checked} = event.target
 
         // console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})

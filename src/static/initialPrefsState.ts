@@ -1,6 +1,14 @@
 import * as d3 from "d3";
 
-type PrefsState = {
+interface PlotPrefsState {
+    semiLog: boolean;
+    firstDeriv: boolean;
+    secondDeriv: boolean;
+    localMins: boolean;
+    localMaxs: boolean;
+}
+
+interface PrefsState extends PlotPrefsState {
     xDomain: [Date,Date],
     dayValues: Date[],
     selectedDayValues: Date[],
@@ -13,7 +21,6 @@ type PrefsState = {
     stateID:number,
     lastChange:{type:string},
     nextChange:string,
-    semiLog:boolean,
     showModelLines:boolean,
     modelLineDays: Date[];
 }
@@ -29,8 +36,12 @@ const initialPrefsState:PrefsState = {
     lastChange:{type:'init'},
     nextChange:'none',
     semiLog:false,
+    firstDeriv: false,
+    secondDeriv: false,
+    localMins: false,
+    localMaxs: false,
     showModelLines:false,
     modelLineDays:[(new Date()),(new Date()),(new Date())]
 }
 
-export {initialPrefsState,PrefsState}
+export {initialPrefsState,PrefsState,PlotPrefsState}

@@ -214,10 +214,22 @@ select {
   grid-column: 2;
 }
 
-.OptionsInput2 {
+.OptionsInput21 {
   grid-column: 3;
+  grid-row: 1
 }
 
-.OptionsLabel2 {
+.OptionsLabel21 {
   grid-column: 4;
+  grid-row: 1
+}
+
+.OptionsInput22 {
+  grid-column: 3;
+  grid-row: 2
+}
+
+.OptionsLabel22 {
+  grid-column: 4;
+  grid-row: 2
 }

@@ -1,24 +1,25 @@
-import React, { useState , useContext } from "react";
+import React, { useState , useContext , ChangeEvent } from "react";
 import { StockContext } from "../StockContext";
+import {PlotPrefsState} from "../static/initialPrefsState"
 
 const GraphOptions = () => {
 
     const { prefsDispatch} = useContext(StockContext)
 
-    const [plotPrefsState,setPlotPrefsState] = useState({
-        "semilog":false,
-        "firstDeriv":false,
-        "secondDeriv":false,
-        "localMins":false,
-        "localMaxs":false
+    const [plotPrefsState,setPlotPrefsState] = useState<PlotPrefsState>({
+        semiLog:false,
+        firstDeriv:false,
+        secondDeriv:false,
+        localMins:false,
+        localMaxs:false
     })
     
-    const handleChange = (event) => {
+    const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
         const {name, checked} = event.target
 
-        const newPlotPrefs = {...plotPrefsState,[name]: checked}
+        const newPlotPrefs:PlotPrefsState = {...plotPrefsState,[name]: checked}
         setPlotPrefsState(newPlotPrefs)
-        prefsDispatch({type:'update_prefs',prefs:newPlotPrefs})
+        prefsDispatch({type:'update_plot_prefs',plotPrefs:newPlotPrefs})
         //setPrefs(newPlotPrefs)
 
     }
@@ -62,10 +63,9 @@ const GraphOptions = () => {
                 checked={plotPrefsState.localMaxs}
                 onChange={handleChange}
                 name="localMaxs"
-                className="OptionsInput2"
-                style={{"grid-row":"1"}}
+                className="OptionsInput21"
             />
-            <label className="OptionsLabel2" style={{"grid-row":"1"}} htmlFor="localMaxs">Local Maxs</label>
+            <label className="OptionsLabel21" htmlFor="localMaxs">Local Maxs</label>
             
             <input 
                 type="checkbox" 
@@ -73,10 +73,9 @@ const GraphOptions = () => {
                 checked={plotPrefsState.localMins}
                 onChange={handleChange}
                 name="localMins"
-                className="OptionsInput2"
-                style={{"grid-row":"2"}}
+                className="OptionsInput22"
             />
-            <label className="OptionsLabel2" style={{"grid-row":"2"}} htmlFor="localMins">Local Mins</label>
+            <label className="OptionsLabel22" htmlFor="localMins">Local Mins</label>
             
             
         </div>
