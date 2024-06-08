@@ -12,6 +12,7 @@ interface PrefsState extends PlotPrefsState {
     xDomain: [Date,Date],
     dayValues: Date[],
     selectedDayValues: Date[],
+    selectedDayStrings: string[],
     dateTickValues: {
         date: Date[],
         scale: d3.ScaleOrdinal<string, unknown, never>
@@ -29,6 +30,7 @@ const initialPrefsState:PrefsState = {
     xDomain:[(new Date()),(new Date())],
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
+    selectedDayStrings:[""],
     dateTickValues: {"date":[(new Date())],"scale":d3.scaleOrdinal()},
     priceRange:[0,0],
     selectedPriceRange:[0,0],

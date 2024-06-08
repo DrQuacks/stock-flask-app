@@ -2,8 +2,6 @@ import React , { useContext } from "react";
 import * as d3 from "d3";
 import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
-import dateToString from "../helpers/dateToString";
-import dateToTickString from "../helpers/dateToTickString";
 import dateLocaleToString from "../helpers/dateLocaleToString";
 import { StockContext } from "../StockContext";
 
@@ -13,7 +11,7 @@ const LineChart = () => {
     const {plotData} = plotState
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,dayValues,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays} = prefsState
+    const {semiLog,firstDeriv,secondDeriv,xDomain,selectedDayStrings,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays} = prefsState
     const showPlot = {
         price:true,
         raw:true,
@@ -22,6 +20,7 @@ const LineChart = () => {
         localMins:localMins,
         localMaxs:localMaxs
     }
+
 
     const colors = ["#619ED6", "#6BA547", "#F7D027", "#E48F1B", "#B77EA3", "#E64345", "#60CEED", "#9CF168", "#F7EA4A", "#FBC543", "#FFC9ED", "#E6696E"]
 
@@ -51,7 +50,7 @@ const LineChart = () => {
                 .domain([0,(plotData[0].data.length - 1)])
                 .rangeRound([ margin.left, width - (margin.right + margin.left)]);
 
-            console.log('[xDomain,dayValues,selectedDayValues,dateTickValues] in LineChart is: ',[xDomain,dayValues,selectedDayValues,dateTickValues])
+            console.log('[xDomain,selectedDayValues,dateTickValues] in LineChart is: ',[xDomain,selectedDayStrings,dateTickValues])
             console.log('xDomain and scale xDomain are: ',[xDomain,d3.scaleTime().domain(xDomain)])
 
             const xScaleRange = [ margin.left, width - (margin.right + margin.left)]
@@ -63,16 +62,18 @@ const LineChart = () => {
 
             const xScale = d3.scalePoint()
                 //.domain(dayValues)
-                .domain(selectedDayValues)
+                .domain(selectedDayStrings)
                 .range(xScaleRange)
 
             const xScaleBand = d3.scaleBand()
                 //.domain(dayValues)
-                .domain(selectedDayValues)
+                .domain(selectedDayStrings)
                 .range(xScaleRange)
 
+            const inverseDomainRaw = d3.range(xScaleRange[0], xScaleRange[1], xScale.step())
+            const inverseDomain = inverseDomainRaw.map(val => val.toString())
             const xScaleInverse = d3.scaleOrdinal()
-                .domain(d3.range(xScaleRange[0], xScaleRange[1], xScale.step()))
+                .domain(inverseDomain)
                 .range(xScale.domain()) 
             
             const yScaleType = semiLog ? d3.scaleLog() : d3.scaleLinear()
@@ -379,7 +380,6 @@ const LineChart = () => {
                             tooltip
                                 .style("top", eDrag.pageY - 10 + "px")
                                 .style("left", eDrag.pageX + 10 + "px")
-                                //.html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${dateToString(mappedX.toUTCString())}`)
                                 .html(`Avg: $${mappedY.toFixed(2)} <br>Raw: $${mappedYRaw.toFixed(2)} <br>${mappedXStr}`)
 
                         }

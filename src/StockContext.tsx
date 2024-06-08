@@ -63,6 +63,7 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         price,
         date,
         selectedDayValues,
+        selectedDayStrings,
         tickValues,
         priceRange,
         selectedPriceRange,
@@ -78,6 +79,7 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         price:number,
         date:Date,
         selectedDayValues:Date[],
+        selectedDayStrings:string[],
         tickValues: {
             date: Date[],
             scale: d3.ScaleOrdinal<string, unknown, never>
@@ -207,7 +209,8 @@ const StockContextProvider = (props:any) => {
             const {type} = prefsState.lastChange
             if ((type === "update_start_date") || (type === "update_end_date") || (type === "update_date_range")){ //I'm not sure these need to be independent
                 const selectedDayValues = calcSelectedDays(prefsState)
-                prefsDispatch({type:"update_selected_days",selectedDayValues})
+                const selectedDayStrings = selectedDayValues.map(date => date.toString())
+                prefsDispatch({type:"update_selected_days",selectedDayValues,selectedDayStrings})
             } 
             if (type === "update_selected_days") {
                 const tickValues = calcTickValues(prefsState,inputState)
