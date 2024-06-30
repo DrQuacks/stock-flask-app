@@ -69,7 +69,8 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         selectedPriceRange,
         nextChange,
         showModelLines,
-        modelLineDays
+        modelLineDays,
+        modelLineStrings
     }:{
         type:string,
         prefs:PrefsState
@@ -81,14 +82,15 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         selectedDayValues:Date[],
         selectedDayStrings:string[],
         tickValues: {
-            date: Date[],
+            date: string[],
             scale: d3.ScaleOrdinal<string, unknown, never>
         },
         priceRange:[number,number],
         selectedPriceRange:[number,number],
         nextChange:string,
         showModelLines:boolean,
-        modelLineDays:Date[]
+        modelLineDays:Date[],
+        modelLineStrings:string[]
     } = action
     if (type) {
         let lastChange = {type}
@@ -124,7 +126,7 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
                 return {...prefsState,xDomain,dayValues,lastChange,nextChange:"none",stateID:newStateID}
             }
             case "update_selected_days":{
-                return {...prefsState,selectedDayValues,lastChange,stateID:newStateID}
+                return {...prefsState,selectedDayValues,selectedDayStrings,lastChange,stateID:newStateID}
             }
             case "update_tick_values":{
                 return {...prefsState,dateTickValues:tickValues,lastChange,stateID:newStateID}
@@ -136,7 +138,7 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
                 return{...prefsState,selectedPriceRange,lastChange,stateID:newStateID}
             }
             case "update_model_lines":{
-                return{...prefsState,showModelLines,modelLineDays,lastChange,stateID:newStateID}
+                return{...prefsState,showModelLines,modelLineDays,modelLineStrings,lastChange,stateID:newStateID}
             }
             default: {
                 return {...prefsState,lastChange}

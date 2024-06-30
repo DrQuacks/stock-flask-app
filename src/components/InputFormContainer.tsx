@@ -72,7 +72,8 @@ function InputFormContainer(
                 const index = Math.floor(((bound/100) * dayValues.length) - 1)
                 return dayValues[index]
             })
-            prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray})
+            const modelLineStrings = dayArray.map(day => day.toString())
+            prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray,modelLineStrings})
         }
         setFormData(prevFormData => {
             return {

@@ -4,7 +4,10 @@ import { PrefsState } from "src/static/initialPrefsState";
 import { InputState } from "src/static/initialInputState";
 
 
-const calcTickValues = (prefsState:PrefsState,inputState:InputState) => {
+const calcTickValues = (prefsState:PrefsState,inputState:InputState):{
+  date: string[];
+  scale: d3.ScaleOrdinal<string, unknown, never>;
+} => {
     const maxTicks = 15
     const days = prefsState.selectedDayValues
     const totalTime = days[days.length-1].getTime() - days[0].getTime()
@@ -79,10 +82,10 @@ const calcTickValues = (prefsState:PrefsState,inputState:InputState) => {
     const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
     console.log('[displayType,newTickValues,newerTickValues]',{displayType,newTickValues,newerTickValues})
     const tickScale = d3.scaleOrdinal()
-      .domain((newTickValues as any[])) //bad typying
+      .domain(newTickValues) //bad typying
       .range(newerTickValues) 
 
-    const tickObject = {"date":newTickValues,"scale":tickScale}
+    const tickObject = {"date":newerTickValues,"scale":tickScale}
     return tickObject
   }
 

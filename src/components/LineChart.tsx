@@ -11,7 +11,7 @@ const LineChart = () => {
     const {plotData} = plotState
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,selectedDayStrings,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays} = prefsState
+    const {semiLog,firstDeriv,secondDeriv,xDomain,selectedDayStrings,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays,modelLineStrings} = prefsState
     const showPlot = {
         price:true,
         raw:true,
@@ -120,7 +120,10 @@ const LineChart = () => {
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale)
                     .tickValues(dateTickValues['date'])
-                    .tickFormat((tick) => dateTickValues['scale'](tick))
+                    //.tickFormat((tick) => dateTickValues['scale'](tick))
+                    //this scale is a problem but it's only used here.
+                    //not sure I really need a scale. I wanna see how this looks
+                    //once the file compiles
                     );
                 //.call(d3.axisBottom(xScaleShow))
 
@@ -130,7 +133,7 @@ const LineChart = () => {
                 .attr("opacity",".05")
                 .call(d3.axisBottom(xScale)
                     .tickValues(dateTickValues['date'])
-                    .tickFormat("")
+                    .tickFormat(x => "")
                     .tickSize(-1*(height - (margin.bottom + margin.top)))
                 )
 
@@ -144,7 +147,7 @@ const LineChart = () => {
                 .attr("transform", `translate(${margin.left},${margin.top})`)
                 .attr("opacity",".05")
                 .call(d3.axisLeft(yScale)
-                    .tickFormat("")
+                    .tickFormat(x => "")
                     .tickSize(-1*(width-(margin.right + 2*margin.left)))
                 )
 
@@ -161,15 +164,17 @@ const LineChart = () => {
                     .attr("transform", `translate(0,${height - margin.bottom})`)
                     .attr("opacity",".3")
                     .call(d3.axisBottom(xScale)
-                        .tickValues(modelLineDays)
-                        .tickFormat("")
+                        // .tickValues(modelLineDays)
+                        .tickValues(modelLineStrings)
+                        .tickFormat(()=> "")
                         .tickSize(-1*(height - (margin.bottom + margin.top)))
                         .tickSizeOuter(0)
                     )
             }
 
             const modelPerformanceScale = d3.scaleOrdinal()
-                .domain([false,true])
+                // .domain([false,true])
+                .domain(["false","true"])
                 .range(["red","green"])
 
 

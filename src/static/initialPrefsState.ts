@@ -14,7 +14,7 @@ interface PrefsState extends PlotPrefsState {
     selectedDayValues: Date[],
     selectedDayStrings: string[],
     dateTickValues: {
-        date: Date[],
+        date: string[],
         scale: d3.ScaleOrdinal<string, unknown, never>
     },
     priceRange: [number,number],
@@ -24,6 +24,7 @@ interface PrefsState extends PlotPrefsState {
     nextChange:string,
     showModelLines:boolean,
     modelLineDays: Date[];
+    modelLineStrings: string[];
 }
 
 const initialPrefsState:PrefsState = {
@@ -31,7 +32,7 @@ const initialPrefsState:PrefsState = {
     dayValues:[(new Date())],
     selectedDayValues:[(new Date())],
     selectedDayStrings:[""],
-    dateTickValues: {"date":[(new Date())],"scale":d3.scaleOrdinal()},
+    dateTickValues: {date:[],scale:d3.scaleOrdinal()},
     priceRange:[0,0],
     selectedPriceRange:[0,0],
     stateID:0,
@@ -43,7 +44,8 @@ const initialPrefsState:PrefsState = {
     localMins: false,
     localMaxs: false,
     showModelLines:false,
-    modelLineDays:[(new Date()),(new Date()),(new Date())]
+    modelLineDays:[(new Date()),(new Date()),(new Date())],
+    modelLineStrings:[]
 }
 
 export {initialPrefsState,PrefsState,PlotPrefsState}
