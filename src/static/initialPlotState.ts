@@ -1,4 +1,22 @@
 import * as d3 from "d3";
+import {SampleType} from '../components/InputFormContainer'
+
+type ModelAnalysisDatum = {
+  correct:boolean,
+  predictionDown:boolean,
+  predictionUp:boolean,
+  targetDown:boolean,
+  targetDown_prectionDown:boolean,
+  targetDown_predictionUp:boolean,
+  targetUp:boolean,
+  targetUp_prectionDown:boolean,
+  targetUp_predictionUp:boolean,
+}
+
+type SampleTimeArray = [string,SampleType]
+
+type ModelAnalysisEntry = [SampleTimeArray,ModelAnalysisDatum]
+type ModelAnalysis = ModelAnalysisEntry[]
 
 type PlotDatum = {
   name: string,
@@ -18,7 +36,7 @@ type PlotDatum = {
   daysList:any[],
   localMins:any[],
   localMaxs:any[],
-  modelAnalysis?:any[],
+  modelAnalysis?:ModelAnalysis,
   splits?: {};
 }
 
@@ -61,5 +79,5 @@ const initialPlotState:PlotState = {
   lastChange:{type:"init"}
 }
 
-export {initialPlotState,PlotDatum,PlotData,PlotState}
+export {initialPlotState,PlotDatum,PlotData,PlotState,ModelAnalysis}
   // export default initialPlotState

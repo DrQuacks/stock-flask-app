@@ -82,7 +82,7 @@ const calcTickValues = (prefsState:PrefsState,inputState:InputState):{
     const newerTickValues = newTickValues.map(tick => dateToTickString(tick,displayType))
     console.log('[displayType,newTickValues,newerTickValues]',{displayType,newTickValues,newerTickValues})
     const tickScale = d3.scaleOrdinal()
-      .domain(newTickValues) //bad typying
+      .domain(newTickValues as any[]) //bad typying
       .range(newerTickValues) 
 
     const tickObject = {"date":newerTickValues,"scale":tickScale}
