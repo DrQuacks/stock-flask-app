@@ -7,7 +7,7 @@ import { StockContext } from "../StockContext";
 
 
 const LineChart = () => {
-    const {plotState,prefsState} = useContext(StockContext)
+    const {plotState,prefsState} = useContext(StockContext)!
     const {plotData} = plotState
     console.log("plotData outside useD3 is: ",plotData)
 
@@ -86,11 +86,11 @@ const LineChart = () => {
 
             const yDomain = selectedPriceRange
 
-            const y2Domain = d3.extent(plotData.reduce((acc,element) => {
+            const extentList = plotData.reduce<number[]>((acc,element) => {
                 const thisDerivExtent = [element.minDeriv,element.maxDeriv]
                 const thisDeriv2Extent = [element.minDeriv2,element.maxDeriv2]
                 //this is kinda hacked together, and should be done better
-                let values
+                let values:number[] = []
                 if (firstDeriv){
                     values = [...thisDerivExtent]
                     if (secondDeriv){
@@ -100,11 +100,31 @@ const LineChart = () => {
                 else {
                     values = [...thisDerivExtent]
                 }
-                const thisExtent = d3.extent(values)
+                const thisExtent:[number,number] = d3.extent(values) as [number,number] //bad typing
                 return [...acc,...thisExtent]
-            },[]))
-            //console.log('yDomain2 is: ',y2Domain)
-            //console.log('After yDomain2, yDomain is: ',yDomain)
+            },[])
+
+            const y2Domain:[number,number] = d3.extent(extentList) as [number,number] //bad typing
+            
+            // const y2Domain = d3.extent(plotData.reduce<number[]>((acc,element) => {
+            //     const thisDerivExtent = [element.minDeriv,element.maxDeriv]
+            //     const thisDeriv2Extent = [element.minDeriv2,element.maxDeriv2]
+            //     //this is kinda hacked together, and should be done better
+            //     let values
+            //     if (firstDeriv){
+            //         values = [...thisDerivExtent]
+            //         if (secondDeriv){
+            //             values = [...values,...thisDeriv2Extent]
+            //         }
+            //     }
+            //     else {
+            //         values = [...thisDerivExtent]
+            //     }
+            //     const thisExtent = d3.extent(values)
+            //     return [...acc,...thisExtent]
+            // },[]))
+            // //console.log('yDomain2 is: ',y2Domain)
+            // //console.log('After yDomain2, yDomain is: ',yDomain)
 
 
             const yScale = yScaleType
