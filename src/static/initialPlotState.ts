@@ -13,6 +13,20 @@ type ModelAnalysisDatum = {
   targetUp_predictionUp:boolean,
 }
 
+type PlotType = "price" | "raw" | "firstDeriv" | "secondDeriv" | "localMins" | "localMaxs"
+
+type StockDatum = {
+  numIndex:number,
+  price:number,
+  rawPrice:number,
+  date:string,
+  derivFirst:number,
+  derivSecond:number,
+  type:PlotType,
+  trailing_min:number,
+  trailing_max:number
+}
+
 type SampleTimeArray = [string,SampleType]
 
 type ModelAnalysisEntry = [SampleTimeArray,ModelAnalysisDatum]
@@ -20,7 +34,8 @@ type ModelAnalysis = ModelAnalysisEntry[]
 
 type PlotDatum = {
   name: string,
-  data: undefined[],
+  // data: undefined[],
+  data: StockDatum[],
   trailingDays: string,
   avgType: string,
   sampleType: string,
@@ -32,7 +47,7 @@ type PlotDatum = {
   maxDeriv: number,
   minDeriv2: number,
   maxDeriv2:number,
-  datePriceScale: d3.ScaleOrdinal<string, unknown, never>,
+  datePriceScale: d3.ScaleOrdinal<string, [number,number], never>,
   daysList:any[],
   localMins:any[],
   localMaxs:any[],
@@ -79,5 +94,5 @@ const initialPlotState:PlotState = {
   lastChange:{type:"init"}
 }
 
-export {initialPlotState,PlotDatum,PlotData,PlotState,ModelAnalysis}
+export {initialPlotState,PlotDatum,PlotData,PlotState,ModelAnalysis,StockDatum}
   // export default initialPlotState

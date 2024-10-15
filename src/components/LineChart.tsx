@@ -4,7 +4,14 @@ import useD3 from "../hooks/useD3";
 import dateToDate from "../helpers/dateToDate";
 import dateLocaleToString from "../helpers/dateLocaleToString";
 import { StockContext } from "../StockContext";
+import { PlotDatum , StockDatum } from "../static/initialPlotState";
 
+interface Array<T> {
+    findLastIndex(
+      predicate: (value: T, index: number, obj: T[]) => unknown,
+      thisArg?: any
+    ): number
+  }
 
 const LineChart = () => {
     const {plotState,prefsState} = useContext(StockContext)!
@@ -72,7 +79,7 @@ const LineChart = () => {
 
             const inverseDomainRaw = d3.range(xScaleRange[0], xScaleRange[1], xScale.step())
             const inverseDomain = inverseDomainRaw.map(val => val.toString())
-            const xScaleInverse = d3.scaleOrdinal()
+            const xScaleInverse = d3.scaleOrdinal<string,string>()
                 .domain(inverseDomain)
                 .range(xScale.domain()) 
             
@@ -192,12 +199,6 @@ const LineChart = () => {
                     )
             }
 
-            const modelPerformanceScale = d3.scaleOrdinal()
-                // .domain([false,true])
-                .domain(["false","true"])
-                .range(["red","green"])
-
-
             function displayModelPerformance() {
                 console.log('plotData is: ',plotData)
                 if (plotData[0]['modelAnalysis']){
@@ -214,10 +215,15 @@ const LineChart = () => {
                         .append('rect')
                         .attr("id","rectAnalysis")
                         .attr("fill", (d) => {
-                            return modelPerformanceScale(d[1]['correct'])
+                            const isCorrect = d[1]['correct']
+                            const fillColor = isCorrect ? "green" : "red"
+                            return fillColor
                         })
                         .attr("x",(d) => {
-                            return xScaleBand(dateToDate(d[0][0]))
+                            // return xScaleBand(dateToDate(d[0][0]))
+                            const newX = xScaleBand(d[0][0])
+                            if (newX === undefined) console.log('debugXScale',{d,newX})
+                            return newX || 0
                         })
                         .attr("y",margin.top)
                         .attr('width',xScaleBand.bandwidth)
@@ -230,7 +236,7 @@ const LineChart = () => {
 
             }
 
-            const lineVector = (lineVectorData,type) => {
+            const lineVector = (lineVectorData:PlotDatum,type:string) => {
 
                 console.log('In lineVector, lineVectorData is: ',lineVectorData)
                 console.log('In lineVector, plotPrefs is: ',prefsState)
@@ -238,8 +244,8 @@ const LineChart = () => {
                 const xDomainTime = [xDomain[0].getTime(),xDomain[1].getTime()]
                 console.log('In lineVector, plotPrefs and xDomainTime is: ',{prefsState,xDomainTime})
 
-                const lineNoY = d3.line()
-                    .x((d) => xScale(dateToDate(d.date)))
+                const lineNoY = d3.line<StockDatum>()
+                    .x((d) => xScale(dateToDate(d.date).toString()) || 0)
 
                 //console.log('In lineVector, d.data is: ',d.data)
                 let line = lineNoY
@@ -256,6 +262,9 @@ const LineChart = () => {
                             return yScale(d.price)
                         } else if (type === "localMaxs") {
                             return yScale(d.price)
+                        } else {
+                            console.log('debugYScale',{d,type})
+                            return 0
                         }
                 })
                 if (type === "localMins"){
@@ -270,6 +279,7 @@ const LineChart = () => {
 
 
                 const startIndex = newData.findIndex(row => dateToDate(row.date).getTime() >= xDomainTime[0])
+                // @ts-ignore: Function in js, but not recognized in ts
                 const endIndex = newData.findLastIndex(row => dateToDate(row.date).getTime() <= xDomainTime[1])
 
                 const checkedStartIndex = startIndex === -1 ? 0:startIndex
@@ -285,7 +295,7 @@ const LineChart = () => {
 
 
 
-            const myColor = d3.scaleOrdinal().domain(plotData)
+            const myColor = d3.scaleOrdinal<PlotDatum,string>().domain(plotData)
                 .range(colors)
 
             
@@ -336,7 +346,7 @@ const LineChart = () => {
 
                     const rangePoints = xScaleInverse.domain()
                     //console.log('[rangePoints] is: ',[rangePoints]) 
-                    const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
+                    const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX.toString())
                     const roundedRawX = rangePoints[roundedRawXIndex-1] //this feels like a fudge factor, need to fix
                     //console.log('roundedRawX and rawX is: ',[roundedRawX,rawX])
                     pointerX = xScaleInverse(roundedRawX)
@@ -362,7 +372,7 @@ const LineChart = () => {
                     //console.log(d3.pointer(e))
                     e.preventDefault()
 
-                    const {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(e)
+                    const {rawX,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(e)
                     svg.on("mousemove",eDrag => {
                         //console.log("eDrag is: ",d3.pointer(eDrag))
                         //console.log("e is: ",d3.pointer(e))
@@ -371,7 +381,7 @@ const LineChart = () => {
 
                     function mouseMove(eDrag) {
                         eDrag.preventDefault()
-                        const {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(eDrag)
+                        const {rawX,mappedX,mappedY,mappedYRaw,plotY,plotYRaw} = calcXandY(eDrag)
                         //console.log('outputted mappedX is: ',mappedX)
                         const mappedXStr = dateLocaleToString(mappedX.toLocaleString("en-US", {
                             timeZone: "America/Los_Angeles"

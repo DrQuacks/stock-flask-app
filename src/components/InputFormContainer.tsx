@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 import { StockContext } from "../StockContext";
-import { PlotData , PlotDatum } from "../static/initialPlotState";
+import { PlotData , PlotDatum, StockDatum } from "../static/initialPlotState";
 
 type SampleType = "Open" | "Close" | "High" | "Low" | "Open/Close"
 
@@ -104,19 +104,21 @@ function InputFormContainer(
         })
     }
 
-    function generateScale(dataArray:any[]):d3.ScaleOrdinal<string, unknown, never> {
+    function generateScale(dataArray:StockDatum[]):d3.ScaleOrdinal<string, [number,number], never> {
         const domain = dataArray.map((row) => {
             // if (row.type){
             //     return dateToDate(row.date,row.type)
             // }
-            return dateToDate(row.date)
+            // return dateToDate(row.date)
+            return row.date
         })
-        const range = dataArray.map((row) => [row.price,row.rawPrice])
+        const range:[number,number][] = dataArray.map((row) => [row.price,row.rawPrice])
 
         console.log('[domain,range] is: ',[domain,range])
         return (
-            d3.scaleOrdinal()
-                .domain((domain as any[])) //bad typing
+            d3.scaleOrdinal<string,[number,number]>()
+                // .domain((domain as any[])) //bad typing
+                .domain(domain) //bad typing
                 .range(range)
         )
     }
@@ -135,7 +137,7 @@ function InputFormContainer(
         //I need to handle blank inputs
         //what's in here is working from the outside, but it's logging errors in python
         const data = sendToPython(formData,route)
-        const resolvedDataDict = await data
+        const resolvedDataDict:any = await data
         console.log('resolvedDataDict is: ',resolvedDataDict)
         let newPlotDataList:PlotData = [] //yeah, uhh, this should be done with reduce...
 
