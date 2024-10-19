@@ -104,23 +104,30 @@ function InputFormContainer(
         })
     }
 
-    function generateScale(dataArray:StockDatum[]):d3.ScaleOrdinal<string, [number,number], never> {
+    function generateScale(dataArray:StockDatum[]) {
         const domain = dataArray.map((row) => {
             // if (row.type){
             //     return dateToDate(row.date,row.type)
             // }
             // return dateToDate(row.date)
-            return row.date
+            const dateWithTime = new Date(row.date)
+            dateWithTime.setHours(0,0,0,0)
+            return dateWithTime
         })
         const range:[number,number][] = dataArray.map((row) => [row.price,row.rawPrice])
 
-        console.log('[domain,range] is: ',[domain,range])
-        return (
-            d3.scaleOrdinal<string,[number,number]>()
-                // .domain((domain as any[])) //bad typing
-                .domain(domain) //bad typing
-                .range(range)
-        )
+        const priceArray:number[] = dataArray.map((row) => row.price)
+        const rawPriceArray:number[] = dataArray.map((row) => row.rawPrice)
+
+        console.log('debugPointerScale',{domain,priceArray,rawPriceArray})
+        const datePriceScale = d3.scaleBand<Date>()
+            .domain(domain) //bad typing
+            .range(priceArray)
+
+        const dateRawPriceScale = d3.scaleBand<Date>()
+            .domain(domain) //bad typing
+            .range(rawPriceArray)
+        return {datePriceScale,dateRawPriceScale}
     }
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -158,6 +165,7 @@ function InputFormContainer(
                 console.log('resolvedDataKey and resolvedData are: ',[resolvedDataKey,resolvedData])
                 const resolvedDaysList = resolvedData.stockFeatures.days_list as any[] 
                 const formattedDays = resolvedDaysList.map((day) => dateToDate(day))
+                const {datePriceScale,dateRawPriceScale} = generateScale(resolvedData.stockArray)
                 //console.log('[formattedDays] is: ',[formattedDays])
                 const newPlotData:PlotDatum = {
                     name:formData.stockSymbol,
@@ -173,7 +181,8 @@ function InputFormContainer(
                     maxDeriv:resolvedData.stockFeatures.max_deriv,
                     minDeriv2:resolvedData.stockFeatures.min_deriv2,
                     maxDeriv2:resolvedData.stockFeatures.max_deriv2,
-                    datePriceScale:generateScale(resolvedData.stockArray),
+                    datePriceScale,
+                    dateRawPriceScale,
                     daysList:formattedDays,
                     localMins:resolvedData.localMinsandMaxs[0],
                     localMaxs:resolvedData.localMinsandMaxs[1],

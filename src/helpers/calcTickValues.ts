@@ -5,7 +5,7 @@ import { InputState } from "src/static/initialInputState";
 
 
 const calcTickValues = (prefsState:PrefsState,inputState:InputState):{
-  date: string[];
+  date: Date[];
   scale: d3.ScaleOrdinal<string, unknown, never>;
 } => {
     const maxTicks = 15
@@ -85,7 +85,8 @@ const calcTickValues = (prefsState:PrefsState,inputState:InputState):{
       .domain(newTickValues as any[]) //bad typying
       .range(newerTickValues) 
 
-    const tickObject = {"date":newerTickValues,"scale":tickScale}
+    // const tickObject = {"date":newerTickValues,"scale":tickScale}
+    const tickObject = {"date":newTickValues,"scale":tickScale}
     return tickObject
   }
 

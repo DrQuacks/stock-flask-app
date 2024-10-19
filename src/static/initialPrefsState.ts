@@ -14,7 +14,7 @@ interface PrefsState extends PlotPrefsState {
     selectedDayValues: Date[],
     selectedDayStrings: string[],
     dateTickValues: {
-        date: string[],
+        date: Date[],
         scale: d3.ScaleOrdinal<string, unknown, never>
     },
     priceRange: [number,number],

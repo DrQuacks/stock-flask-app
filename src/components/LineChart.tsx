@@ -18,7 +18,7 @@ const LineChart = () => {
     const {plotData} = plotState
     console.log("plotData outside useD3 is: ",plotData)
 
-    const {semiLog,firstDeriv,secondDeriv,xDomain,selectedDayStrings,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays,modelLineStrings} = prefsState
+    const {semiLog,firstDeriv,secondDeriv,xDomain,selectedDayStrings,selectedDayValues,selectedPriceRange,localMins,localMaxs,dateTickValues,showModelLines,modelLineDays,modelLineStrings} = prefsState
     const showPlot = {
         price:true,
         raw:true,
@@ -37,10 +37,6 @@ const LineChart = () => {
             const height = 700;
             const width = 1200;
             const margin = { top: 20, right: 50, bottom: 30, left: 50 }
-
-            let pointerX,
-                pointerY
-
 
             //I feel like I'm mis-using d3 here. Shouldn't this be accomplished with exit()?
             svg.selectAll("#symbolGroup").remove()
@@ -67,21 +63,43 @@ const LineChart = () => {
                 .rangeRound(xScaleRange)
                 .clamp(true)
 
-            const xScale = d3.scalePoint()
-                //.domain(dayValues)
-                .domain(selectedDayStrings)
-                .range(xScaleRange)
 
-            const xScaleBand = d3.scaleBand()
-                //.domain(dayValues)
-                .domain(selectedDayStrings)
-                .range(xScaleRange)
 
-            const inverseDomainRaw = d3.range(xScaleRange[0], xScaleRange[1], xScale.step())
-            const inverseDomain = inverseDomainRaw.map(val => val.toString())
-            const xScaleInverse = d3.scaleOrdinal<string,string>()
-                .domain(inverseDomain)
-                .range(xScale.domain()) 
+            // const xScale = d3.scalePoint()
+            //     //.domain(dayValues)
+            //     .domain(selectedDayStrings)
+            //     .range(xScaleRange)
+
+            // const xScaleBand = d3.scaleBand()
+            //     //.domain(dayValues)
+            //     .domain(selectedDayStrings)
+            //     .range(xScaleRange)
+
+            // const inverseDomainRaw = d3.range(xScaleRange[0], xScaleRange[1], xScale.step())
+            // const xScaleInverse = d3.scaleOrdinal<number,string>()
+            //     .domain(inverseDomainRaw)
+            //     .range(xScale.domain()) 
+
+        const xScale = d3.scalePoint<Date>()
+            //.domain(dayValues)
+            .domain(selectedDayValues)
+            .range(xScaleRange)
+
+        const xScaleBand = d3.scaleBand()
+            //.domain(dayValues)
+            .domain(selectedDayStrings)
+            .range(xScaleRange)
+
+        const inverseDomainRaw = d3.range(xScaleRange[0], xScaleRange[1], xScale.step())
+        const xScaleInverse = d3.scaleOrdinal<number,Date>()
+            .domain(inverseDomainRaw)
+            .range(xScale.domain()) 
+
+
+            //const inverseDomain = inverseDomainRaw.map(val => val.toString())
+            // const xScaleInverse = d3.scaleOrdinal<string,string>()
+            //     .domain(inverseDomain)
+            //     .range(xScale.domain()) 
             
             const yScaleType = semiLog ? d3.scaleLog() : d3.scaleLinear()
 
@@ -191,8 +209,8 @@ const LineChart = () => {
                     .attr("transform", `translate(0,${height - margin.bottom})`)
                     .attr("opacity",".3")
                     .call(d3.axisBottom(xScale)
-                        // .tickValues(modelLineDays)
-                        .tickValues(modelLineStrings)
+                        .tickValues(modelLineDays)
+                        //.tickValues(modelLineStrings)
                         .tickFormat(()=> "")
                         .tickSize(-1*(height - (margin.bottom + margin.top)))
                         .tickSizeOuter(0)
@@ -245,7 +263,7 @@ const LineChart = () => {
                 console.log('In lineVector, plotPrefs and xDomainTime is: ',{prefsState,xDomainTime})
 
                 const lineNoY = d3.line<StockDatum>()
-                    .x((d) => xScale(dateToDate(d.date).toString()) || 0)
+                    .x((d) => xScale(dateToDate(d.date)) || 0)
 
                 //console.log('In lineVector, d.data is: ',d.data)
                 let line = lineNoY
@@ -346,23 +364,29 @@ const LineChart = () => {
 
                     const rangePoints = xScaleInverse.domain()
                     //console.log('[rangePoints] is: ',[rangePoints]) 
-                    const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX.toString())
+                    // const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX.toString())
+                    const roundedRawXIndex = d3.bisectLeft(rangePoints, rawX)
                     const roundedRawX = rangePoints[roundedRawXIndex-1] //this feels like a fudge factor, need to fix
                     //console.log('roundedRawX and rawX is: ',[roundedRawX,rawX])
-                    pointerX = xScaleInverse(roundedRawX)
+                    const pointerX = xScaleInverse(roundedRawX)
 
-                    pointerY = yScale.invert(rawY - margin.top)
+                    const pointerY = yScale.invert(rawY - margin.top)
                     //console.log('pointer is at: ',[pointerX,pointerY])
                     
+                    //const mappedX = new Date(pointerX)
+                    //mappedX.setHours(0,0,0,0)
                     const mappedX = pointerX
                     //eventually I need to make this more dynamic
                     console.log('mappedX is: ',mappedX)
                     console.log('mappedX type is: ',(typeof mappedX))
-                    const [mappedY,mappedYRaw] = plotData[0].datePriceScale(mappedX)
+                    // const [mappedY,mappedYRaw] = plotData[0].datePriceScale(mappedX)
+                    const mappedY = plotData[0].datePriceScale(mappedX) || 0
+                    const mappedYRaw = plotData[0].dateRawPriceScale(mappedX) || 0
                     
                     //console.log('mappedY is: ',mappedY)
                     const plotY = yScale(mappedY) + margin.top
                     const plotYRaw = yScale(mappedYRaw) + margin.top
+                    console.log('debugPointer',{mappedX,mappedY,pointerX,pointerY,mappedYRaw,plotY,plotYRaw,rawX,rawY,roundedRawXIndex,roundedRawX,rangePoints,plotData})
                     //console.log('plotY is: ',plotY)
                     return {rawX,rawY,mappedX,mappedY,mappedYRaw,plotY,plotYRaw}
                 }
