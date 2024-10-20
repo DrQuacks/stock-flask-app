@@ -105,14 +105,17 @@ function InputFormContainer(
     }
 
     function generateScale(dataArray:StockDatum[]) {
+
         const domain = dataArray.map((row) => {
             // if (row.type){
             //     return dateToDate(row.date,row.type)
             // }
             // return dateToDate(row.date)
-            const dateWithTime = new Date(row.date)
-            dateWithTime.setHours(0,0,0,0)
-            return dateWithTime
+            // const dateWithTime = new Date(row.date)
+            // dateWithTime.setHours(0,0,0,0)
+            // return dateWithTime
+            const date = dateToDate(row.date)
+            return date
         })
         const range:[number,number][] = dataArray.map((row) => [row.price,row.rawPrice])
 
@@ -120,15 +123,21 @@ function InputFormContainer(
         const rawPriceArray:number[] = dataArray.map((row) => row.rawPrice)
 
         console.log('debugPointerScale',{domain,priceArray,rawPriceArray})
-        const datePriceScale = d3.scaleBand<Date>()
+        const datePriceScale = d3.scaleOrdinal<Date,number>()
             .domain(domain) //bad typing
             .range(priceArray)
 
-        const dateRawPriceScale = d3.scaleBand<Date>()
+        const dateRawPriceScale = d3.scaleOrdinal<Date,number>()
             .domain(domain) //bad typing
             .range(rawPriceArray)
         return {datePriceScale,dateRawPriceScale}
     }
+
+    // function generateLookup(dataArray:StockDatum[]) {
+    //     const {dateToPrice,priceToDate} = dataArray.reduce((acc,row) => {
+
+    //     })
+    // }
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault()

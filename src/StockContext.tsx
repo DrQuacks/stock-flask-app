@@ -227,7 +227,7 @@ const StockContextProvider = (props:any) => {
             if ((type === "update_selected_price_range") && (prefsState.nextChange === "update_date_range")){ //this is incredibly hacky and I hate it
                 if (!inputState.customDate){
                     const newXDomain = calcStartEnd(plotState.plotData)
-                    const newDayValues = calcDayValues(plotState.plotData)
+                    const newDayValues:Date[] = calcDayValues(plotState.plotData)
                     console.log('debug Prefs State Context',{prefsState,newXDomain,newDayValues,plotState,type})
                     prefsDispatch({type:"update_date_range",xDomain:newXDomain,dayValues:newDayValues})
                 }

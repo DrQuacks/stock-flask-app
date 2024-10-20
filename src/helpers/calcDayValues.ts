@@ -1,7 +1,7 @@
 import { PlotData } from "src/static/initialPlotState"
 
 //this function now has a bug due to double length of Open/Close
-const calcDayValues = (plots:PlotData) => {
+const calcDayValues = (plots:PlotData):Date[] => {
   console.log("In calc day values, plots is: ",plots)
   const indexLongest = plots.reduce((acc,stock,index)=>{
     const thisLength = stock.daysList.length
@@ -11,7 +11,7 @@ const calcDayValues = (plots:PlotData) => {
       return acc
   },{"index":0,"length":0})
   console.log("In calc day values, idenxLongest is: ",indexLongest)
-  const longestDayList = plots[indexLongest["index"]].daysList
+  const longestDayList:Date[] = plots[indexLongest["index"]].daysList
   //console.log('[Longest Day List] is: ',[longestDayList])
   return longestDayList
 }
