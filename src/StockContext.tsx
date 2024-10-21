@@ -83,7 +83,7 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         selectedDayStrings:string[],
         tickValues: {
             date: Date[],
-            scale: d3.ScaleOrdinal<string, unknown, never>
+            scale: d3.ScaleOrdinal<Date, string, never>
         },
         priceRange:[number,number],
         selectedPriceRange:[number,number],

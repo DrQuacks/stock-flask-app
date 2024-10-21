@@ -165,12 +165,8 @@ const LineChart = () => {
                 .attr("transform", `translate(0,${height - margin.bottom})`)
                 .call(d3.axisBottom(xScale)
                     .tickValues(dateTickValues['date'])
-                    //.tickFormat((tick) => dateTickValues['scale'](tick))
-                    //this scale is a problem but it's only used here.
-                    //not sure I really need a scale. I wanna see how this looks
-                    //once the file compiles
+                    .tickFormat((tick) => dateTickValues['scale'](tick))
                     );
-                //.call(d3.axisBottom(xScaleShow))
 
             const xAxisGridLines = svg.append("g")
                 .attr("id","xAxisGridLines")
