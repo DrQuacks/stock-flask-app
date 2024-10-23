@@ -85,9 +85,10 @@ const LineChart = () => {
             .domain(selectedDayValues)
             .range(xScaleRange)
 
-        const xScaleBand = d3.scaleBand()
+        const xScaleBand = d3.scaleBand<Date>()
             //.domain(dayValues)
-            .domain(selectedDayStrings)
+            // .domain(selectedDayStrings)
+            .domain(selectedDayValues)
             .range(xScaleRange)
 
         const inverseDomainRaw = d3.range(xScaleRange[0], xScaleRange[1], xScale.step())

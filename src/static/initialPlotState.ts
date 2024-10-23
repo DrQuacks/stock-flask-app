@@ -28,9 +28,12 @@ type StockDatum = {
 }
 
 type SampleTimeArray = [string,SampleType]
-
 type ModelAnalysisEntry = [SampleTimeArray,ModelAnalysisDatum]
-type ModelAnalysis = ModelAnalysisEntry[]
+type ModelAnalysisRaw = ModelAnalysisEntry[]
+
+type SampleTimeArrayDate = [Date,SampleType]
+type ModelAnalysisEntryDate = [SampleTimeArrayDate,ModelAnalysisDatum]
+type ModelAnalysis = ModelAnalysisEntryDate[]
 
 type PlotDatum = {
   name: string,
@@ -96,5 +99,5 @@ const initialPlotState:PlotState = {
   lastChange:{type:"init"}
 }
 
-export {initialPlotState,PlotDatum,PlotData,PlotState,ModelAnalysis,StockDatum}
+export {initialPlotState,PlotDatum,PlotData,PlotState,ModelAnalysis,ModelAnalysisRaw,StockDatum}
   // export default initialPlotState

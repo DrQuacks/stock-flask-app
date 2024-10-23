@@ -3,7 +3,7 @@ import * as d3 from "d3";
 import sendToPython from "../helpers/sendToPython"
 import dateToDate from "../helpers/dateToDate";
 import { StockContext } from "../StockContext";
-import { PlotData , PlotDatum, StockDatum } from "../static/initialPlotState";
+import { ModelAnalysis, ModelAnalysisRaw, PlotData , PlotDatum, StockDatum } from "../static/initialPlotState";
 
 type SampleType = "Open" | "Close" | "High" | "Low" | "Open/Close"
 
@@ -158,11 +158,17 @@ function InputFormContainer(
         let newPlotDataList:PlotData = [] //yeah, uhh, this should be done with reduce...
 
         if (isModelInput){
+            const modelAnalysisFormatted:ModelAnalysis = (resolvedDataDict.modelAnalysis as ModelAnalysisRaw).map(entry => {
+                const sampleTimeArray = entry[0]
+                const dateString = sampleTimeArray[0]
+                const formattedDate = dateToDate(dateString)
+                return [[formattedDate,sampleTimeArray[1]],entry[1]]
+            })
             const {plotData} = plotState
             plotData.forEach((plot) =>{
                 newPlotDataList = [
                     ...newPlotDataList,
-                    {...plot,modelAnalysis:resolvedDataDict.modelAnalysis,splits:resolvedDataDict.splits}
+                    {...plot,modelAnalysis:modelAnalysisFormatted,splits:resolvedDataDict.splits}
                 ]
             })
         } else {
