@@ -38,6 +38,7 @@ function App() {
           </div>
         </div>
         <div className="StatsContainer">
+          <StatsContainer/>
         </div>
 
       </div>

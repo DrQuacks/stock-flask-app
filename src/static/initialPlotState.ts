@@ -35,6 +35,17 @@ type SampleTimeArrayDate = [Date,SampleType]
 type ModelAnalysisEntryDate = [SampleTimeArrayDate,ModelAnalysisDatum]
 type ModelAnalysis = ModelAnalysisEntryDate[]
 
+type PredictionArray = {
+  targetUp_predictionUp:number,
+  targetUp_predictionDown:number,
+  targetDown_predictionUp:number,
+  targetDown_predictionDown:number
+}
+type Splits = {
+  against_predictions:PredictionArray,
+  against_targets:PredictionArray
+}
+
 type PlotDatum = {
   name: string,
   // data: undefined[],
@@ -56,7 +67,7 @@ type PlotDatum = {
   localMins:any[],
   localMaxs:any[],
   modelAnalysis?:ModelAnalysis,
-  splits?: {};
+  splits?: Splits;
 }
 
 type PlotData = PlotDatum[]

@@ -6,7 +6,7 @@ import { StockContext } from "../StockContext";
 
 const LegendContainer = () => {
 
-    const {plotState} = useContext(StockContext)
+    const {plotState} = useContext(StockContext)!
     const {plotData} = plotState
 
     const legendInsides = plotData.map((element,index) => {

@@ -21,10 +21,7 @@ const StatsContainer = () => {
         />
     </div>
 
-
     return Stats
-
-
 }
 
 export default StatsContainer
