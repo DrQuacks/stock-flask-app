@@ -22,7 +22,8 @@ type StockDatum = {
   date:string,
   derivFirst:number,
   derivSecond:number,
-  type:PlotType,
+  // type:PlotType,
+  type:SampleType,
   trailing_min:number,
   trailing_max:number
 }

@@ -13,8 +13,14 @@ def trailing_avg(history, days, avg_type, sample_type,data_prep_callback):
     #return({**results})
     return(results)
 
+def correctTime(dateTime,type):
+    if (type == "Open"):
+        return dateTime.normalize() + pd.Timedelta(hours=14,minutes=30)
+    else :
+        return dateTime.normalize() + pd.Timedelta(hours=21)
 
 def prep_data(history, days, avg_type, sample_name):
+    # breakpoint()
     if (sample_name == "Open/Close"):
         #days = days*2 #accounts for 2 rows with same date
         stock = history.loc[:,["Open","Close"]]
@@ -27,13 +33,13 @@ def prep_data(history, days, avg_type, sample_name):
         print("DF-d: ")
         print(stock)
 
-        date_index = [item[0] for item in stock.index]
+        date_index = [correctTime(item[0],item[1]) for item in stock.index]
         type_index = [item[1] for item in stock.index]
         sample_type = 'price'
         samples_per_day = 2
     else:
         stock = history.loc[:,[sample_name]]
-        date_index = stock.index
+        date_index = [correctTime(item,sample_name) for item in stock.index]
         type_index = [sample_name for item in stock.index]
         sample_type = sample_name
         samples_per_day = 1

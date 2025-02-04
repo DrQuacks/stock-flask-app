@@ -78,6 +78,8 @@ def plot_rubric(data):
     stockData = get_average_data(stock_history,data)
     plotData = get_plot_data(stock_history,stockData)
     plotDataDict = {'0':plotData}
+    print('plotData keys is ',plotData.keys)
+    # breakpoint()
     return ({'plotData':plotDataDict})
 
 def model_rubric(data):

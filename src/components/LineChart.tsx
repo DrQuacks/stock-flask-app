@@ -34,7 +34,7 @@ const LineChart = () => {
     const ref = useD3(
         
         (svg) => {
-            const height = 700;
+            const height = 750;
             const width = 1200;
             const margin = { top: 20, right: 50, bottom: 30, left: 50 }
 
@@ -295,7 +295,7 @@ const LineChart = () => {
 
                 const startIndex = newData.findIndex(row => dateToDate(row.date).getTime() >= xDomainTime[0])
                 // @ts-ignore: Function in js, but not recognized in ts
-                const endIndex = newData.findLastIndex(row => dateToDate(row.date).getTime() <= xDomainTime[1])
+                const endIndex = newData.findLastIndex(row => dateToDate(row.date,row.time).getTime() <= xDomainTime[1])
 
                 const checkedStartIndex = startIndex === -1 ? 0:startIndex
                 const checkedEndIndex = endIndex === -1 ? (newData.length - 1):endIndex
@@ -525,7 +525,7 @@ const LineChart = () => {
             className="plotArea"
             ref = {ref}
             style={{
-                height: 800,
+                height: 750,
                 width: 1200,
                 marginRight: "0px",
                 marginLeft: "0px",

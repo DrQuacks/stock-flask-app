@@ -75,7 +75,7 @@
 .MainSection {
   order: 2;
   min-width: 1500px;
-  min-height: 800px;
+  min-height: 750px;
   display: flex;
   flex-direction: row;
 }
@@ -83,7 +83,7 @@
 .PlotArea {
   order: 1;
   min-width: 1100px;
-  min-height: 800px;
+  min-height: 750px;
 }
 
 .tick {
@@ -232,4 +232,12 @@ select {
 .OptionsLabel22 {
   grid-column: 4;
   grid-row: 2
+}
+
+.StatsSection {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 20px;
+  justify-content: space-around;
+  width: 1200px;
 }

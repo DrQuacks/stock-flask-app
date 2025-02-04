@@ -37,9 +37,9 @@ function App() {
             <LegendContainer/>
           </div>
         </div>
-        <div className="StatsContainer">
+        {/* <div className="StatsContainer">
           <StatsContainer/>
-        </div>
+        </div> */}
 
       </div>
     </StockContextProvider>

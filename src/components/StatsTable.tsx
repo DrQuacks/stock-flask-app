@@ -20,9 +20,9 @@ const StatsTable = ({type}:{type:('targets' | 'predictions')}) => {
         const thisData = type === 'targets' ? against_targets : against_predictions
 
         const Stats = (plotData[0].modelAnalysis && plotData[0].modelAnalysis.length === 0) ? <Fragment></Fragment> : 
-            <div className='StatsSection'>
+            <div>
                 <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <Table sx={{ minWidth: 400 }} aria-label="simple table">
                     <TableHead>
                     <TableRow>
                         <TableCell>Against {type}</TableCell>
