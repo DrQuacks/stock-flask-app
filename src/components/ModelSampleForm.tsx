@@ -8,7 +8,7 @@ import { StockContext } from "../StockContext";
 
 function ModelSampleForm() {
 
-    const {prefsDispatch} = useContext(StockContext)
+    const {prefsDispatch} = useContext(StockContext)!
 
     function handleMouseUp(event) {
         console.log('debugHandleChange')
@@ -30,7 +30,8 @@ function ModelSampleForm() {
             formData:InputFormData,
             handleChangeCallBack:(event: (ChangeEvent<HTMLInputElement>|ChangeEvent<HTMLSelectElement>)) => void,
             handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void,
-            handleChangeSliderCallBack: (event: Event, value: [number, number, number]) => void
+            handleChangeSliderCallBack: (event: Event, value: number[]|number) => void
+            //handleChangeSliderCallBack: (event: Event, value: [number, number, number]) => void
         }
     ) => {
 

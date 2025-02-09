@@ -31,7 +31,8 @@ function InputFormContainer(
             formData: InputFormData;
             handleChangeCallBack: (event: (ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLSelectElement>)) => void;
             handleChangeCheckboxCallBack:(event: ChangeEvent<HTMLInputElement>) => void;
-            handleChangeSliderCallBack: (event: Event, value: [number, number, number]) => void
+            // handleChangeSliderCallBack: (event: Event, value: [number, number, number]) => void
+            handleChangeSliderCallBack: (event: Event, value: number[]|number) => void
         }) => React.JSX.Element,
         route:string,
         modelSample?:any,
@@ -93,13 +94,13 @@ function InputFormContainer(
             }
         })
     }
-    function handleChangeSlider(event: Event, value: [number,number,number]) {
-
-        // console.log('debugHandleChange',{name, value, type, checked,event,formData,prefsState,plotState})
+    // function handleChangeSlider(event: Event, value: [number,number,number]) {
+    function handleChangeSlider(event: Event, value: number[]|number) {
+        const hackyValue:[number,number,number] = (value.constructor === Array) ? [value[0],value[1],value[2]] : [0,1,2]
         setFormData(prevFormData => {
             return {
                 ...prevFormData,
-                "trainingBounds": value
+                "trainingBounds": hackyValue
             }
         })
     }

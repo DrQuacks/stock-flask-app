@@ -4,6 +4,7 @@ import LineChart from './components/LineChart';
 import LegendContainer from './components/LegendContainer';
 import PlotTab from './components/PlotTab';
 import ModelTab from './components/ModelTab';
+import InvestTab from './components/InvestTab';
 import StatsContainer from './components/StatsContainer';
 import { StockContextProvider } from './StockContext';
 import 'react-tabs/style/react-tabs.css';
@@ -20,12 +21,16 @@ function App() {
             <TabList className='TabTops'>
               <Tab>PLOT</Tab>
               <Tab>MODEL</Tab>
+              <Tab>INVEST</Tab>
             </TabList>
             <TabPanel>
               <PlotTab/>
             </TabPanel>
             <TabPanel>
               <ModelTab/>
+            </TabPanel>
+            <TabPanel>
+              <InvestTab/>
             </TabPanel>
           </Tabs>
         </div>
@@ -37,9 +42,9 @@ function App() {
             <LegendContainer/>
           </div>
         </div>
-        {/* <div className="StatsContainer">
+        <div className="StatsContainer">
           <StatsContainer/>
-        </div> */}
+        </div>
 
       </div>
     </StockContextProvider>
