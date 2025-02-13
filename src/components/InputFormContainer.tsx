@@ -18,6 +18,11 @@ type InputFormData = {
     customDate: boolean;
     avgType: string;
     sampleType: SampleType;
+    startAmount: string;
+    availableCash: string;
+    buySell: string;
+    startInvest: Date;
+    endInvest: Date;
 }
 
 function InputFormContainer(
@@ -56,7 +61,12 @@ function InputFormContainer(
             overlayNew: false,
             customDate: false,
             avgType: "Constant",
-            sampleType: modelSample || "Close"
+            sampleType: modelSample || "Close",
+            startAmount: "",
+            availableCash: "",
+            buySell: "",
+            startInvest: new Date(),
+            endInvest: new Date()
         }
     )
 

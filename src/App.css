@@ -42,6 +42,11 @@
   grid-template-rows: 30px 30px;
 }
 
+.InvestDateRangeContainer {
+  display: grid;
+  grid-template-rows: 30px 30px;
+}
+
 .DateElement {
   display: grid;
   grid-template-columns: 80px 140px;
