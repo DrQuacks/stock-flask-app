@@ -1,4 +1,5 @@
 import pandas as pd
+from pprint import pprint
 import api_helper as apihelp
 
 average_list = ['Constant','Linear','Quadratic','Exponential']
@@ -26,12 +27,12 @@ def prep_data(history, days, avg_type, sample_name):
         stock = history.loc[:,["Open","Close"]]
         stock = stock.stack()
         print("Stacked:")
-        print(stock)
+        pprint(stock)
         stock = stock.to_frame()
         stock = stock.rename(columns= {0: 'price'})
         #stock = pd.melt(history,id_vars=['High','Low','Volume','Dividends','Stock Splits'],value_vars=['Open','Close'])
         print("DF-d: ")
-        print(stock)
+        pprint(stock)
 
         date_index = [correctTime(item[0],item[1]) for item in stock.index]
         type_index = [item[1] for item in stock.index]
@@ -127,9 +128,12 @@ def checkExtremes(val,min,max):
     return [min,max]
 
 
-def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history,samples_per_day=1):
+def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history,start_day,samples_per_day=1):
     
-    index_days = days*samples_per_day
+    if start_day:
+        index_days = start_day*samples_per_day
+    else:
+        index_days = days*samples_per_day
     print('type_index length is: ',len(type_index))
     print('date_index length is: ',len(date_index))
     w = 0.01
@@ -234,4 +238,8 @@ def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,histo
         ]
 
     results = apihelp.make_dict(names,locals())
+    print('stock_data is')
+    pprint(stock_data[:10])
+    print('results keys is')
+    print(results.keys())
     return (results)

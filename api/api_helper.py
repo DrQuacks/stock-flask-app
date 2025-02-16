@@ -2,6 +2,7 @@ import yfinance as yf
 import math
 import stock_data as sd
 import learning_manager as lm
+from pprint import pprint
 
 
 def get_history(sym):
@@ -26,7 +27,10 @@ def get_average_data(stock_history,data,trailing_days=None):
 def get_plot_data(stock_history,stockData):
     plotData = {}
     stockArray = stockData["stock_data"]
-    print ('stockArray is: ',stockArray[:10])
+    for i in range(10):
+        print ('stockArray at ' + str(i) + ' is: ')
+        pprint(stockArray[i])
+        # pprint ('stockArray is: ',stockArray[:10])
 
     localMinsandMaxs = sd.findLocalMinsandMaxs(stock_history) #shows up in locals()
 
@@ -98,7 +102,9 @@ def train_test_rubric(data):
     stock_history = get_history(data['stockSymbol'])
     modelData = lm.getModelData()
     print('modelData type: ',type(modelData['data']))
-    print('modelData: ',modelData['data'].head())
+    print('modelData: ')
+    pprint(modelData['data'].head())
+
     print('modelData entire: ',modelData.keys())
     print('modelData features: ',modelData['features'])
     print('modelData columns: ',modelData['data'].columns)
@@ -127,6 +133,7 @@ def train_test_rubric(data):
     print('splits is ',splits)
     print('type of splits is',type(splits))
     print('type of plotDataDict is',type(plotDataDict))
+    print('Model Analysis is: ',modelAnalysis[:10])
 
     return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis,'splits':splits})
     #return ({'plotData':plotDataDict,'modelAnalysis':modelAnalysis})

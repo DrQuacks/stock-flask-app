@@ -170,10 +170,12 @@ function InputFormContainer(
 
         if (isModelInput){
             const modelAnalysisFormatted:ModelAnalysis = (resolvedDataDict.modelAnalysis as ModelAnalysisRaw).map(entry => {
-                const sampleTimeArray = entry[0]
-                const dateString = sampleTimeArray[0]
+                // const sampleTimeArray = entry[0]
+                // const dateString = sampleTimeArray[0]
+                const dateString = entry[0]
+                console.log('model input',{entry,dateString})
                 const formattedDate = dateToDate(dateString)
-                return [[formattedDate,sampleTimeArray[1]],entry[1]]
+                return [[formattedDate,"Open/Close"],entry[1]] //#improve
             })
             const {plotData} = plotState
             plotData.forEach((plot) =>{

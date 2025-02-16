@@ -6,6 +6,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import precision_score
 from sklearn.tree import plot_tree
 import matplotlib.pyplot as plt
+from pprint import pprint
 
 
 def make_predictions(model,data,features,train_end,test_end):
@@ -26,8 +27,9 @@ def analyze_predictions(preds,data,train_end,test_end):
 
     combined = pd.concat([target,preds],axis=1)
     combined.columns = ['target_binary','prediction_binary']
-    print(combined.head())
-    print(combined.columns)
+    print("combined is: ", combined.head())
+    print("combined columns is ", combined.columns)
+    print("combined index is: ", combined.index)
     comparison = pd.DataFrame()
     comparison['targetUp_predictionUp'] = (combined['target_binary'] == 1) & (combined['prediction_binary'] == 1)
     comparison['targetDown_predictionDown'] = (combined['target_binary'] == 0) & (combined['prediction_binary'] == 0)
@@ -42,7 +44,9 @@ def analyze_predictions(preds,data,train_end,test_end):
     comparison['predictionDown'] = (combined['prediction_binary'] == 0)
 
     comparison['correct'] = combined['target_binary'] == combined['prediction_binary']
-    comparison.index = combined.index
+    newIndexList = [sd.correctTime(date,type) for date,type in combined.index]
+    print("new index list is: ", newIndexList[:10])
+    comparison.index = pd.Index(newIndexList)
     print('comparison: ',comparison.head())
 
     splits = {
@@ -67,7 +71,13 @@ def analyze_predictions(preds,data,train_end,test_end):
 def first_model(data,features,train_start,train_end):
     train = data.iloc[train_start:train_end]
     #test = data.iloc[-500:-200]
-    print('train is: ',train.head())
+    print('train is:')
+    with pd.option_context('display.max_rows', 10,
+                       'display.max_columns', None,
+                       'display.precision', 3,
+                       ):
+        print(train.head(10))
+    #print('train is: ',train.head())
     print('features is: ',features)
 
     model = RandomForestClassifier(n_estimators=100,min_samples_split=100,random_state=1)
@@ -93,7 +103,7 @@ def setup_model_data(history,step,max_days):
     stock_history[history_columns] = stock_history[history_columns].shift(2)
     stock_history['last_derivative'] = stock_history['derivative'].shift(1) #should this be shited by 2?
     additional_feature_cols.extend(['last_derivative','last_price'])
-    print('stock_history is: ',stock_history.head())
+    print('stock_history for model is: ',stock_history.head())
     print('columns are: ',stock_history.columns)
 
     stock_history['target_binary'] = (stock_history['price'] > stock_history['last_price']).astype(int)
@@ -108,15 +118,23 @@ def setup_model_data(history,step,max_days):
             'price',
             prepared_data['avg_type'],
             stock_history,
+            max_days,
             2)
-
+        #breakpoint()
+        stockData['avg_df']['round_date'] = stockData['avg_df'].index.floor('D')
         stockData_list.append(stockData)
-        stock_history = pd.merge(stock_history,stockData['avg_df'],on=['Date','Type'],how='left')
+        print('stock_history index is: ', stock_history.index)
+        stock_history['round_date'] = stock_history.index.floor('D')
+        #stock_history = pd.merge(stock_history,stockData['avg_df'],left_on=['Date','Type'],right_on=['round_date','Type'],how='left')
+        stock_history = pd.merge(stock_history,stockData['avg_df'],on=['round_date','Type'],how='left').set_index(stock_history.index)
         price_feature_cols.append(stockData['avg_df'].columns[0])
         print('stockData keys are', stockData.keys())
-        print('stockData avg_df is ', stockData['avg_df'].columns)
+        print('stockData avg_df columns is ', stockData['avg_df'].columns)
+        print('stockData avg_df is ', stockData['avg_df'].head())
 
-        print('stock_history is: ',stock_history.head())
+
+        print('stock_history is: ')
+        pprint(stock_history.head())
         print('columns are: ',stock_history.columns)
 
     stock_history = stock_history.set_index([stock_history.index,stock_history['Type']])

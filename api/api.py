@@ -1,9 +1,16 @@
 from flask import Flask, request
-
+import os
+from dotenv import load_dotenv
 import learning_manager as lm
 import api_helper as apihelp
 
+load_dotenv()
+
 app = Flask(__name__)
+app.config.from_prefixed_env()
+
+print(f"Current Environment: {os.getenv('ENVIRONMENT')}")
+print(f"Using Database: {app.config.get('DATABASE')}")
 
 print("hi")
 

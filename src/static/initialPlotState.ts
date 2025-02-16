@@ -28,8 +28,9 @@ type StockDatum = {
   trailing_max:number
 }
 
-type SampleTimeArray = [string,SampleType]
-type ModelAnalysisEntry = [SampleTimeArray,ModelAnalysisDatum]
+// type SampleTimeArray = [string,SampleType]
+// type ModelAnalysisEntry = [SampleTimeArray,ModelAnalysisDatum]
+type ModelAnalysisEntry = [string,ModelAnalysisDatum]
 type ModelAnalysisRaw = ModelAnalysisEntry[]
 
 type SampleTimeArrayDate = [Date,SampleType]

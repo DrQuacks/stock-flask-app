@@ -12,6 +12,10 @@ def access_data():
     with open('file.pk1','rb') as file:
         loaded_result = pickle.load(file)
 
+        print('data from 0-10 is: ')
+        print(loaded_result['data'].iloc[:10])
+
+        print('data from 100-110 is: ')
         print(loaded_result['data'].iloc[100:110])
         return(loaded_result)
 
