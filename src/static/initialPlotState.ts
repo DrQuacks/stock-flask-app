@@ -3,6 +3,7 @@ import {SampleType} from '../components/InputFormContainer'
 
 type ModelAnalysisDatum = {
   correct:boolean,
+  targets_increased:boolean,
   predictionDown:boolean,
   predictionUp:boolean,
   targetDown:boolean,

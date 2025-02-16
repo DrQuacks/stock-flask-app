@@ -8,7 +8,7 @@ import { StockContext } from "../StockContext";
 
 function ModelSampleForm() {
 
-    const {prefsDispatch} = useContext(StockContext)!
+    const {prefsDispatch,prefsState} = useContext(StockContext)!
 
     function handleMouseUp(event) {
         console.log('debugHandleChange')
@@ -40,10 +40,10 @@ function ModelSampleForm() {
                 <div className="SymbolDays">
                     <input
                         type="text"
-                        placeholder={formData.trainingBounds[0].toString()}
+                        placeholder={formData.trainingBounds[0] < prefsState.modelStart ? prefsState.modelStart.toString() : formData.trainingBounds[0].toString()}
                         onChange={handleChangeCallBack}
                         name="trainStart"
-                        value={formData.trainingBounds[0]}
+                        value={formData.trainingBounds[0] < prefsState.modelStart ? prefsState.modelStart : formData.trainingBounds[0]}
                     />
 
                     <input
@@ -72,6 +72,7 @@ function ModelSampleForm() {
                         onChangeCommitted={handleMouseUp}
                         valueLabelDisplay="off"
                         getAriaValueText={valuetext}
+                        min={prefsState.modelStart}
                     />
                 </Box>
             </div>

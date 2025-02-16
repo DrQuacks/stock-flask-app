@@ -59,7 +59,8 @@ def analyze_predictions(preds,data,train_end,test_end):
         'targetDown_predictionDown':(comparison['targetDown_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
         'targetUp_predictionDown':(comparison['targetUp_predictionDown'].sum()/comparison['predictionDown'].sum())*100,
         'targetDown_predictionUp':(comparison['targetDown_predictionUp'].sum()/comparison['predictionUp'].sum())*100},
-        'correct':comparison['correct'].sum()/trials
+        'correct':comparison['correct'].sum()/trials,
+        'targets_increased': comparison['targetUp'].sum()/trials
         # 'correct':{comparison['correct'].sum()/trials}
     }
     print(splits)
@@ -107,9 +108,9 @@ def setup_model_data(history,step,max_days):
     print('columns are: ',stock_history.columns)
 
     stock_history['target_binary'] = (stock_history['price'] > stock_history['last_price']).astype(int)
+    largest = (max_days // step) * step
     
-    
-    for days_to_trail in range(step,max_days,step):
+    for days_to_trail in range(step,max_days + 1,step):
         stockData = sd.build_stock_list(
             stock_history,
             prepared_data['date_index'],

@@ -85,6 +85,9 @@ function InputFormContainer(
             })
             const modelLineStrings = dayArray.map(day => day.toString())
             prefsDispatch({type:"update_model_lines",showModelLines:true,modelLineDays:dayArray,modelLineStrings})
+        } else if (name === "max") {
+            console.log('debugFormData',{formData,name,value})
+            prefsDispatch({type:"update_model_start",modelStart:(+value+1)})
         }
         setFormData(prevFormData => {
             return {

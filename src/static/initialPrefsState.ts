@@ -25,6 +25,7 @@ interface PrefsState extends PlotPrefsState {
     showModelLines:boolean,
     modelLineDays: Date[];
     modelLineStrings: string[];
+    modelStart:number
 }
 
 const initialPrefsState:PrefsState = {
@@ -45,7 +46,8 @@ const initialPrefsState:PrefsState = {
     localMaxs: false,
     showModelLines:false,
     modelLineDays:[(new Date()),(new Date()),(new Date())],
-    modelLineStrings:[]
+    modelLineStrings:[],
+    modelStart:0
 }
 
 export {initialPrefsState,PrefsState,PlotPrefsState}

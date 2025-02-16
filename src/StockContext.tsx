@@ -70,7 +70,8 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         nextChange,
         showModelLines,
         modelLineDays,
-        modelLineStrings
+        modelLineStrings,
+        modelStart
     }:{
         type:string,
         prefs:PrefsState
@@ -90,7 +91,8 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
         nextChange:string,
         showModelLines:boolean,
         modelLineDays:Date[],
-        modelLineStrings:string[]
+        modelLineStrings:string[],
+        modelStart:number
     } = action
     if (type) {
         let lastChange = {type}
@@ -139,6 +141,9 @@ const prefsReducer = (prefsState:PrefsState,action:any):PrefsState => {
             }
             case "update_model_lines":{
                 return{...prefsState,showModelLines,modelLineDays,modelLineStrings,lastChange,stateID:newStateID}
+            }
+            case "update_model_start":{
+                return{...prefsState,modelStart,lastChange,stateID:newStateID}
             }
             default: {
                 return {...prefsState,lastChange}
