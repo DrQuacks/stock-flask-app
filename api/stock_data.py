@@ -51,7 +51,9 @@ def prep_data(history, days, avg_type, sample_name):
     stock['derivative'] = stock[sample_type].pct_change()
     
     #feels a bit hacky
-    stock['derivative'].iloc[0] = 0
+    print('derivative was: ',stock['derivative'])
+    # stock['derivative'].iloc[0] = 0
+    stock['derivative'].at[0] = 0
     print('derivative is: ',stock['derivative'])
     print('stock shape[0] is: ',stock.shape[0])
     #print("stock is: ",stock)
@@ -128,9 +130,9 @@ def checkExtremes(val,min,max):
     return [min,max]
 
 
-def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history,start_day,samples_per_day=1):
+def build_stock_list(stock,date_index,type_index,days,sample_type,avg_type,history,start_day=0,samples_per_day=1):
     
-    if start_day:
+    if start_day != 0:
         index_days = start_day*samples_per_day
     else:
         index_days = days*samples_per_day
