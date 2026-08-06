@@ -9,7 +9,7 @@ def get_history(sym):
     stock = yf.Ticker(sym)
     return(stock.history(period = 'max'))
 
-print(get_history('voo'))
+print(get_history("qqq"))
 
 def get_average_data(stock_history,data,trailing_days=None):
     days = trailing_days or int(data['trailingDays'])
@@ -99,7 +99,7 @@ def model_rubric(data):
     return ({'plotData':plotDataDict})
 
 def train_test_rubric(data):
-    stock_history = get_history(data['stockSymbol'])
+    #stock_history = get_history(data['stockSymbol'])
     modelData = lm.getModelData()
     print('modelData type: ',type(modelData['data']))
     print('modelData: ')
@@ -108,6 +108,13 @@ def train_test_rubric(data):
     print('modelData entire: ',modelData.keys())
     print('modelData features: ',modelData['features'])
     print('modelData columns: ',modelData['data'].columns)
+
+    stock_history = None
+    if modelData and isinstance(modelData, dict):
+        if 'stock_history' in modelData and modelData['stock_history'] is not None:
+            stock_history = modelData['stock_history']
+        elif 'history' in modelData and modelData['history'] is not None:
+            stock_history = modelData['history']
 
     data_length = len(modelData['data'].index)
 

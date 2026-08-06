@@ -49,11 +49,13 @@ def prep_data(history, days, avg_type, sample_name):
     print("stock type is: ",type(stock))
 
     stock['derivative'] = stock[sample_type].pct_change()
+    print('stock is: ')
+    pprint(stock.head())
     
     #feels a bit hacky
     print('derivative was: ',stock['derivative'])
-    # stock['derivative'].iloc[0] = 0
-    stock['derivative'].at[0] = 0
+    stock['derivative'].iloc[0] = 0
+    #stock['derivative'].at[0] = 0
     print('derivative is: ',stock['derivative'])
     print('stock shape[0] is: ',stock.shape[0])
     #print("stock is: ",stock)

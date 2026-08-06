@@ -4,6 +4,7 @@ import pickle
 
 def create_data(history,step,max):
     created_result = sl.setup_model_data(history,step,max)
+    created_result['stock_history'] = history
 
     with open('file.pk1','wb') as file:
         pickle.dump(created_result,file)
